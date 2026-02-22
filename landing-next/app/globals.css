@@ -12,6 +12,8 @@
   --soft: rgba(247, 247, 242, 0.06);
   --shadow: 0 28px 80px rgba(0, 0, 0, 0.65);
   --radius: 28px;
+  --nav-content-offset: clamp(102px, 7.6vw, 132px);
+  --nav-content-offset-rail: clamp(94px, 7vw, 112px);
 }
 
 * {
@@ -1020,13 +1022,15 @@ main {
 }
 
 .section {
-  padding: clamp(64px, 8vw, 120px) clamp(20px, 6vw, 90px);
+  padding: clamp(64px, 8vw, 120px) clamp(20px, 6vw, 90px)
+    clamp(64px, 8vw, 120px)
+    max(clamp(20px, 6vw, 90px), var(--nav-content-offset));
 }
 
 .section-head {
   display: grid;
   gap: 18px;
-  max-width: 720px;
+  max-width: 700px;
 }
 
 .section-head h2 {
@@ -1051,8 +1055,8 @@ h2.section-title--hero-font {
 .card-grid {
   margin-top: 36px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 18px;
 }
 
 .card {
@@ -1095,7 +1099,8 @@ h2.section-title--hero-font {
 }
 
 .rail-head {
-  padding: 0 clamp(20px, 6vw, 90px) 32px;
+  padding: 0 clamp(20px, 6vw, 90px) 32px
+    max(clamp(20px, 6vw, 90px), var(--nav-content-offset-rail));
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -1104,8 +1109,9 @@ h2.section-title--hero-font {
 
 .rail-track {
   display: flex;
-  gap: 24px;
-  padding: 20px clamp(20px, 6vw, 90px) 60px;
+  gap: 22px;
+  padding: 20px clamp(20px, 6vw, 90px) 60px
+    max(clamp(20px, 6vw, 90px), var(--nav-content-offset-rail));
   will-change: transform;
 }
 
@@ -1250,7 +1256,7 @@ h2.section-title--hero-font {
 .split {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 32px;
+  gap: 28px;
   align-items: center;
 }
 
@@ -1312,7 +1318,8 @@ h2.section-title--hero-font {
 }
 
 .cta {
-  padding: clamp(64px, 8vw, 120px) clamp(20px, 6vw, 90px) 120px;
+  padding: clamp(64px, 8vw, 120px) clamp(20px, 6vw, 90px) 120px
+    max(clamp(20px, 6vw, 90px), var(--nav-content-offset));
 }
 
 .cta-inner {
@@ -1346,7 +1353,8 @@ h2.section-title--hero-font {
 }
 
 .footer {
-  padding: 40px clamp(20px, 6vw, 90px);
+  padding: 40px clamp(20px, 6vw, 90px) 40px
+    max(clamp(20px, 6vw, 90px), var(--nav-content-offset));
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -1362,6 +1370,11 @@ h2.section-title--hero-font {
 }
 
 @media (max-width: 1024px) {
+  :root {
+    --nav-content-offset: clamp(80px, 9vw, 104px);
+    --nav-content-offset-rail: clamp(72px, 8vw, 94px);
+  }
+
   .nav {
     top: 50%;
     left: clamp(28px, 4vw, 48px);
@@ -1394,6 +1407,11 @@ h2.section-title--hero-font {
 }
 
 @media (max-width: 900px) {
+  :root {
+    --nav-content-offset: clamp(54px, 7vw, 74px);
+    --nav-content-offset-rail: clamp(52px, 6.5vw, 68px);
+  }
+
   .process-card {
     grid-template-columns: 1fr;
   }
