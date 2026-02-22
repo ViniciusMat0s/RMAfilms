@@ -135,14 +135,22 @@ main {
   left: 0;
   right: 0;
   z-index: 50;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
+  gap: 20px;
   padding: 24px clamp(20px, 5vw, 90px);
-  backdrop-filter: blur(16px);
-  background: rgba(5, 5, 5, 0.78);
-  border-bottom: 1px solid var(--line);
+  background: transparent;
+  background-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+  border-bottom: 0;
+}
+
+.nav-spacer {
+  width: 100%;
+  min-height: 1px;
 }
 
 .hero,
@@ -192,9 +200,14 @@ main {
 .nav-links {
   display: flex;
   gap: 18px;
+  justify-self: center;
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.18em;
+}
+
+.nav > .button {
+  justify-self: end;
 }
 
 .nav-links a {
@@ -561,7 +574,7 @@ main {
   position: relative;
   z-index: 2;
   min-height: 100%;
-  padding: clamp(120px, 15vh, 200px) clamp(56px, 9vw, 140px)
+  padding: clamp(170px, 22vh, 280px) clamp(56px, 9vw, 140px)
     clamp(56px, 9vw, 140px);
 }
 
@@ -1067,12 +1080,22 @@ main {
 
 @media (max-width: 1024px) {
   .nav {
-    flex-direction: column;
-    align-items: flex-start;
+    grid-template-columns: 1fr;
+    justify-items: start;
+    gap: 14px;
   }
 
   .nav-links {
     flex-wrap: wrap;
+    justify-self: start;
+  }
+
+  .nav-spacer {
+    display: none;
+  }
+
+  .nav > .button {
+    justify-self: start;
   }
 
   .rail-head {
@@ -1097,7 +1120,7 @@ main {
   .hero-grid {
     grid-template-columns: 1fr;
     gap: 32px;
-    padding: clamp(90px, 16vw, 132px) clamp(16px, 5vw, 24px)
+    padding: clamp(124px, 22vw, 176px) clamp(16px, 5vw, 24px)
       clamp(36px, 8vw, 56px);
   }
 

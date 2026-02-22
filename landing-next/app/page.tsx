@@ -428,13 +428,7 @@ export default function Home() {
       </div>
 
       <header className="nav">
-        <div className="brand">
-          <span className="brand-mark">LA</span>
-          <div>
-            <p>Lumen Atelier</p>
-            <span>Editorial launch craft</span>
-          </div>
-        </div>
+        <div className="nav-spacer" aria-hidden="true" />
         <nav className="nav-links">
           <a href="#capabilities">Capabilities</a>
           <a href="#work">Work</a>
