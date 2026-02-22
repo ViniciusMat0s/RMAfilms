@@ -101,6 +101,13 @@ const studioValues = [
   "Modular scenes",
 ];
 
+const navSections = [
+  { id: "capabilities", label: "Capabilities" },
+  { id: "work", label: "Work" },
+  { id: "process", label: "Process" },
+  { id: "studio", label: "Studio" },
+];
+
 export default function Home() {
   const rootRef = useRef<HTMLDivElement>(null);
   const railRef = useRef<HTMLDivElement>(null);
@@ -113,7 +120,12 @@ export default function Home() {
       smoothWheel: true,
     });
 
-    lenis.on("scroll", ScrollTrigger.update);
+    let updateNavProgress: (() => void) | null = null;
+    const onLenisScroll = () => {
+      ScrollTrigger.update();
+      updateNavProgress?.();
+    };
+    lenis.on("scroll", onLenisScroll);
     gsap.ticker.add((time) => {
       lenis.raf(time * 1000);
     });
@@ -123,6 +135,7 @@ export default function Home() {
     let onHeroMove: ((event: MouseEvent) => void) | null = null;
     let onHeroLeave: (() => void) | null = null;
     let onHeroLayoutRefresh: (() => void) | null = null;
+    let onNavProgressRefresh: (() => void) | null = null;
     let recordingTimerId: ReturnType<typeof setInterval> | null = null;
     const pad2 = (value: number) => String(value).padStart(2, "0");
 
@@ -226,6 +239,123 @@ export default function Home() {
         heroStage?.querySelector<HTMLElement>(".hud-zoom-value") ?? null;
       const heroMainWords = gsap.utils.toArray<HTMLElement>("[data-hero-main-word]");
       const heroWords = gsap.utils.toArray<HTMLElement>(".hero-word");
+      const navItems = gsap.utils.toArray<HTMLElement>("[data-nav-item]");
+
+      if (navItems.length) {
+        const navStates = navItems
+          .map((item) => {
+            const sectionId = item.dataset.section;
+            if (!sectionId) return null;
+
+            const section = document.getElementById(sectionId);
+            if (!section) return null;
+
+            const setProgress = gsap.quickTo(item, "--progress", {
+              duration: 0.38,
+              ease: "power2.out",
+            });
+            const setScale = gsap.quickTo(item, "--dock-scale", {
+              duration: 0.42,
+              ease: "power2.out",
+            });
+            const setAlpha = gsap.quickTo(item, "--dock-alpha", {
+              duration: 0.34,
+              ease: "power2.out",
+            });
+
+            return { item, section, setProgress, setScale, setAlpha };
+          })
+          .filter(
+            (
+              state
+            ): state is {
+              item: HTMLElement;
+              section: HTMLElement;
+              setProgress: gsap.QuickToFunc;
+              setScale: gsap.QuickToFunc;
+              setAlpha: gsap.QuickToFunc;
+            } => state !== null
+          );
+
+        const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
+        const clamp = (value: number, min: number, max: number) =>
+          Math.min(max, Math.max(min, value));
+        updateNavProgress = () => {
+          const scrollY = window.scrollY;
+          const viewportHeight = window.innerHeight;
+          let activeIndex = -1;
+          let activeProgress = 0;
+          const navSnapshot = navStates.map(({ item, section }) => {
+            const sectionRect = section.getBoundingClientRect();
+            const sectionTop = scrollY + sectionRect.top;
+            const sectionBottom = sectionTop + sectionRect.height;
+
+            const enterStart = sectionTop - viewportHeight * 0.7;
+            const fillEnd = sectionBottom - viewportHeight * 0.42;
+            const decayEnd = sectionBottom + viewportHeight * 0.42;
+
+            let targetProgress = 0;
+            if (scrollY < enterStart) {
+              targetProgress = 0;
+            } else if (scrollY <= fillEnd) {
+              const growSpan = Math.max(fillEnd - enterStart, 1);
+              targetProgress = clamp01((scrollY - enterStart) / growSpan);
+            } else if (scrollY <= decayEnd) {
+              const decaySpan = Math.max(decayEnd - fillEnd, 1);
+              targetProgress = clamp01(1 - (scrollY - fillEnd) / decaySpan);
+            } else {
+              targetProgress = 0;
+            }
+
+            const passedDepth =
+              scrollY <= fillEnd
+                ? 0
+                : clamp01(
+                    (scrollY - fillEnd) / Math.max(decayEnd - fillEnd, 1)
+                  );
+
+            return { item, targetProgress, passedDepth };
+          });
+
+          navSnapshot.forEach((state, index) => {
+            if (state.targetProgress > activeProgress) {
+              activeProgress = state.targetProgress;
+              activeIndex = index;
+            }
+          });
+
+          navSnapshot.forEach((state, index) => {
+            const { item, targetProgress, passedDepth } = state;
+            const { setProgress, setScale, setAlpha } = navStates[index];
+            const dockInfluence =
+              activeIndex < 0
+                ? 0
+                : Math.max(0, 1 - Math.abs(index - activeIndex) * 0.55);
+            const dockBoost = dockInfluence * 0.18;
+            const scaleTarget = clamp(
+              0.6,
+              1.24,
+              0.86 + targetProgress * 0.34 + dockBoost - passedDepth * 0.3
+            );
+            const alphaTarget = clamp(
+              0.34,
+              1,
+              0.62 + targetProgress * 0.28 + dockBoost * 0.24 - passedDepth * 0.24
+            );
+
+            setProgress(targetProgress);
+            setScale(scaleTarget);
+            setAlpha(alphaTarget);
+            item.classList.toggle("is-active", index === activeIndex && activeProgress > 0.08);
+            item.classList.toggle("is-passed", passedDepth > 0.45 && targetProgress < 0.22);
+          });
+        };
+
+        updateNavProgress();
+        window.addEventListener("resize", updateNavProgress);
+        ScrollTrigger.addEventListener("refresh", updateNavProgress);
+        onNavProgressRefresh = updateNavProgress;
+      }
 
       if (heroGrid && heroMainBlock && heroAccentLine) {
         const updateHeroBalance = () => {
@@ -463,6 +593,10 @@ export default function Home() {
       if (onHeroLayoutRefresh) {
         window.removeEventListener("resize", onHeroLayoutRefresh);
       }
+      if (onNavProgressRefresh) {
+        window.removeEventListener("resize", onNavProgressRefresh);
+        ScrollTrigger.removeEventListener("refresh", onNavProgressRefresh);
+      }
       if (heroStage && onHeroMove && onHeroLeave) {
         heroStage.removeEventListener("mousemove", onHeroMove);
         heroStage.removeEventListener("mouseleave", onHeroLeave);
@@ -487,14 +621,34 @@ export default function Home() {
       </div>
 
       <header className="nav">
-        <div className="nav-spacer" aria-hidden="true" />
-        <nav className="nav-links">
-          <a href="#capabilities">Capabilities</a>
-          <a href="#work">Work</a>
-          <a href="#process">Process</a>
-          <a href="#studio">Studio</a>
+        <nav className="nav-links" aria-label="Section navigation">
+          {navSections.map((section) => (
+            <a
+              key={section.id}
+              href={`#${section.id}`}
+              className="nav-link-hud"
+              data-nav-item
+              data-section={section.id}
+            >
+              <span className="nav-link-track" aria-hidden="true">
+                <span className="nav-link-fill" />
+              </span>
+              <span className="nav-link-label" aria-hidden="true">
+                {section.label.split("").map((character, index) => (
+                  <span
+                    key={`${section.id}-${character}-${index}`}
+                    className={`nav-letter${
+                      character === " " ? " nav-letter--space" : ""
+                    }`}
+                  >
+                    {character === " " ? "\u00A0" : character}
+                  </span>
+                ))}
+              </span>
+              <span className="sr-only">{section.label}</span>
+            </a>
+          ))}
         </nav>
-        <div className="nav-spacer" aria-hidden="true" />
       </header>
 
       <main>
