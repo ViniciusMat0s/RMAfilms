@@ -217,6 +217,7 @@ export default function Home() {
         null;
       const heroZoomValue =
         heroStage?.querySelector<HTMLElement>(".hud-zoom-value") ?? null;
+      const heroMainWords = gsap.utils.toArray<HTMLElement>("[data-hero-main-word]");
       const heroWords = gsap.utils.toArray<HTMLElement>(".hero-word");
 
       if (heroTimeValue) {
@@ -239,7 +240,7 @@ export default function Home() {
         recordingTimerId = setInterval(updateTimecode, tickMs);
       }
 
-      if (heroStage || heroWords.length) {
+      if (heroStage || heroWords.length || heroMainWords.length) {
         const heroTimeline = gsap.timeline({
           scrollTrigger: {
             trigger: ".hero--statement",
@@ -265,6 +266,25 @@ export default function Home() {
             const zoom =
               minZoom + (maxZoom - minZoom) * heroTimeline.progress();
             heroZoomValue.textContent = `${zoom.toFixed(1)}x`;
+          });
+        }
+
+        if (heroMainWords.length) {
+          gsap.set(heroMainWords, { autoAlpha: 0, y: 20 });
+          gsap.set(heroMainWords[0], { autoAlpha: 1, y: 0 });
+
+          const mainWordStops = [0.16, 0.28, 0.4, 0.56, 0.72];
+          heroMainWords.forEach((word, index) => {
+            if (index === 0) return;
+            const position =
+              mainWordStops[index - 1] ??
+              0.16 + (0.56 * (index - 1)) / Math.max(heroMainWords.length - 2, 1);
+
+            heroTimeline.to(
+              word,
+              { autoAlpha: 1, y: 0, duration: 0.12, ease: "power3.out" },
+              position
+            );
           });
         }
 
@@ -461,13 +481,31 @@ export default function Home() {
             <div className="hero-grid">
               <h1 className="hero-text">
                 <span className="hero-line hero-line--main">
-                  FILMES ESTRAT&Eacute;GICOS
+                  <span className="hero-main-word" data-hero-main-word>
+                    FILMES
+                  </span>{" "}
+                  <span className="hero-main-word" data-hero-main-word>
+                    ESTRAT&Eacute;GICOS
+                  </span>
                 </span>
                 <span className="hero-line hero-line--main">
-                  PARA MARCAS QUE
+                  <span className="hero-main-word" data-hero-main-word>
+                    PARA
+                  </span>{" "}
+                  <span className="hero-main-word" data-hero-main-word>
+                    MARCAS
+                  </span>{" "}
+                  <span className="hero-main-word" data-hero-main-word>
+                    QUE
+                  </span>
                 </span>
                 <span className="hero-line hero-line--accent">
-                  <span className="hero-highlight">Lideram</span>
+                  <span
+                    className="hero-highlight hero-main-word"
+                    data-hero-main-word
+                  >
+                    LIDERAM
+                  </span>
                 </span>
               </h1>
               <div className="hero-right">
