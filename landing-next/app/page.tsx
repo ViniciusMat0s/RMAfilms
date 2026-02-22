@@ -102,10 +102,10 @@ const studioValues = [
 ];
 
 const navSections = [
-  { id: "capabilities", label: "Capabilities" },
-  { id: "work", label: "Work" },
-  { id: "process", label: "Process" },
-  { id: "studio", label: "Studio" },
+  { id: "capabilities", label: "Capacidades" },
+  { id: "work", label: "Projetos" },
+  { id: "process", label: "Processo" },
+  { id: "studio", label: "Estúdio" },
 ];
 
 export default function Home() {
