@@ -111,7 +111,6 @@ export default function Home() {
     const lenis = new Lenis({
       lerp: 0.08,
       smoothWheel: true,
-      smoothTouch: false,
     });
 
     lenis.on("scroll", ScrollTrigger.update);
@@ -212,16 +211,12 @@ export default function Home() {
         },
       });
 
-      const heroFill = document.querySelector<HTMLElement>(
-        ".hero-highlight-fill"
-      );
       heroStage = document.querySelector<HTMLElement>(".hero-stage");
       const heroTimeValue =
         rootRef.current?.querySelector<HTMLElement>("[data-recording-timer]") ??
         null;
       const heroZoomValue =
         heroStage?.querySelector<HTMLElement>(".hud-zoom-value") ?? null;
-      const heroHighlight = document.querySelector<HTMLElement>(".hero-highlight");
       const heroWords = gsap.utils.toArray<HTMLElement>(".hero-word");
 
       if (heroTimeValue) {
@@ -244,7 +239,7 @@ export default function Home() {
         recordingTimerId = setInterval(updateTimecode, tickMs);
       }
 
-      if (heroStage || heroFill || heroHighlight || heroWords.length) {
+      if (heroStage || heroWords.length) {
         const heroTimeline = gsap.timeline({
           scrollTrigger: {
             trigger: ".hero--statement",
@@ -271,28 +266,6 @@ export default function Home() {
               minZoom + (maxZoom - minZoom) * heroTimeline.progress();
             heroZoomValue.textContent = `${zoom.toFixed(1)}x`;
           });
-        }
-
-        if (heroFill) {
-          heroTimeline.fromTo(
-            heroFill,
-            { "--reveal": "0%" },
-            { "--reveal": "100%", ease: "none" },
-            0
-          );
-        }
-
-        if (heroStage || heroHighlight) {
-          const flashTarget = heroStage ?? heroHighlight;
-          heroTimeline
-            .to(flashTarget, { "--flash": 1, duration: 0.03 }, 0.12)
-            .to(flashTarget, { "--flash": 0, duration: 0.18 }, 0.16)
-            .to(flashTarget, { "--flash": 1, duration: 0.03 }, 0.32)
-            .to(flashTarget, { "--flash": 0, duration: 0.2 }, 0.36)
-            .to(flashTarget, { "--flash": 1, duration: 0.03 }, 0.58)
-            .to(flashTarget, { "--flash": 0, duration: 0.2 }, 0.62)
-            .to(flashTarget, { "--flash": 1, duration: 0.03 }, 0.82)
-            .to(flashTarget, { "--flash": 0, duration: 0.2 }, 0.86);
         }
 
         if (heroWords.length) {
@@ -376,6 +349,7 @@ export default function Home() {
       }
 
       if (heroStage && window.matchMedia("(pointer: fine)").matches) {
+        const currentHeroStage = heroStage;
         const setX = gsap.quickTo(heroStage, "--mx", {
           duration: 0.5,
           ease: "power3.out",
@@ -386,20 +360,20 @@ export default function Home() {
         });
 
         onHeroMove = (event: MouseEvent) => {
-          const bounds = heroStage.getBoundingClientRect();
+          const bounds = currentHeroStage.getBoundingClientRect();
           const x = ((event.clientX - bounds.left) / bounds.width) * 100;
           const y = ((event.clientY - bounds.top) / bounds.height) * 100;
-          setX(`${x}%`);
-          setY(`${y}%`);
+          setX(x);
+          setY(y);
         };
 
         onHeroLeave = () => {
-          setX("50%");
-          setY("50%");
+          setX(50);
+          setY(50);
         };
 
-        heroStage.addEventListener("mousemove", onHeroMove);
-        heroStage.addEventListener("mouseleave", onHeroLeave);
+        currentHeroStage.addEventListener("mousemove", onHeroMove);
+        currentHeroStage.addEventListener("mouseleave", onHeroLeave);
       }
     }, rootRef);
 
@@ -493,12 +467,7 @@ export default function Home() {
                   PARA MARCAS QUE
                 </span>
                 <span className="hero-line hero-line--accent">
-                  <span className="hero-highlight">
-                    <span className="hero-highlight-outline" aria-hidden="true">
-                      LIDERAM
-                    </span>
-                    <span className="hero-highlight-fill">LIDERAM</span>
-                  </span>
+                  <span className="hero-highlight">Lideram</span>
                 </span>
               </h1>
               <div className="hero-right">

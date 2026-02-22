@@ -1,5 +1,4 @@
-﻿@import "tailwindcss";
-
+@import "tailwindcss";
 :root {
   --black: #050505;
   --white: #f7f7f2;
@@ -276,13 +275,13 @@ main {
   border-radius: 0;
   overflow: hidden;
   background: radial-gradient(
-      520px circle at var(--mx, 50%) var(--my, 50%),
+      520px circle at calc(var(--mx, 50) * 1%) calc(var(--my, 50) * 1%),
       rgba(255, 255, 255, 0.12),
       transparent 55%
     ),
     radial-gradient(
-      380px circle at calc(var(--mx, 50%) + 10%)
-        calc(var(--my, 50%) + 8%),
+      380px circle at calc((var(--mx, 50) + 10) * 1%)
+        calc((var(--my, 50) + 8) * 1%),
       rgba(255, 255, 255, 0.08),
       transparent 60%
     ),
@@ -347,7 +346,7 @@ main {
     rgba(255, 255, 255, 0.2) 45%,
     transparent 70%
   );
-  opacity: calc(var(--flash) * 0.5);
+  opacity: calc(var(--flash) * 0.28);
   mix-blend-mode: screen;
   pointer-events: none;
   z-index: 1;
@@ -601,7 +600,8 @@ main {
 }
 
 .hero-line--main {
-  font-weight: 400;
+  font-family: var(--font-aventa), var(--font-body), "Manrope", sans-serif !important;
+  font-weight: 300;
   letter-spacing: 0.06em;
 }
 
@@ -610,84 +610,17 @@ main {
   letter-spacing: 0.12em;
   line-height: 0.95;
   margin-top: 0.12em;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .hero-highlight {
-  position: relative;
-  display: inline-grid;
-  align-items: center;
-}
-
-.hero-highlight-outline,
-.hero-highlight-fill {
-  grid-area: 1 / 1;
-}
-
-.hero-highlight-outline {
-  color: rgba(247, 247, 242, 0.2);
-}
-
-.hero-highlight-fill {
-  color: transparent;
-  background-image: linear-gradient(110deg, #ffffff 0%, #cfcfcf 45%, #ffffff 90%);
-  background-size: 200% 100%;
-  background-position: 0% 50%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  --reveal: 0%;
-  -webkit-mask-image: linear-gradient(
-    90deg,
-    #000 0%,
-    rgba(0, 0, 0, 0.8) 70%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    90deg,
-    #000 0%,
-    rgba(0, 0, 0, 0.8) 70%,
-    transparent 100%
-  );
-  -webkit-mask-size: var(--reveal) 100%;
-  mask-size: var(--reveal) 100%;
-  -webkit-mask-position: left;
-  mask-position: left;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  text-shadow: 0 0 34px rgba(255, 255, 255, 0.45);
-  animation: highlightShimmer 3.2s ease-in-out infinite;
-  will-change: mask-size, background-position;
-}
-
-.hero-highlight::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0.08em;
-  height: 0.1em;
-  background: linear-gradient(90deg, transparent, #ffffff, transparent);
-  opacity: 0.7;
-  transform: scaleX(0.8);
-  transform-origin: center;
-  filter: blur(1px);
-  animation: underlineGlow 3.2s ease-in-out infinite;
-}
-
-.hero-highlight::before {
-  content: "";
-  position: absolute;
-  inset: -0.15em -0.2em;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(255, 255, 255, 0.25) 45%,
-    transparent 70%
-  );
-  opacity: var(--flash);
-  mix-blend-mode: screen;
-  filter: blur(8px);
-  pointer-events: none;
+  display: inline-block;
+  font-family: var(--font-bierika), var(--font-heading), "Bodoni Moda", serif !important;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0.03em;
+  color: var(--white);
+  text-shadow: none;
 }
 
 .hero-stage {
@@ -733,30 +666,6 @@ main {
   }
   100% {
     transform: translateX(-4%);
-  }
-}
-
-@keyframes highlightShimmer {
-  0%,
-  100% {
-    background-position: 0% 50%;
-    text-shadow: 0 0 14px rgba(255, 255, 255, 0.25);
-  }
-  50% {
-    background-position: 100% 50%;
-    text-shadow: 0 0 26px rgba(255, 255, 255, 0.6);
-  }
-}
-
-@keyframes underlineGlow {
-  0%,
-  100% {
-    opacity: 0.25;
-    transform: scaleX(0.5);
-  }
-  50% {
-    opacity: 0.65;
-    transform: scaleX(1);
   }
 }
 
@@ -1171,24 +1080,8 @@ main {
     animation: none !important;
   }
 
-  .hero-highlight-fill,
-  .hero-highlight::after {
-    animation: none !important;
-  }
-
-  .hero-highlight-fill {
-    color: var(--white);
-    background: none;
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    --reveal: 100%;
-  }
-
-  .hero-highlight::before {
-    opacity: 0;
-  }
-
   .hero-stage {
     --zoom-level: 1;
   }
 }
+
