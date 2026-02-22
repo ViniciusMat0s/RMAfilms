@@ -601,7 +601,12 @@ main {
 
 .hero-main-word {
   display: inline-block;
-  will-change: transform, opacity;
+  --word-glow: 0;
+  text-shadow:
+    0 0 calc(12px * var(--word-glow)) rgba(255, 255, 255, calc(0.56 * var(--word-glow))),
+    0 0 calc(32px * var(--word-glow)) rgba(206, 221, 255, calc(0.42 * var(--word-glow))),
+    0 0 calc(54px * var(--word-glow)) rgba(156, 190, 255, calc(0.2 * var(--word-glow)));
+  will-change: transform, opacity, text-shadow;
 }
 
 .hero-line--main {
@@ -614,7 +619,7 @@ main {
   font-size: clamp(3.6rem, 9vw, 10rem);
   letter-spacing: 0.12em;
   line-height: 0.95;
-  margin-top: 0.12em;
+  margin-top: clamp(72px, 14vh, 180px);
   font-weight: 700;
 }
 
@@ -1029,6 +1034,10 @@ main {
     white-space: normal;
   }
 
+  .hero-line--accent {
+    margin-top: clamp(30px, 7vh, 64px);
+  }
+
   .hero-grid {
     grid-template-columns: 1fr;
     gap: 32px;
@@ -1081,11 +1090,6 @@ main {
   .orb,
   .marquee-track {
     animation: none !important;
-  }
-
-  .hero-main-word {
-    opacity: 1 !important;
-    transform: none !important;
   }
 
   .hero-stage {

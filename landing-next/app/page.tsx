@@ -270,26 +270,51 @@ export default function Home() {
         }
 
         if (heroMainWords.length) {
-          gsap.set(heroMainWords, { autoAlpha: 0, y: 20 });
-          gsap.set(heroMainWords[0], { autoAlpha: 1, y: 0 });
+          gsap.set(heroMainWords, {
+            autoAlpha: 0,
+            y: 14,
+            scale: 0.992,
+            "--word-glow": 0,
+          });
+          gsap.set(heroMainWords[0], {
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            "--word-glow": 0,
+          });
 
-          const mainWordStops = [0.16, 0.28, 0.4, 0.56, 0.72];
+          const mainWordStops = [0.14, 0.24, 0.34, 0.46, 0.6];
           heroMainWords.forEach((word, index) => {
             if (index === 0) return;
             const position =
               mainWordStops[index - 1] ??
-              0.16 + (0.56 * (index - 1)) / Math.max(heroMainWords.length - 2, 1);
+              0.14 + (0.56 * (index - 1)) / Math.max(heroMainWords.length - 2, 1);
 
             heroTimeline.to(
               word,
-              { autoAlpha: 1, y: 0, duration: 0.12, ease: "power3.out" },
+              { autoAlpha: 1, y: 0, scale: 1, duration: 0.26, ease: "power2.out" },
               position
+            );
+            heroTimeline.to(
+              word,
+              { "--word-glow": 1.22, duration: 0.16, ease: "sine.out" },
+              position + 0.04
+            );
+            heroTimeline.to(
+              word,
+              { "--word-glow": 0.18, duration: 0.2, ease: "sine.inOut" },
+              position + 0.2
+            );
+            heroTimeline.to(
+              word,
+              { "--word-glow": 0, duration: 0.28, ease: "sine.inOut" },
+              position + 0.34
             );
           });
         }
 
         if (heroWords.length) {
-          gsap.set(heroWords, { autoAlpha: 0, y: 18 });
+          gsap.set(heroWords, { autoAlpha: 0, y: 14 });
           gsap.set(heroWords[0], { autoAlpha: 1, y: 0 });
 
           const wordStops = [0.2, 0.52, 0.84];
@@ -297,8 +322,16 @@ export default function Home() {
             if (index === 0) return;
             const prev = heroWords[index - 1];
             const position = wordStops[index] ?? index / heroWords.length;
-            heroTimeline.to(prev, { autoAlpha: 0, y: -18, duration: 0.1 }, position);
-            heroTimeline.to(word, { autoAlpha: 1, y: 0, duration: 0.1 }, position);
+            heroTimeline.to(
+              prev,
+              { autoAlpha: 0, y: -10, duration: 0.18, ease: "power2.inOut" },
+              position
+            );
+            heroTimeline.to(
+              word,
+              { autoAlpha: 1, y: 0, duration: 0.18, ease: "power2.out" },
+              position + 0.02
+            );
           });
         }
       }
