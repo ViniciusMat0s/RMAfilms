@@ -120,6 +120,10 @@ export default function Home() {
     });
     gsap.ticker.lagSmoothing(0);
 
+    let heroStage: HTMLElement | null = null;
+    let onHeroMove: ((event: MouseEvent) => void) | null = null;
+    let onHeroLeave: (() => void) | null = null;
+
     const ctx = gsap.context(() => {
       gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((el) => {
         const direction = el.dataset.reveal || "up";
@@ -206,24 +210,79 @@ export default function Home() {
         },
       });
 
-      const heroFill = document.querySelector<HTMLElement>(".hero-text-fill");
-      if (heroFill) {
-        gsap
-          .timeline({
-            scrollTrigger: {
-              trigger: ".hero--statement",
-              start: "top top",
-              end: "+=140%",
-              scrub: true,
-              pin: true,
-              anticipatePin: 1,
-            },
-          })
-          .fromTo(
-            heroFill,
-            { clipPath: "inset(0 85% 0 0)" },
-            { clipPath: "inset(0 0% 0 0)", ease: "none" }
+      const heroFill = document.querySelector<HTMLElement>(
+        ".hero-highlight-fill"
+      );
+      heroStage = document.querySelector<HTMLElement>(".hero-stage");
+      const heroZoomValue =
+        heroStage?.querySelector<HTMLElement>(".hud-zoom-value") ?? null;
+      const heroHighlight = document.querySelector<HTMLElement>(".hero-highlight");
+      const heroWords = gsap.utils.toArray<HTMLElement>(".hero-word");
+
+      if (heroStage || heroFill || heroHighlight || heroWords.length) {
+        const heroTimeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: ".hero--statement",
+            start: "top top",
+            end: "+=160%",
+            scrub: true,
+            pin: true,
+            anticipatePin: 1,
+          },
+        });
+
+        if (heroStage) {
+          heroTimeline.fromTo(
+            heroStage,
+            { "--zoom-level": 0 },
+            { "--zoom-level": 1, ease: "none" },
+            0
           );
+          heroTimeline.eventCallback("onUpdate", () => {
+            if (!heroZoomValue) return;
+            const minZoom = 1;
+            const maxZoom = 3;
+            const zoom =
+              minZoom + (maxZoom - minZoom) * heroTimeline.progress();
+            heroZoomValue.textContent = `${zoom.toFixed(1)}x`;
+          });
+        }
+
+        if (heroFill) {
+          heroTimeline.fromTo(
+            heroFill,
+            { "--reveal": "0%" },
+            { "--reveal": "100%", ease: "none" },
+            0
+          );
+        }
+
+        if (heroStage || heroHighlight) {
+          const flashTarget = heroStage ?? heroHighlight;
+          heroTimeline
+            .to(flashTarget, { "--flash": 1, duration: 0.03 }, 0.12)
+            .to(flashTarget, { "--flash": 0, duration: 0.18 }, 0.16)
+            .to(flashTarget, { "--flash": 1, duration: 0.03 }, 0.32)
+            .to(flashTarget, { "--flash": 0, duration: 0.2 }, 0.36)
+            .to(flashTarget, { "--flash": 1, duration: 0.03 }, 0.58)
+            .to(flashTarget, { "--flash": 0, duration: 0.2 }, 0.62)
+            .to(flashTarget, { "--flash": 1, duration: 0.03 }, 0.82)
+            .to(flashTarget, { "--flash": 0, duration: 0.2 }, 0.86);
+        }
+
+        if (heroWords.length) {
+          gsap.set(heroWords, { autoAlpha: 0, y: 18 });
+          gsap.set(heroWords[0], { autoAlpha: 1, y: 0 });
+
+          const wordStops = [0.2, 0.52, 0.84];
+          heroWords.forEach((word, index) => {
+            if (index === 0) return;
+            const prev = heroWords[index - 1];
+            const position = wordStops[index] ?? index / heroWords.length;
+            heroTimeline.to(prev, { autoAlpha: 0, y: -18, duration: 0.1 }, position);
+            heroTimeline.to(word, { autoAlpha: 1, y: 0, duration: 0.1 }, position);
+          });
+        }
       }
 
       const railTrack = railRef.current;
@@ -290,9 +349,40 @@ export default function Home() {
           );
         });
       }
+
+      if (heroStage && window.matchMedia("(pointer: fine)").matches) {
+        const setX = gsap.quickTo(heroStage, "--mx", {
+          duration: 0.5,
+          ease: "power3.out",
+        });
+        const setY = gsap.quickTo(heroStage, "--my", {
+          duration: 0.5,
+          ease: "power3.out",
+        });
+
+        onHeroMove = (event: MouseEvent) => {
+          const bounds = heroStage.getBoundingClientRect();
+          const x = ((event.clientX - bounds.left) / bounds.width) * 100;
+          const y = ((event.clientY - bounds.top) / bounds.height) * 100;
+          setX(`${x}%`);
+          setY(`${y}%`);
+        };
+
+        onHeroLeave = () => {
+          setX("50%");
+          setY("50%");
+        };
+
+        heroStage.addEventListener("mousemove", onHeroMove);
+        heroStage.addEventListener("mouseleave", onHeroLeave);
+      }
     }, rootRef);
 
     return () => {
+      if (heroStage && onHeroMove && onHeroLeave) {
+        heroStage.removeEventListener("mousemove", onHeroMove);
+        heroStage.removeEventListener("mouseleave", onHeroLeave);
+      }
       lenis.destroy();
       ctx.revert();
     };
@@ -330,18 +420,72 @@ export default function Home() {
 
       <main>
         <section className="hero hero--statement" id="top">
-          <h1 className="hero-text">
-            <span className="hero-text-outline" aria-hidden="true">
-              <span className="hero-line">We choreograph launches</span>
-              <span className="hero-line">into cinematic, scroll-led</span>
-              <span className="hero-line">rituals.</span>
-            </span>
-            <span className="hero-text-fill">
-              <span className="hero-line">We choreograph launches</span>
-              <span className="hero-line">into cinematic, scroll-led</span>
-              <span className="hero-line">rituals.</span>
-            </span>
-          </h1>
+          <div className="hero-stage">
+            <div className="hero-flash" aria-hidden="true" />
+            <div className="hero-hud" aria-hidden="true">
+              <span className="hud-corner hud-corner--tl" />
+              <span className="hud-corner hud-corner--tr" />
+              <span className="hud-corner hud-corner--bl" />
+              <span className="hud-corner hud-corner--br" />
+              <div className="hud-rec">
+                <span className="hud-dot" />
+                REC
+              </div>
+              <div className="hud-time">00:00:00:01</div>
+              <div className="hud-mode">AUTO<br />AWB</div>
+              <div className="hud-battery">
+                <span />
+                <span />
+                <span />
+              </div>
+              <div className="hud-crosshair">
+                <span />
+                <span />
+              </div>
+              <div className="hud-zoom">
+                <span>ZOOM</span>
+                <strong className="hud-zoom-value">1.0x</strong>
+                <div className="hud-zoom-bar">
+                  <span />
+                </div>
+              </div>
+              <div className="hud-meter">-3..2..1..1..2..3</div>
+              <div className="hud-iso">ISO 100 1/100 F2.8</div>
+              <div className="hud-audio">
+                <span>L</span>
+                <div className="hud-bars" />
+                <span>R</span>
+              </div>
+              <div className="hud-res">
+                HD 2K 4K 6K FPS60<br />3840x2160<br />1h30m
+              </div>
+            </div>
+            <div className="hero-grid">
+              <h1 className="hero-text">
+                <span className="hero-line hero-line--main">
+                  FILMES ESTRAT&Eacute;GICOS
+                </span>
+                <span className="hero-line hero-line--main">
+                  PARA MARCAS QUE
+                </span>
+                <span className="hero-line hero-line--accent">
+                  <span className="hero-highlight">
+                    <span className="hero-highlight-outline" aria-hidden="true">
+                      LIDERAM
+                    </span>
+                    <span className="hero-highlight-fill">LIDERAM</span>
+                  </span>
+                </span>
+              </h1>
+              <div className="hero-right">
+                <div className="hero-words">
+                  <span className="hero-word">Reputa&ccedil;&atilde;o.</span>
+                  <span className="hero-word">Marca.</span>
+                  <span className="hero-word">Autoridade.</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
         <div className="marquee">
