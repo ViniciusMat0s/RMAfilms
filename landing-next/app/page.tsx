@@ -673,12 +673,14 @@ export default function Home() {
             y: 14,
             scale: 0.992,
             "--word-glow": 0,
+            "--tv-scroll": 0,
           });
           gsap.set(heroMainWords[0], {
             autoAlpha: 1,
             y: 0,
             scale: 1,
             "--word-glow": 0,
+            "--tv-scroll": 0,
           });
 
           const mainWordStops = [0.14, 0.24, 0.34, 0.46, 0.6];
@@ -692,6 +694,26 @@ export default function Home() {
               word,
               { autoAlpha: 1, y: 0, scale: 1, duration: 0.26, ease: "power2.out" },
               position
+            );
+            heroTimeline.to(
+              word,
+              { "--tv-scroll": 1, duration: 0.1, ease: "steps(2)" },
+              position + 0.02
+            );
+            heroTimeline.to(
+              word,
+              { "--tv-scroll": 0.32, duration: 0.12, ease: "steps(2)" },
+              position + 0.14
+            );
+            heroTimeline.to(
+              word,
+              { "--tv-scroll": 0.82, duration: 0.1, ease: "steps(2)" },
+              position + 0.22
+            );
+            heroTimeline.to(
+              word,
+              { "--tv-scroll": 0, duration: 0.22, ease: "power1.out" },
+              position + 0.34
             );
             heroTimeline.to(
               word,
@@ -712,8 +734,8 @@ export default function Home() {
         }
 
         if (heroWords.length) {
-          gsap.set(heroWords, { autoAlpha: 0, y: 14 });
-          gsap.set(heroWords[0], { autoAlpha: 1, y: 0 });
+          gsap.set(heroWords, { autoAlpha: 0, y: 14, "--tv-scroll": 0 });
+          gsap.set(heroWords[0], { autoAlpha: 1, y: 0, "--tv-scroll": 0 });
 
           const wordStops = [0.2, 0.52, 0.84];
           heroWords.forEach((word, index) => {
@@ -722,13 +744,39 @@ export default function Home() {
             const position = wordStops[index] ?? index / heroWords.length;
             heroTimeline.to(
               prev,
-              { autoAlpha: 0, y: -10, duration: 0.18, ease: "power2.inOut" },
+              {
+                autoAlpha: 0,
+                y: -10,
+                "--tv-scroll": 0,
+                duration: 0.18,
+                ease: "power2.inOut",
+              },
               position
             );
             heroTimeline.to(
               word,
               { autoAlpha: 1, y: 0, duration: 0.18, ease: "power2.out" },
               position + 0.02
+            );
+            heroTimeline.to(
+              word,
+              { "--tv-scroll": 1, duration: 0.08, ease: "steps(2)" },
+              position + 0.03
+            );
+            heroTimeline.to(
+              word,
+              { "--tv-scroll": 0.26, duration: 0.12, ease: "steps(2)" },
+              position + 0.12
+            );
+            heroTimeline.to(
+              word,
+              { "--tv-scroll": 0.72, duration: 0.08, ease: "steps(2)" },
+              position + 0.2
+            );
+            heroTimeline.to(
+              word,
+              { "--tv-scroll": 0, duration: 0.18, ease: "power1.out" },
+              position + 0.3
             );
           });
         }

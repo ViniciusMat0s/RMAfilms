@@ -811,11 +811,20 @@ main {
 .hero-main-word {
   display: inline-block;
   --word-glow: 0;
+  --tv-scroll: 0;
+  --tv-hover: 0;
+  --tv-intensity: clamp(0, calc(var(--tv-scroll) + var(--tv-hover)), 1);
   text-shadow:
     0 0 calc(12px * var(--word-glow)) rgba(255, 255, 255, calc(0.56 * var(--word-glow))),
     0 0 calc(32px * var(--word-glow)) rgba(206, 221, 255, calc(0.42 * var(--word-glow))),
-    0 0 calc(54px * var(--word-glow)) rgba(156, 190, 255, calc(0.2 * var(--word-glow)));
-  will-change: transform, opacity, text-shadow;
+    0 0 calc(54px * var(--word-glow)) rgba(156, 190, 255, calc(0.2 * var(--word-glow))),
+    calc(-0.045em * var(--tv-intensity)) 0
+      rgba(255, 72, 96, calc(0.42 * var(--tv-intensity))),
+    calc(0.045em * var(--tv-intensity)) 0
+      rgba(123, 196, 255, calc(0.42 * var(--tv-intensity)));
+  filter: saturate(calc(1 + var(--tv-intensity) * 0.3))
+    contrast(calc(1 + var(--tv-intensity) * 0.22));
+  will-change: transform, opacity, text-shadow, filter;
 }
 
 .hero-line--main {
@@ -870,9 +879,81 @@ main {
 
 .hero-word {
   grid-area: 1 / 1;
+  --tv-scroll: 0;
+  --tv-hover: 0;
+  --tv-intensity: clamp(0, calc(var(--tv-scroll) + var(--tv-hover)), 1);
   opacity: 0;
   transform: translateY(20%);
-  will-change: opacity, transform;
+  text-shadow:
+    calc(-0.04em * var(--tv-intensity)) 0
+      rgba(255, 72, 96, calc(0.36 * var(--tv-intensity))),
+    calc(0.04em * var(--tv-intensity)) 0
+      rgba(123, 196, 255, calc(0.36 * var(--tv-intensity)));
+  filter: saturate(calc(1 + var(--tv-intensity) * 0.28))
+    contrast(calc(1 + var(--tv-intensity) * 0.18));
+  will-change: opacity, transform, text-shadow, filter;
+}
+
+@media (pointer: fine) {
+  .hero-stage .hero-main-word,
+  .hero-stage .hero-word,
+  .hero-stage .hud-contact-button {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .hero-stage .hero-main-word::before,
+  .hero-stage .hero-main-word::after,
+  .hero-stage .hero-word::before,
+  .hero-stage .hero-word::after {
+    pointer-events: none;
+  }
+
+  .hero-stage .hero-main-word::before,
+  .hero-stage .hero-word::before {
+    content: "";
+    position: absolute;
+    inset: -0.1em -0.04em;
+    opacity: calc(0.36 * var(--tv-intensity));
+    mix-blend-mode: screen;
+    background-image: repeating-linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.24) 0,
+      rgba(255, 255, 255, 0.24) 1px,
+      rgba(255, 255, 255, 0) 1px,
+      rgba(255, 255, 255, 0) 3px
+    );
+    background-size: 100% 220%;
+    animation: heroTvScan 0.16s linear infinite;
+  }
+
+  .hero-stage .hero-main-word::after,
+  .hero-stage .hero-word::after {
+    content: "";
+    position: absolute;
+    inset: -0.1em -0.04em;
+    opacity: calc(0.28 * var(--tv-intensity));
+    mix-blend-mode: screen;
+    background-image: linear-gradient(
+      90deg,
+      rgba(255, 72, 96, 0.34),
+      rgba(123, 196, 255, 0.34)
+    );
+    background-size: 200% 100%;
+    filter: blur(0.6px);
+    animation: heroTvNoise 0.34s steps(2, end) infinite;
+  }
+
+  .hero-stage .hero-main-word:hover,
+  .hero-stage .hero-word:hover,
+  .hero-stage .hud-contact-button:hover {
+    animation: heroTvFlicker 0.46s steps(2, end) infinite;
+  }
+
+  .hero-stage .hero-main-word:hover,
+  .hero-stage .hero-word:hover {
+    --tv-hover: 1;
+  }
 }
 
 @keyframes scanDrift {
@@ -890,6 +971,64 @@ main {
   }
   100% {
     transform: translateX(-4%);
+  }
+}
+
+@keyframes heroTvFlicker {
+  0%,
+  100% {
+    opacity: 1;
+    filter: saturate(1) contrast(1);
+    text-shadow: none;
+  }
+  18% {
+    opacity: 0.92;
+    filter: saturate(1.24) contrast(1.16);
+    text-shadow: -0.045em 0 rgba(255, 72, 96, 0.34),
+      0.045em 0 rgba(123, 196, 255, 0.34);
+  }
+  36% {
+    opacity: 1;
+    filter: saturate(1.08) contrast(1.08);
+    text-shadow: -0.022em 0 rgba(255, 72, 96, 0.18),
+      0.022em 0 rgba(123, 196, 255, 0.2);
+  }
+  61% {
+    opacity: 0.88;
+    filter: saturate(1.32) contrast(1.2);
+    text-shadow: -0.05em 0 rgba(255, 72, 96, 0.42),
+      0.05em 0 rgba(123, 196, 255, 0.4);
+  }
+  82% {
+    opacity: 0.96;
+    filter: saturate(1.14) contrast(1.1);
+    text-shadow: -0.03em 0 rgba(255, 72, 96, 0.24),
+      0.03em 0 rgba(123, 196, 255, 0.24);
+  }
+}
+
+@keyframes heroTvScan {
+  0% {
+    background-position: 0 -120%;
+  }
+  100% {
+    background-position: 0 120%;
+  }
+}
+
+@keyframes heroTvNoise {
+  0%,
+  100% {
+    opacity: 0.18;
+    background-position: 0% 0%;
+  }
+  33% {
+    opacity: 0.3;
+    background-position: 50% 0%;
+  }
+  66% {
+    opacity: 0.14;
+    background-position: 100% 0%;
   }
 }
 
