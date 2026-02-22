@@ -573,12 +573,13 @@ main {
   position: relative;
   z-index: 2;
   min-height: 100%;
+  --hero-balance-offset: clamp(88px, 12vh, 170px);
   padding: clamp(170px, 22vh, 280px) clamp(56px, 9vw, 140px)
     clamp(56px, 9vw, 140px);
 }
 
 .hero-text {
-  position: relative;
+  position: static;
   width: 100%;
   max-width: 1400px;
   margin: 0;
@@ -599,6 +600,11 @@ main {
   display: block;
 }
 
+.hero-main-block {
+  display: grid;
+  gap: 0.1em;
+}
+
 .hero-main-word {
   display: inline-block;
   --word-glow: 0;
@@ -616,10 +622,17 @@ main {
 }
 
 .hero-line--accent {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + var(--hero-balance-offset));
+  transform: translate(-50%, -50%);
+  z-index: 4;
+  width: max-content;
   font-size: clamp(3.6rem, 9vw, 10rem);
   letter-spacing: 0.12em;
   line-height: 0.95;
-  margin-top: clamp(72px, 14vh, 180px);
+  text-align: center;
+  margin-top: 0;
   font-weight: 700;
 }
 
@@ -1032,10 +1045,6 @@ main {
 
   .hero-line--main {
     white-space: normal;
-  }
-
-  .hero-line--accent {
-    margin-top: clamp(30px, 7vh, 64px);
   }
 
   .hero-grid {

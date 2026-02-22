@@ -122,6 +122,7 @@ export default function Home() {
     let heroStage: HTMLElement | null = null;
     let onHeroMove: ((event: MouseEvent) => void) | null = null;
     let onHeroLeave: (() => void) | null = null;
+    let onHeroLayoutRefresh: (() => void) | null = null;
     let recordingTimerId: ReturnType<typeof setInterval> | null = null;
     const pad2 = (value: number) => String(value).padStart(2, "0");
 
@@ -212,6 +213,12 @@ export default function Home() {
       });
 
       heroStage = document.querySelector<HTMLElement>(".hero-stage");
+      const heroGrid =
+        rootRef.current?.querySelector<HTMLElement>(".hero-grid") ?? null;
+      const heroMainBlock =
+        heroGrid?.querySelector<HTMLElement>(".hero-main-block") ?? null;
+      const heroAccentLine =
+        heroGrid?.querySelector<HTMLElement>(".hero-line--accent") ?? null;
       const heroTimeValue =
         rootRef.current?.querySelector<HTMLElement>("[data-recording-timer]") ??
         null;
@@ -219,6 +226,28 @@ export default function Home() {
         heroStage?.querySelector<HTMLElement>(".hud-zoom-value") ?? null;
       const heroMainWords = gsap.utils.toArray<HTMLElement>("[data-hero-main-word]");
       const heroWords = gsap.utils.toArray<HTMLElement>(".hero-word");
+
+      if (heroGrid && heroMainBlock && heroAccentLine) {
+        const updateHeroBalance = () => {
+          const gridBounds = heroGrid.getBoundingClientRect();
+          const mainBounds = heroMainBlock.getBoundingClientRect();
+          const accentBounds = heroAccentLine.getBoundingClientRect();
+
+          const centerY = gridBounds.height / 2;
+          const mainBottom = mainBounds.bottom - gridBounds.top;
+          const accentHeight = accentBounds.height;
+          const gapAboveCenter = Math.max(0, centerY - mainBottom);
+          const accentOffset = gapAboveCenter + accentHeight / 2;
+
+          heroGrid.style.setProperty("--hero-balance-offset", `${accentOffset}px`);
+        };
+
+        updateHeroBalance();
+        requestAnimationFrame(updateHeroBalance);
+        window.addEventListener("resize", updateHeroBalance);
+        onHeroLayoutRefresh = updateHeroBalance;
+        void document.fonts?.ready.then(updateHeroBalance);
+      }
 
       if (heroTimeValue) {
         const startedAt = Date.now();
@@ -431,6 +460,9 @@ export default function Home() {
     }, rootRef);
 
     return () => {
+      if (onHeroLayoutRefresh) {
+        window.removeEventListener("resize", onHeroLayoutRefresh);
+      }
       if (heroStage && onHeroMove && onHeroLeave) {
         heroStage.removeEventListener("mousemove", onHeroMove);
         heroStage.removeEventListener("mouseleave", onHeroLeave);
@@ -513,23 +545,25 @@ export default function Home() {
             </div>
             <div className="hero-grid">
               <h1 className="hero-text">
-                <span className="hero-line hero-line--main">
-                  <span className="hero-main-word" data-hero-main-word>
-                    FILMES
-                  </span>{" "}
-                  <span className="hero-main-word" data-hero-main-word>
-                    ESTRAT&Eacute;GICOS
+                <span className="hero-main-block">
+                  <span className="hero-line hero-line--main">
+                    <span className="hero-main-word" data-hero-main-word>
+                      FILMES
+                    </span>{" "}
+                    <span className="hero-main-word" data-hero-main-word>
+                      ESTRAT&Eacute;GICOS
+                    </span>
                   </span>
-                </span>
-                <span className="hero-line hero-line--main">
-                  <span className="hero-main-word" data-hero-main-word>
-                    PARA
-                  </span>{" "}
-                  <span className="hero-main-word" data-hero-main-word>
-                    MARCAS
-                  </span>{" "}
-                  <span className="hero-main-word" data-hero-main-word>
-                    QUE
+                  <span className="hero-line hero-line--main">
+                    <span className="hero-main-word" data-hero-main-word>
+                      PARA
+                    </span>{" "}
+                    <span className="hero-main-word" data-hero-main-word>
+                      MARCAS
+                    </span>{" "}
+                    <span className="hero-main-word" data-hero-main-word>
+                      QUE
+                    </span>
                   </span>
                 </span>
                 <span className="hero-line hero-line--accent">
