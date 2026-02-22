@@ -123,6 +123,8 @@ export default function Home() {
     let heroStage: HTMLElement | null = null;
     let onHeroMove: ((event: MouseEvent) => void) | null = null;
     let onHeroLeave: (() => void) | null = null;
+    let recordingTimerId: ReturnType<typeof setInterval> | null = null;
+    const pad2 = (value: number) => String(value).padStart(2, "0");
 
     const ctx = gsap.context(() => {
       gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((el) => {
@@ -214,10 +216,33 @@ export default function Home() {
         ".hero-highlight-fill"
       );
       heroStage = document.querySelector<HTMLElement>(".hero-stage");
+      const heroTimeValue =
+        rootRef.current?.querySelector<HTMLElement>("[data-recording-timer]") ??
+        null;
       const heroZoomValue =
         heroStage?.querySelector<HTMLElement>(".hud-zoom-value") ?? null;
       const heroHighlight = document.querySelector<HTMLElement>(".hero-highlight");
       const heroWords = gsap.utils.toArray<HTMLElement>(".hero-word");
+
+      if (heroTimeValue) {
+        const startedAt = Date.now();
+        const fps = 30;
+        const tickMs = Math.round(1000 / fps);
+        const updateTimecode = () => {
+          const elapsedMs = Date.now() - startedAt;
+          const totalSeconds = Math.floor(elapsedMs / 1000);
+          const hours = Math.floor(totalSeconds / 3600);
+          const minutes = Math.floor((totalSeconds % 3600) / 60);
+          const seconds = totalSeconds % 60;
+          const frames = Math.floor((elapsedMs % 1000) / tickMs) % fps;
+          heroTimeValue.textContent = `${pad2(hours)}:${pad2(minutes)}:${pad2(
+            seconds
+          )}:${pad2(frames)}`;
+        };
+
+        updateTimecode();
+        recordingTimerId = setInterval(updateTimecode, tickMs);
+      }
 
       if (heroStage || heroFill || heroHighlight || heroWords.length) {
         const heroTimeline = gsap.timeline({
@@ -383,6 +408,9 @@ export default function Home() {
         heroStage.removeEventListener("mousemove", onHeroMove);
         heroStage.removeEventListener("mouseleave", onHeroLeave);
       }
+      if (recordingTimerId) {
+        clearInterval(recordingTimerId);
+      }
       lenis.destroy();
       ctx.revert();
     };
@@ -431,7 +459,9 @@ export default function Home() {
                 <span className="hud-dot" />
                 REC
               </div>
-              <div className="hud-time">00:00:00:01</div>
+              <div className="hud-time" data-recording-timer>
+                00:00:00:00
+              </div>
               <div className="hud-mode">AUTO<br />AWB</div>
               <div className="hud-battery">
                 <span />

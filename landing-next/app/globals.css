@@ -280,6 +280,7 @@ main {
   --zoom-level: 0;
   --hud-edge: clamp(14px, 2.4vw, 36px);
   --hud-top: clamp(16px, 2.4vw, 32px);
+  --hud-safe-top: calc(var(--hud-top) + clamp(68px, 8vh, 104px));
 }
 
 .hero-stage::before,
@@ -360,14 +361,14 @@ main {
 }
 
 .hud-corner--tl {
-  top: var(--hud-top);
+  top: var(--hud-safe-top);
   left: var(--hud-edge);
   border-right: 0;
   border-bottom: 0;
 }
 
 .hud-corner--tr {
-  top: var(--hud-top);
+  top: var(--hud-safe-top);
   right: var(--hud-edge);
   border-left: 0;
   border-bottom: 0;
@@ -389,7 +390,7 @@ main {
 
 .hud-rec {
   position: absolute;
-  top: calc(var(--hud-top) + 6px);
+  top: calc(var(--hud-safe-top) + 6px);
   left: calc(var(--hud-edge) + 48px);
   display: flex;
   align-items: center;
@@ -406,15 +407,24 @@ main {
 
 .hud-time {
   position: absolute;
-  top: calc(var(--hud-top) + 4px);
+  top: calc(var(--hud-safe-top) + 4px);
   left: 50%;
   transform: translateX(-50%);
-  letter-spacing: 0.3em;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(247, 247, 242, 0.35);
+  background: rgba(3, 3, 3, 0.45);
+  letter-spacing: 0.24em;
+  line-height: 1;
+  white-space: nowrap;
+  font-size: clamp(0.58rem, 0.7vw, 0.76rem);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
 }
 
 .hud-mode {
   position: absolute;
-  top: calc(var(--hud-top) + 4px);
+  top: calc(var(--hud-safe-top) + 4px);
   right: calc(var(--hud-edge) + 54px);
   text-align: right;
   line-height: 1.4;
@@ -422,7 +432,7 @@ main {
 
 .hud-battery {
   position: absolute;
-  top: calc(var(--hud-top) + 8px);
+  top: calc(var(--hud-safe-top) + 8px);
   right: var(--hud-edge);
   display: grid;
   gap: 4px;
@@ -551,7 +561,8 @@ main {
   position: relative;
   z-index: 2;
   min-height: 100%;
-  padding: clamp(56px, 9vw, 140px);
+  padding: clamp(120px, 15vh, 200px) clamp(56px, 9vw, 140px)
+    clamp(56px, 9vw, 140px);
 }
 
 .hero-text {
@@ -1068,6 +1079,10 @@ main {
     flex-direction: column;
     align-items: flex-start;
   }
+
+  .hero-stage {
+    --hud-safe-top: calc(var(--hud-top) + clamp(104px, 14vh, 156px));
+  }
 }
 
 @media (max-width: 900px) {
@@ -1082,7 +1097,8 @@ main {
   .hero-grid {
     grid-template-columns: 1fr;
     gap: 32px;
-    padding: clamp(36px, 8vw, 56px) clamp(16px, 5vw, 24px);
+    padding: clamp(90px, 16vw, 132px) clamp(16px, 5vw, 24px)
+      clamp(36px, 8vw, 56px);
   }
 
   .hero-right {
@@ -1093,6 +1109,7 @@ main {
   .hero-stage {
     --hud-edge: clamp(10px, 4vw, 16px);
     --hud-top: clamp(10px, 4vw, 16px);
+    --hud-safe-top: calc(var(--hud-top) + clamp(98px, 16vh, 162px));
   }
 
   .hud-time,
