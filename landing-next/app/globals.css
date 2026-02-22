@@ -383,7 +383,9 @@ main {
   --hud-content-right: calc(var(--hud-edge) + var(--hud-content-inset-x));
   --hud-content-top: calc(var(--hud-safe-top) + var(--hud-content-inset-y));
   --hud-content-bottom: calc(var(--hud-top) + var(--hud-content-inset-y));
-  --hud-rec-top: var(--hud-content-top);
+  --hud-header-inset-y: clamp(10px, 1.6vw, 16px);
+  --hud-header-top: calc(var(--hud-top) + var(--hud-header-inset-y));
+  --hud-rec-top: var(--hud-header-top);
   --hud-rec-left: calc(var(--hud-edge) + 48px);
 }
 
@@ -465,14 +467,14 @@ main {
 }
 
 .hud-corner--tl {
-  top: var(--hud-safe-top);
+  top: var(--hud-top);
   left: var(--hud-edge);
   border-right: 0;
   border-bottom: 0;
 }
 
 .hud-corner--tr {
-  top: var(--hud-safe-top);
+  top: var(--hud-top);
   right: var(--hud-edge);
   border-left: 0;
   border-bottom: 0;
@@ -528,7 +530,7 @@ main {
 
 .hud-mode {
   position: absolute;
-  top: var(--hud-content-top);
+  top: var(--hud-header-top);
   right: calc(var(--hud-content-right) + 36px);
   text-align: right;
   line-height: 1.4;
@@ -536,7 +538,7 @@ main {
 
 .hud-battery {
   position: absolute;
-  top: calc(var(--hud-content-top) + 4px);
+  top: calc(var(--hud-header-top) + 4px);
   right: var(--hud-content-right);
   display: grid;
   gap: 4px;
