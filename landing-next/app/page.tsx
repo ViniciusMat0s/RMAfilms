@@ -494,9 +494,7 @@ export default function Home() {
           <a href="#process">Process</a>
           <a href="#studio">Studio</a>
         </nav>
-        <a className="button magnetic" href="#contact">
-          Start a project
-        </a>
+        <div className="nav-spacer" aria-hidden="true" />
       </header>
 
       <main>
@@ -508,10 +506,6 @@ export default function Home() {
               <span className="hud-corner hud-corner--tr" />
               <span className="hud-corner hud-corner--bl" />
               <span className="hud-corner hud-corner--br" />
-              <div className="hud-rec">
-                <span className="hud-dot" />
-                REC
-              </div>
               <div className="hud-time" data-recording-timer>
                 00:00:00:00
               </div>
@@ -543,6 +537,10 @@ export default function Home() {
                 HD 2K 4K 6K FPS60<br />3840x2160<br />1h30m
               </div>
             </div>
+            <a className="hud-contact-button magnetic" href="#contact">
+              <span className="hud-contact-button-dot" aria-hidden="true" />
+              Entre em contato
+            </a>
             <div className="hero-grid">
               <h1 className="hero-text">
                 <span className="hero-main-block">
