@@ -751,7 +751,9 @@ export default function Home() {
             <p className="eyebrow" data-reveal="left">
               Capabilities
             </p>
-            <h2 data-reveal="left">A studio tuned for premium launches.</h2>
+            <h2 className="section-title--hero-font hero-line--main" data-reveal="left">
+              A studio tuned for premium launches.
+            </h2>
             <p className="section-lead" data-reveal="right">
               We combine editorial systems, motion direction, and technical
               excellence to shape experiences with intent.
@@ -808,7 +810,9 @@ export default function Home() {
             <p className="eyebrow" data-reveal="left">
               Process
             </p>
-            <h2 data-reveal="left">Precision, rhythm, velocity.</h2>
+            <h2 className="section-title--hero-font hero-line--main" data-reveal="left">
+              Precision, rhythm, velocity.
+            </h2>
             <p className="section-lead" data-reveal="right">
               Every step is choreographed so the experience feels inevitable.
             </p>
@@ -880,7 +884,9 @@ export default function Home() {
           <div className="cta-inner" data-reveal="up">
             <div>
               <p className="eyebrow">Ready to launch</p>
-              <h2>Lets craft a landing page that feels alive.</h2>
+              <h2 className="section-title--hero-font hero-line--main">
+                Lets craft a landing page that feels alive.
+              </h2>
               <p>
                 Share your brief and receive a concept outline with timelines,
                 motion notes, and layout direction.
