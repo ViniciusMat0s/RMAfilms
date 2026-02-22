@@ -225,6 +225,245 @@ export default function Home() {
         },
       });
 
+      {
+        const cinematicSections = gsap.utils.toArray<HTMLElement>(
+          ".section--cinematic"
+        );
+
+        cinematicSections.forEach((section, index) => {
+          gsap.set(section, {
+            transformPerspective: 1000,
+            transformOrigin: "50% 50%",
+          });
+
+          gsap.fromTo(
+            section,
+            {
+              autoAlpha: 0.14,
+              y: 112,
+              scale: 0.96,
+              rotateX: index % 2 === 0 ? 8 : -8,
+            },
+            {
+              autoAlpha: 1,
+              y: 0,
+              scale: 1,
+              rotateX: 0,
+              ease: "none",
+              scrollTrigger: {
+                trigger: section,
+                start: "top 96%",
+                end: "top 60%",
+                scrub: 0.62,
+              },
+            }
+          );
+        });
+
+        const capabilityCards = gsap.utils.toArray<HTMLElement>(".card-grid .card");
+        capabilityCards.forEach((card, index) => {
+          gsap.set(card, {
+            transformPerspective: 980,
+            transformOrigin: "50% 62%",
+          });
+
+          gsap.fromTo(
+            card,
+            {
+              rotateX: 12,
+              rotateY: index % 2 === 0 ? -7 : 7,
+              scale: 0.92,
+              "--card-glow": 0.14,
+            },
+            {
+              rotateX: 0,
+              rotateY: 0,
+              scale: 1,
+              "--card-glow": 1,
+              ease: "none",
+              scrollTrigger: {
+                trigger: card,
+                start: "top 90%",
+                end: "center 56%",
+                scrub: 0.65,
+              },
+            }
+          );
+
+          gsap.to(card, {
+            rotateX: -3,
+            scale: 0.97,
+            "--card-glow": 0.22,
+            ease: "none",
+            scrollTrigger: {
+              trigger: card,
+              start: "center 56%",
+              end: "bottom 24%",
+              scrub: 0.65,
+            },
+          });
+        });
+
+        const processCards = gsap.utils.toArray<HTMLElement>(".process-card");
+        processCards.forEach((card, index) => {
+          gsap.set(card, {
+            transformPerspective: 960,
+            transformOrigin: "50% 52%",
+          });
+
+          gsap.fromTo(
+            card,
+            {
+              rotateX: index % 2 === 0 ? 7 : -7,
+              scale: 0.95,
+              "--process-scan": 0.04,
+              "--process-glow": 0.12,
+            },
+            {
+              rotateX: 0,
+              scale: 1,
+              "--process-scan": 1,
+              "--process-glow": 1,
+              ease: "none",
+              scrollTrigger: {
+                trigger: card,
+                start: "top 88%",
+                end: "center 60%",
+                scrub: 0.55,
+              },
+            }
+          );
+
+          gsap.to(card, {
+            scale: 0.98,
+            "--process-scan": 0.28,
+            "--process-glow": 0.2,
+            ease: "none",
+            scrollTrigger: {
+              trigger: card,
+              start: "center 60%",
+              end: "bottom 22%",
+              scrub: 0.55,
+            },
+          });
+        });
+
+        const studioPills = gsap.utils.toArray<HTMLElement>(".pill-row .pill");
+        studioPills.forEach((pill, index) => {
+          gsap.fromTo(
+            pill,
+            {
+              scale: 0.9,
+              rotateZ: index % 2 === 0 ? -3 : 3,
+              "--pill-pop": 0.08,
+            },
+            {
+              scale: 1,
+              rotateZ: 0,
+              "--pill-pop": 1,
+              ease: "none",
+              scrollTrigger: {
+                trigger: pill,
+                start: "top 92%",
+                end: "top 60%",
+                scrub: 0.45,
+              },
+            }
+          );
+
+          gsap.to(pill, {
+            scale: 0.98,
+            "--pill-pop": 0.2,
+            ease: "none",
+            scrollTrigger: {
+              trigger: pill,
+              start: "top 60%",
+              end: "bottom 28%",
+              scrub: 0.45,
+            },
+          });
+        });
+
+        const statsPanel =
+          rootRef.current?.querySelector<HTMLElement>(".stats-panel") ?? null;
+        if (statsPanel) {
+          gsap.fromTo(
+            statsPanel,
+            { "--panel-glow": 0.08 },
+            {
+              "--panel-glow": 1,
+              ease: "none",
+              scrollTrigger: {
+                trigger: statsPanel,
+                start: "top 86%",
+                end: "bottom 34%",
+                scrub: 0.6,
+              },
+            }
+          );
+        }
+
+        const ctaInner =
+          rootRef.current?.querySelector<HTMLElement>(".cta-inner") ?? null;
+        if (ctaInner) {
+          gsap.fromTo(
+            ctaInner,
+            { "--cta-glow": 0.12, "--cta-sweep": -1 },
+            {
+              "--cta-glow": 1,
+              "--cta-sweep": 1,
+              ease: "none",
+              scrollTrigger: {
+                trigger: ctaInner,
+                start: "top 88%",
+                end: "bottom 34%",
+                scrub: 0.7,
+              },
+            }
+          );
+
+          const ctaButtons = ctaInner.querySelectorAll<HTMLElement>(
+            ".cta-actions .button"
+          );
+          gsap.fromTo(
+            ctaButtons,
+            { autoAlpha: 0.45, scale: 0.92, rotateZ: -1.4 },
+            {
+              autoAlpha: 1,
+              scale: 1,
+              rotateZ: 0,
+              duration: 0.8,
+              ease: "power3.out",
+              stagger: 0.1,
+              scrollTrigger: {
+                trigger: ctaInner,
+                start: "top 82%",
+              },
+            }
+          );
+        }
+
+        const footerColumns = gsap.utils.toArray<HTMLElement>(".footer > div");
+        if (footerColumns.length) {
+          gsap.fromTo(
+            footerColumns,
+            { autoAlpha: 0, y: 24, filter: "blur(6px)" },
+            {
+              autoAlpha: 1,
+              y: 0,
+              filter: "blur(0px)",
+              duration: 0.9,
+              ease: "power3.out",
+              stagger: 0.14,
+              scrollTrigger: {
+                trigger: ".footer",
+                start: "top 92%",
+              },
+            }
+          );
+        }
+      }
+
       heroStage = document.querySelector<HTMLElement>(".hero-stage");
       const heroGrid =
         rootRef.current?.querySelector<HTMLElement>(".hero-grid") ?? null;
@@ -500,7 +739,7 @@ export default function Home() {
         const getScrollDistance = () =>
           railTrack.scrollWidth - window.innerWidth + 120;
 
-        gsap.to(railTrack, {
+        const railTween = gsap.to(railTrack, {
           x: () => -getScrollDistance(),
           ease: "none",
           scrollTrigger: {
@@ -512,6 +751,52 @@ export default function Home() {
             anticipatePin: 1,
           },
         });
+
+        {
+          const railCards = gsap.utils.toArray<HTMLElement>(".rail-card");
+          railCards.forEach((card, index) => {
+            gsap.set(card, {
+              transformPerspective: 1000,
+              transformOrigin: "50% 50%",
+            });
+
+            gsap.fromTo(
+              card,
+              {
+                scale: 0.88,
+                rotateY: index % 2 === 0 ? -7 : 7,
+                "--rail-focus": 0.14,
+              },
+              {
+                scale: 1,
+                rotateY: 0,
+                "--rail-focus": 1,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: card,
+                  containerAnimation: railTween,
+                  start: "left 82%",
+                  end: "center center",
+                  scrub: 0.5,
+                },
+              }
+            );
+
+            gsap.to(card, {
+              scale: 0.9,
+              rotateY: index % 2 === 0 ? 6 : -6,
+              "--rail-focus": 0.2,
+              ease: "none",
+              scrollTrigger: {
+                trigger: card,
+                containerAnimation: railTween,
+                start: "center center",
+                end: "right 18%",
+                scrub: 0.5,
+              },
+            });
+          });
+        }
       }
 
       const magneticItems = gsap.utils.toArray<HTMLElement>(".magnetic");
@@ -746,7 +1031,7 @@ export default function Home() {
           </div>
         </div>
 
-        <section className="section" id="capabilities">
+        <section className="section section--cinematic" id="capabilities">
           <div className="section-head">
             <p className="eyebrow" data-reveal="left">
               Capabilities
@@ -770,7 +1055,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="rail-section" id="work">
+        <section className="rail-section section--cinematic" id="work">
           <div className="rail-head">
             <div>
               <p className="eyebrow" data-reveal="left">
@@ -805,7 +1090,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="section" id="process">
+        <section className="section section--cinematic" id="process">
           <div className="section-head">
             <p className="eyebrow" data-reveal="left">
               Process
@@ -830,7 +1115,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="section" id="studio">
+        <section className="section section--cinematic" id="studio">
           <div className="split">
             <div>
               <p className="eyebrow" data-reveal="left">
@@ -880,7 +1165,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="cta" id="contact">
+        <section className="cta section--cinematic" id="contact">
           <div className="cta-inner" data-reveal="up">
             <div>
               <p className="eyebrow">Ready to launch</p>
