@@ -672,10 +672,14 @@ export default function Home() {
 
             if (heroLideramWord) {
               const alpha = Number(gsap.getProperty(heroLideramWord, "autoAlpha"));
+              const disintegrate = Number(
+                gsap.getProperty(heroLideramWord, "--lideram-disintegrate")
+              );
               const rect = heroLideramWord.getBoundingClientRect();
               const isInViewport =
                 rect.bottom > 0 && rect.top < window.innerHeight && rect.right > 0;
-              const shouldRunGlitch = alpha > 0.08 && isInViewport;
+              const shouldRunGlitch =
+                isInViewport && (alpha > 0.08 || disintegrate > 0.04);
               heroLideramWord.style.setProperty(
                 "--lideram-play",
                 shouldRunGlitch ? "running" : "paused"
@@ -696,6 +700,10 @@ export default function Home() {
             "--word-glow": 0,
             "--tv-scroll": 0,
             "--tv-hover": 0,
+            "--hero-disintegrate": 0,
+            "--hero-frag-opacity": 0,
+            "--lideram-disintegrate": 0,
+            "--lideram-frag-opacity": 0,
             "--lideram-play": "paused",
           });
           gsap.set(heroMainWords[0], {
@@ -703,6 +711,8 @@ export default function Home() {
             y: 0,
             scale: 1,
             "--word-glow": 0,
+            "--hero-disintegrate": 0,
+            "--hero-frag-opacity": 0,
           });
 
           const mainWordStops = [0.14, 0.24, 0.34, 0.46, 0.6];
@@ -714,6 +724,8 @@ export default function Home() {
             if (index === 0) return;
             const position = getMainWordPosition(index);
             const isLideramWord = word.classList.contains("hero-highlight--glitch");
+            const disintegrateStart = 0.74 + index * 0.03;
+            const disintegrateMotionStart = disintegrateStart + 0.05;
 
             heroTimeline.to(
               word,
@@ -722,6 +734,60 @@ export default function Home() {
             );
             if (isLideramWord) {
               heroTimeline.set(word, { "--lideram-play": "running" }, position + 0.02);
+              heroTimeline.to(
+                word,
+                {
+                  "--lideram-frag-opacity": 1,
+                  duration: 0.1,
+                  ease: "power2.out",
+                },
+                disintegrateStart
+              );
+              heroTimeline.to(
+                word,
+                {
+                  "--lideram-disintegrate": 1,
+                  "--lideram-frag-opacity": 0,
+                  "--word-glow": 0,
+                  "--tv-scroll": 0,
+                  y: -132,
+                  scale: 0.84,
+                  autoAlpha: 0,
+                  duration: 0.36,
+                  ease: "power3.in",
+                },
+                disintegrateMotionStart
+              );
+              heroTimeline.set(
+                word,
+                { "--lideram-play": "paused", "--lideram-frag-opacity": 0, autoAlpha: 0 },
+                1.08
+              );
+            } else {
+              heroTimeline.to(
+                word,
+                {
+                  "--hero-frag-opacity": 0.92,
+                  duration: 0.08,
+                  ease: "power2.out",
+                },
+                disintegrateStart
+              );
+              heroTimeline.to(
+                word,
+                {
+                  "--hero-disintegrate": 1,
+                  "--hero-frag-opacity": 0,
+                  "--word-glow": 0,
+                  "--tv-scroll": 0,
+                  y: -124,
+                  scale: 0.86,
+                  autoAlpha: 0,
+                  duration: 0.34,
+                  ease: "power3.in",
+                },
+                disintegrateMotionStart
+              );
             }
             heroTimeline.to(
               word,
@@ -739,11 +805,54 @@ export default function Home() {
               position + 0.34
             );
           });
+
+          const firstMainWord = heroMainWords[0];
+          if (
+            firstMainWord &&
+            !firstMainWord.classList.contains("hero-highlight--glitch")
+          ) {
+            heroTimeline.to(
+              firstMainWord,
+              {
+                "--hero-frag-opacity": 0.9,
+                duration: 0.08,
+                ease: "power2.out",
+              },
+              0.72
+            );
+            heroTimeline.to(
+              firstMainWord,
+              {
+                "--hero-disintegrate": 1,
+                "--hero-frag-opacity": 0,
+                "--word-glow": 0,
+                "--tv-scroll": 0,
+                y: -124,
+                scale: 0.86,
+                autoAlpha: 0,
+                duration: 0.34,
+                ease: "power3.in",
+              },
+              0.77
+            );
+          }
         }
 
         if (heroWords.length) {
-          gsap.set(heroWords, { autoAlpha: 0, y: 14, "--tv-scroll": 0 });
-          gsap.set(heroWords[0], { autoAlpha: 1, y: 0, "--tv-scroll": 0 });
+          gsap.set(heroWords, {
+            autoAlpha: 0,
+            y: 14,
+            "--tv-scroll": 0,
+            "--hero-disintegrate": 0,
+            "--hero-frag-opacity": 0,
+          });
+          gsap.set(heroWords[0], {
+            autoAlpha: 1,
+            y: 0,
+            "--tv-scroll": 0,
+            "--hero-disintegrate": 0,
+            "--hero-frag-opacity": 0,
+          });
 
           const wordStops = [0.2, 0.52, 0.84];
           const getWordPosition = (wordIndex: number) =>
@@ -760,21 +869,40 @@ export default function Home() {
                 ? Math.max(0.08, Math.min(0.14, (nextPosition - position) * 0.42))
                 : 0.12;
             const tvFadeEnd = tvStart + tvDuration;
+            const prevDissolveStart = Math.max(0, position - 0.04);
 
             heroTimeline.to(
               prev,
               {
+                "--hero-frag-opacity": 0.84,
+                duration: 0.07,
+                ease: "power2.out",
+              },
+              prevDissolveStart
+            );
+            heroTimeline.to(
+              prev,
+              {
                 autoAlpha: 0,
-                y: -10,
+                y: -44,
                 "--tv-scroll": 0,
-                duration: 0.18,
-                ease: "power2.inOut",
+                "--hero-disintegrate": 1,
+                "--hero-frag-opacity": 0,
+                duration: 0.22,
+                ease: "power2.in",
               },
               position
             );
             heroTimeline.to(
               word,
-              { autoAlpha: 1, y: 0, duration: 0.18, ease: "power2.out" },
+              {
+                autoAlpha: 1,
+                y: 0,
+                "--hero-disintegrate": 0,
+                "--hero-frag-opacity": 0,
+                duration: 0.18,
+                ease: "power2.out",
+              },
               position + 0.02
             );
             heroTimeline.set(word, { "--tv-scroll": 1 }, tvStart);
@@ -785,6 +913,32 @@ export default function Home() {
             );
             heroTimeline.set(word, { "--tv-scroll": 0 }, tvFadeEnd + 0.01);
           });
+
+          const lastWord = heroWords[heroWords.length - 1];
+          if (lastWord) {
+            heroTimeline.to(
+              lastWord,
+              {
+                "--hero-frag-opacity": 0.9,
+                duration: 0.08,
+                ease: "power2.out",
+              },
+              0.9
+            );
+            heroTimeline.to(
+              lastWord,
+              {
+                "--hero-disintegrate": 1,
+                "--hero-frag-opacity": 0,
+                "--tv-scroll": 0,
+                y: -96,
+                autoAlpha: 0,
+                duration: 0.32,
+                ease: "power3.in",
+              },
+              0.94
+            );
+          }
         }
       }
 
@@ -1108,22 +1262,37 @@ export default function Home() {
               <h1 className="hero-text">
                 <span className="hero-main-block">
                   <span className="hero-line hero-line--main">
-                    <span className="hero-main-word" data-hero-main-word>
-                      FILMES
+                    <span className="hero-main-word hero-disintegrate-word" data-hero-main-word>
+                      <span className="hero-text-core">FILMES</span>
+                      <span className="hero-text-fragments" aria-hidden="true">
+                        FILMES
+                      </span>
                     </span>{" "}
-                    <span className="hero-main-word" data-hero-main-word>
-                      ESTRAT&Eacute;GICOS
+                    <span className="hero-main-word hero-disintegrate-word" data-hero-main-word>
+                      <span className="hero-text-core">ESTRAT&Eacute;GICOS</span>
+                      <span className="hero-text-fragments" aria-hidden="true">
+                        ESTRAT&Eacute;GICOS
+                      </span>
                     </span>
                   </span>
                   <span className="hero-line hero-line--main">
-                    <span className="hero-main-word" data-hero-main-word>
-                      PARA
+                    <span className="hero-main-word hero-disintegrate-word" data-hero-main-word>
+                      <span className="hero-text-core">PARA</span>
+                      <span className="hero-text-fragments" aria-hidden="true">
+                        PARA
+                      </span>
                     </span>{" "}
-                    <span className="hero-main-word" data-hero-main-word>
-                      MARCAS
+                    <span className="hero-main-word hero-disintegrate-word" data-hero-main-word>
+                      <span className="hero-text-core">MARCAS</span>
+                      <span className="hero-text-fragments" aria-hidden="true">
+                        MARCAS
+                      </span>
                     </span>{" "}
-                    <span className="hero-main-word" data-hero-main-word>
-                      QUE
+                    <span className="hero-main-word hero-disintegrate-word" data-hero-main-word>
+                      <span className="hero-text-core">QUE</span>
+                      <span className="hero-text-fragments" aria-hidden="true">
+                        QUE
+                      </span>
                     </span>
                   </span>
                 </span>
@@ -1134,16 +1303,34 @@ export default function Home() {
                     data-text="LIDERAM"
                   >
                     <span className="hero-highlight-label" data-text="LIDERAM">
-                      LIDERAM
+                      <span className="hero-highlight-core">LIDERAM</span>
+                      <span className="hero-highlight-fragments" aria-hidden="true">
+                        LIDERAM
+                      </span>
                     </span>
                   </span>
                 </span>
               </h1>
               <div className="hero-right">
                 <div className="hero-words">
-                  <span className="hero-word">Reputa&ccedil;&atilde;o.</span>
-                  <span className="hero-word">Marca.</span>
-                  <span className="hero-word">Autoridade.</span>
+                  <span className="hero-word hero-disintegrate-word">
+                    <span className="hero-text-core">Reputa&ccedil;&atilde;o.</span>
+                    <span className="hero-text-fragments" aria-hidden="true">
+                      Reputa&ccedil;&atilde;o.
+                    </span>
+                  </span>
+                  <span className="hero-word hero-disintegrate-word">
+                    <span className="hero-text-core">Marca.</span>
+                    <span className="hero-text-fragments" aria-hidden="true">
+                      Marca.
+                    </span>
+                  </span>
+                  <span className="hero-word hero-disintegrate-word">
+                    <span className="hero-text-core">Autoridade.</span>
+                    <span className="hero-text-fragments" aria-hidden="true">
+                      Autoridade.
+                    </span>
+                  </span>
                 </div>
               </div>
             </div>
