@@ -277,6 +277,101 @@ export default function Home() {
           );
         });
 
+        const sectionTitles = gsap.utils.toArray<HTMLElement>("[data-title-fx]");
+        sectionTitles.forEach((title) => {
+          const lines = gsap.utils.toArray<HTMLElement>(".title-line", title);
+          const accent = title.querySelector<HTMLElement>("em");
+          const isWorkTitle = title.classList.contains(
+            "section-title-cinematic--work"
+          );
+
+          if (!lines.length) return;
+
+          gsap.set(title, {
+            "--title-glow": 0,
+            "--title-scan": 0,
+          });
+
+          if (accent) {
+            gsap.set(accent, { "--title-accent": 0 });
+          }
+
+          gsap.set(lines, {
+            autoAlpha: 0,
+            yPercent: isWorkTitle ? 130 : 116,
+            filter: "blur(10px)",
+          });
+
+          const titleTimeline = gsap.timeline({
+            scrollTrigger: {
+              trigger: title,
+              start: isWorkTitle ? "top 88%" : "top 90%",
+              end: isWorkTitle ? "top 28%" : "top 44%",
+              scrub: isWorkTitle ? 0.68 : 0.56,
+            },
+          });
+
+          titleTimeline.to(
+            lines,
+            {
+              autoAlpha: 1,
+              yPercent: 0,
+              filter: "blur(0px)",
+              xPercent: isWorkTitle ? (index: number) => (index === 1 ? 0 : -1.4) : 0,
+              ease: "power3.out",
+              stagger: isWorkTitle ? 0.16 : 0.12,
+            },
+            0
+          );
+
+          titleTimeline.to(
+            title,
+            {
+              "--title-glow": isWorkTitle ? 1.36 : 1,
+              "--title-scan": 1,
+              ease: "none",
+            },
+            0.04
+          );
+
+          titleTimeline.to(
+            title,
+            {
+              "--title-glow": isWorkTitle ? 0.66 : 0.46,
+              "--title-scan": isWorkTitle ? 0.64 : 0.42,
+              ease: "none",
+            },
+            0.74
+          );
+
+          if (accent) {
+            titleTimeline.fromTo(
+              accent,
+              {
+                autoAlpha: 0.22,
+                yPercent: 32,
+                filter: "blur(6px)",
+              },
+              {
+                autoAlpha: 1,
+                yPercent: 0,
+                filter: "blur(0px)",
+                ease: "power3.out",
+              },
+              0.18
+            );
+
+            titleTimeline.to(
+              accent,
+              {
+                "--title-accent": 1,
+                ease: "none",
+              },
+              0.24
+            );
+          }
+        });
+
         const capabilityCards = gsap.utils.toArray<HTMLElement>(".card-grid .card");
         if (capabilityCards.length) {
           gsap.set(capabilityCards, {
@@ -1439,8 +1534,13 @@ export default function Home() {
             <p className="eyebrow" data-reveal="left">
               Capacidades
             </p>
-            <h2 className="section-title--hero-font hero-line--main" data-reveal="left">
-              Audiovisual estratégico para marcas que querem ser lembradas.
+            <h2 className="section-title--hero-font section-title-cinematic" data-title-fx>
+              <span className="title-line">
+                AUDIOVISUAL ESTRAT&Eacute;GICO
+              </span>
+              <span className="title-line">
+                QUE POSICIONA MARCAS.
+              </span>
             </h2>
             <p className="section-lead" data-reveal="right">
               A RMA FILMS nasceu da prática real: iniciativa, visão e evolução
@@ -1464,12 +1564,12 @@ export default function Home() {
               <p className="eyebrow" data-reveal="left">
                 Projetos em destaque
               </p>
-              <h2 className="rail-title" data-reveal="left">
-                <span>N&Atilde;O &Eacute; S&Oacute; V&Iacute;DEO.</span>
-                <span>
+              <h2 className="rail-title section-title-cinematic section-title-cinematic--work" data-title-fx>
+                <span className="title-line">N&Atilde;O &Eacute; S&Oacute; V&Iacute;DEO.</span>
+                <span className="title-line">
                   &Eacute; <em>POSICIONAMENTO</em>
                 </span>
-                <span>EM MOVIMENTO.</span>
+                <span className="title-line">EM MOVIMENTO.</span>
               </h2>
             </div>
             <p className="section-lead" data-reveal="right">
@@ -1505,8 +1605,13 @@ export default function Home() {
             <p className="eyebrow" data-reveal="left">
               Processo
             </p>
-            <h2 className="section-title--hero-font hero-line--main" data-reveal="left">
-              Estratégia, execução e resultado.
+            <h2 className="section-title--hero-font section-title-cinematic" data-title-fx>
+              <span className="title-line">
+                ESTRAT&Eacute;GIA, EXECU&Ccedil;&Atilde;O
+              </span>
+              <span className="title-line">
+                E RESULTADO.
+              </span>
             </h2>
             <p className="section-lead" data-reveal="right">
               Método direto, criativo e consistente para transformar briefing em
@@ -1532,8 +1637,13 @@ export default function Home() {
               <p className="eyebrow" data-reveal="left">
                 Estúdio
               </p>
-              <h2 data-reveal="left">
-                De um celular aos filmes de marca: evolução com propósito.
+              <h2 className="section-title--hero-font section-title-cinematic" data-title-fx>
+                <span className="title-line">
+                  DE UM CELULAR
+                </span>
+                <span className="title-line">
+                  A FILMES DE MARCA.
+                </span>
               </h2>
               <p className="section-lead" data-reveal="right">
                 A trajetória começou na adolescência, em 2017. Em dezembro de
@@ -1555,8 +1665,13 @@ export default function Home() {
           <div className="cta-inner" data-reveal="up">
             <div>
               <p className="eyebrow">Entre em contato</p>
-              <h2 className="section-title--hero-font hero-line--main">
-                Vamos transformar sua ideia em imagem que gera autoridade.
+              <h2 className="section-title--hero-font section-title-cinematic section-title-cinematic--cta" data-title-fx>
+                <span className="title-line">
+                  SUA IDEIA EM IMAGEM
+                </span>
+                <span className="title-line">
+                  QUE GERA AUTORIDADE.
+                </span>
               </h2>
               <p>
                 Envie seu briefing e receba uma direção criativa com proposta de
