@@ -1958,32 +1958,129 @@ main {
 }
 
 .marquee {
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  padding: 18px 0;
-  background: rgba(5, 5, 5, 0.85);
+  position: relative;
+  border-top: 1px solid rgba(247, 247, 242, 0.2);
+  border-bottom: 1px solid rgba(247, 247, 242, 0.2);
+  background: linear-gradient(
+      180deg,
+      rgba(18, 18, 18, 0.94) 0%,
+      rgba(8, 8, 8, 0.96) 50%,
+      rgba(18, 18, 18, 0.94) 100%
+    ),
+    radial-gradient(circle at 50% 50%, rgba(175, 206, 247, 0.1), transparent 68%);
   overflow: hidden;
+  isolation: isolate;
+}
+
+.marquee::before,
+.marquee::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: clamp(8px, 1.2vw, 12px);
+  pointer-events: none;
+  z-index: 2;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.92) 0 12px,
+    rgba(0, 0, 0, 0) 12px 30px
+  );
+  opacity: 0.9;
+}
+
+.marquee::before {
+  top: 0;
+  border-bottom: 1px solid rgba(247, 247, 242, 0.14);
+}
+
+.marquee::after {
+  bottom: 0;
+  border-top: 1px solid rgba(247, 247, 242, 0.14);
+}
+
+.marquee-reel {
+  position: relative;
+  padding: clamp(9px, 1.3vw, 14px) 0;
+  animation: none;
 }
 
 .marquee-track {
   display: flex;
-  gap: 48px;
-  animation: marquee 20s linear infinite;
+  width: max-content;
+  gap: 0;
+  animation: none;
+  will-change: transform;
 }
 
-.marquee-track span {
-  font-size: 0.85rem;
+.film-frame {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: clamp(180px, 16vw, 280px);
+  height: clamp(38px, 4vw, 52px);
+  margin: 0 clamp(3px, 0.5vw, 6px);
+  border-left: 1px solid rgba(247, 247, 242, 0.2);
+  border-right: 1px solid rgba(247, 247, 242, 0.2);
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.07) 0%,
+      rgba(255, 255, 255, 0.02) 50%,
+      rgba(255, 255, 255, 0.06) 100%
+    ),
+    rgba(7, 7, 7, 0.8);
+  box-shadow: inset 0 0 0 1px rgba(247, 247, 242, 0.06);
+}
+
+.film-frame::before,
+.film-frame::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(247, 247, 242, 0.14);
+}
+
+.film-frame::before {
+  top: 0;
+}
+
+.film-frame::after {
+  bottom: 0;
+}
+
+.film-frame-text {
+  font-size: clamp(0.62rem, 0.84vw, 0.86rem);
   text-transform: uppercase;
-  letter-spacing: 0.3em;
-  color: rgba(247, 247, 242, 0.55);
+  letter-spacing: clamp(0.16em, 0.34vw, 0.28em);
+  color: rgba(247, 247, 242, 0.62);
+  white-space: nowrap;
 }
 
-@keyframes marquee {
+@keyframes filmRoll {
   0% {
     transform: translateX(0);
   }
   100% {
     transform: translateX(-50%);
+  }
+}
+
+@keyframes filmGate {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  32% {
+    transform: translateY(-0.4px);
+    opacity: 0.98;
+  }
+  66% {
+    transform: translateY(0.3px);
+    opacity: 0.99;
   }
 }
 
@@ -2665,7 +2762,8 @@ h2.section-title--hero-font {
   }
 
   .orb,
-  .marquee-track {
+  .marquee-track,
+  .marquee-reel {
     animation: none !important;
   }
 

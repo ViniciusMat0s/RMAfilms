@@ -5,21 +5,6 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 
-const marqueeItems = [
-  "story systems",
-  "scroll choreography",
-  "editorial grids",
-  "cinematic motion",
-  "tactile UI",
-  "precision craft",
-  "story systems",
-  "scroll choreography",
-  "editorial grids",
-  "cinematic motion",
-  "tactile UI",
-  "precision craft",
-];
-
 const capabilities = [
   {
     label: "01",
@@ -122,9 +107,11 @@ export default function Home() {
     const enableHeroTrail = false;
 
     let updateNavProgress: (() => void) | null = null;
+    let updateFilmStrip: (() => void) | null = null;
     const onLenisScroll = () => {
       ScrollTrigger.update();
       updateNavProgress?.();
+      updateFilmStrip?.();
     };
     lenis.on("scroll", onLenisScroll);
     gsap.ticker.add((time) => {
@@ -225,6 +212,22 @@ export default function Home() {
           scrub: 0.2,
         },
       });
+
+      const marqueeTrack =
+        rootRef.current?.querySelector<HTMLElement>(".marquee-track") ?? null;
+      if (marqueeTrack) {
+        const stripSpeed = 0.72;
+        updateFilmStrip = () => {
+          const loopWidth = marqueeTrack.scrollWidth / 2;
+          if (loopWidth <= 0) return;
+          const scrollPosition =
+            typeof lenis.scroll === "number" ? lenis.scroll : window.scrollY;
+          const offset = (scrollPosition * stripSpeed) % loopWidth;
+          marqueeTrack.style.transform = `translate3d(${-offset}px, 0, 0)`;
+        };
+        updateFilmStrip();
+        window.addEventListener("resize", updateFilmStrip);
+      }
 
       {
         const cinematicSections = gsap.utils.toArray<HTMLElement>(
@@ -1151,6 +1154,9 @@ export default function Home() {
     }, rootRef);
 
     return () => {
+      if (updateFilmStrip) {
+        window.removeEventListener("resize", updateFilmStrip);
+      }
       if (onHeroLayoutRefresh) {
         window.removeEventListener("resize", onHeroLayoutRefresh);
       }
@@ -1339,10 +1345,12 @@ export default function Home() {
         </section>
 
         <div className="marquee">
-          <div className="marquee-track">
-            {marqueeItems.map((item, index) => (
-              <span key={`${item}-${index}`}>{item}</span>
-            ))}
+          <div className="marquee-reel">
+            <div className="marquee-track">
+              {Array.from({ length: 24 }).map((_, index) => (
+                <span className="film-frame" key={`film-frame-${index}`} aria-hidden="true" />
+              ))}
+            </div>
           </div>
         </div>
 
