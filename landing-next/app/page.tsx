@@ -198,6 +198,7 @@ export default function Home() {
     let onHeroLayoutRefresh: (() => void) | null = null;
     let onNavProgressRefresh: (() => void) | null = null;
     let capabilityHoverCleanups: Array<() => void> = [];
+    let teamHoverCleanups: Array<() => void> = [];
     let recordingTimerId: ReturnType<typeof setInterval> | null = null;
     const pad2 = (value: number) => String(value).padStart(2, "0");
 
@@ -604,6 +605,70 @@ export default function Home() {
             },
           });
         });
+
+        const teamCards = gsap.utils.toArray<HTMLElement>(".team-card");
+        if (teamCards.length && window.matchMedia("(pointer: fine)").matches) {
+          teamCards.forEach((card) => {
+            gsap.set(card, {
+              transformPerspective: 1200,
+              transformOrigin: "50% 52%",
+              "--team-mx": 50,
+              "--team-my": 50,
+              "--team-tilt-x": 0,
+              "--team-tilt-y": 0,
+            });
+
+            const setTiltX = gsap.quickTo(card, "--team-tilt-x", {
+              duration: 0.28,
+              ease: "power3.out",
+            });
+            const setTiltY = gsap.quickTo(card, "--team-tilt-y", {
+              duration: 0.28,
+              ease: "power3.out",
+            });
+            const setMx = gsap.quickTo(card, "--team-mx", {
+              duration: 0.22,
+              ease: "power2.out",
+            });
+            const setMy = gsap.quickTo(card, "--team-my", {
+              duration: 0.22,
+              ease: "power2.out",
+            });
+
+            const onMove = (event: MouseEvent) => {
+              const bounds = card.getBoundingClientRect();
+              const nx = gsap.utils.clamp(
+                0,
+                1,
+                (event.clientX - bounds.left) / Math.max(bounds.width, 1)
+              );
+              const ny = gsap.utils.clamp(
+                0,
+                1,
+                (event.clientY - bounds.top) / Math.max(bounds.height, 1)
+              );
+
+              setMx(nx * 100);
+              setMy(ny * 100);
+              setTiltY((nx - 0.5) * 8.5);
+              setTiltX((0.5 - ny) * 7.2);
+            };
+
+            const onLeave = () => {
+              setTiltX(0);
+              setTiltY(0);
+              setMx(50);
+              setMy(50);
+            };
+
+            card.addEventListener("mousemove", onMove);
+            card.addEventListener("mouseleave", onLeave);
+            teamHoverCleanups.push(() => {
+              card.removeEventListener("mousemove", onMove);
+              card.removeEventListener("mouseleave", onLeave);
+            });
+          });
+        }
 
         const studioPills = gsap.utils.toArray<HTMLElement>(".pill-row .pill");
         studioPills.forEach((pill, index) => {
@@ -1389,6 +1454,8 @@ export default function Home() {
     return () => {
       capabilityHoverCleanups.forEach((cleanup) => cleanup());
       capabilityHoverCleanups = [];
+      teamHoverCleanups.forEach((cleanup) => cleanup());
+      teamHoverCleanups = [];
       if (updateFilmStrip) {
         window.removeEventListener("resize", updateFilmStrip);
       }
