@@ -2140,7 +2140,7 @@ main {
 }
 
 #process.section {
-  padding-top: clamp(112px, 12vw, 186px);
+  padding-top: clamp(72px, 8vw, 132px);
 }
 
 .section-head {
@@ -2290,6 +2290,57 @@ h2.section-title--hero-font {
   margin: 0;
   color: var(--muted);
   font-size: 1.05rem;
+}
+
+#capabilities .section-head,
+#process .section-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "eyebrow ."
+    "title lead";
+  column-gap: clamp(28px, 6vw, 80px);
+  row-gap: 18px;
+  align-items: start;
+  max-width: none;
+  width: 100%;
+}
+
+#capabilities .section-head-eyebrow,
+#process .section-head-eyebrow {
+  grid-area: eyebrow;
+}
+
+#capabilities .section-head-title,
+#process .section-head-title {
+  grid-area: title;
+}
+
+#capabilities .section-lead--side,
+#process .section-lead--side {
+  grid-area: lead;
+  align-self: center;
+  margin-top: 0;
+  max-width: clamp(360px, 40vw, 600px);
+}
+
+@media (max-width: 720px) {
+  #capabilities .section-head,
+  #process .section-head {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      "eyebrow"
+      "title"
+      "lead";
+  }
+
+  #capabilities .section-lead--side,
+  #process .section-lead--side {
+    grid-area: lead;
+    max-width: none;
+  }
 }
 
 .card-grid {
@@ -2953,7 +3004,7 @@ h2.section-title--hero-font {
   }
 
   #process.section {
-    padding-top: clamp(92px, 14vw, 138px);
+    padding-top: clamp(64px, 10vw, 112px);
   }
 
   .hero-line--main {

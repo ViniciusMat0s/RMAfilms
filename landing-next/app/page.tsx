@@ -1571,11 +1571,14 @@ export default function Home() {
         </div>
 
         <section className="section section--cinematic" id="capabilities">
-          <div className="section-head">
-            <p className="eyebrow" data-reveal="left">
+          <div className="section-head section-head--split">
+            <p className="eyebrow section-head-eyebrow" data-reveal="left">
               Capacidades
             </p>
-            <h2 className="section-title--hero-font section-title-cinematic" data-title-fx>
+            <h2
+              className="section-title--hero-font section-title-cinematic section-head-title"
+              data-title-fx
+            >
               <span className="title-line">
                 AUDIOVISUAL ESTRAT&Eacute;GICO
               </span>
@@ -1583,7 +1586,7 @@ export default function Home() {
                 QUE POSICIONA MARCAS.
               </span>
             </h2>
-            <p className="section-lead" data-reveal="right">
+            <p className="section-lead section-lead--side" data-reveal="right">
               A RMA FILMS nasceu da prática real: iniciativa, visão e evolução
               constante para transformar imagem em posicionamento e resultado.
             </p>
@@ -1649,11 +1652,14 @@ export default function Home() {
         </section>
 
         <section className="section section--cinematic" id="process">
-          <div className="section-head">
-            <p className="eyebrow" data-reveal="left">
+          <div className="section-head section-head--split">
+            <p className="eyebrow section-head-eyebrow" data-reveal="left">
               Processo
             </p>
-            <h2 className="section-title--hero-font section-title-cinematic" data-title-fx>
+            <h2
+              className="section-title--hero-font section-title-cinematic section-head-title"
+              data-title-fx
+            >
               <span className="title-line">
                 ESTRAT&Eacute;GIA, EXECU&Ccedil;&Atilde;O
               </span>
@@ -1661,7 +1667,7 @@ export default function Home() {
                 E RESULTADO.
               </span>
             </h2>
-            <p className="section-lead" data-reveal="right">
+            <p className="section-lead section-lead--side" data-reveal="right">
               Método direto, criativo e consistente para transformar briefing em
               conteúdo que gera percepção de valor.
             </p>
