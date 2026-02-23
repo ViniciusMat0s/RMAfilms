@@ -8,82 +8,94 @@ import Lenis from "lenis";
 const capabilities = [
   {
     label: "01",
-    title: "Narrative architecture",
-    copy: "We map stories like a film edit: tension, pause, release.",
+    title: "Narrativa que posiciona",
+    copy:
+      "Cada vídeo é estruturado para construir autoridade, percepção de valor e conexão com o público certo.",
   },
   {
     label: "02",
-    title: "Motion direction",
-    copy: "Micro and macro motion tuned to feel alive, never noisy.",
+    title: "Direção criativa e motion",
+    copy:
+      "Roteiro, captação, edição e motion design alinhados para transformar ideia em imagem memorável.",
   },
   {
     label: "03",
-    title: "Design systems",
-    copy: "Tokenized grids, typography, and color for scalable rollouts.",
+    title: "Audiovisual para construção e imóveis",
+    copy:
+      "Produções que valorizam empreendimentos, destacam diferenciais e aceleram a decisão de compra.",
   },
   {
     label: "04",
-    title: "Launch engineering",
-    copy: "High performance builds with scroll triggers and responsive polish.",
+    title: "Cobertura de eventos e campanhas",
+    copy:
+      "Conteúdo ágil e estratégico para marcas e instituições que precisam presença forte e consistência.",
   },
 ];
 
 const projects = [
   {
-    tag: "Luxury",
-    title: "Velvet Signal",
-    copy: "A gallery like launch that feels cinematic from the first scroll.",
-    stats: ["12 scene rail", "parallax stack", "global press"],
+    tag: "Construção Civil",
+    title: "Lançamentos Imobiliários",
+    copy:
+      "Filmes e cortes verticais para posicionar empreendimentos com estética premium e foco comercial.",
+    stats: ["captação em obra", "vídeo principal + social", "posicionamento de marca"],
   },
   {
-    tag: "Culture",
-    title: "Echo Atlas",
-    copy: "Editorial landing experience with audio cues and kinetic type.",
-    stats: ["94% scroll depth", "7 languages", "live debut"],
+    tag: "Mercado Imobiliário",
+    title: "Imóveis de Alto Valor",
+    copy:
+      "Narrativas visuais que aumentam percepção de qualidade e reforçam confiança no atendimento.",
+    stats: ["tour estratégico", "edição cinematográfica", "mais autoridade digital"],
   },
   {
-    tag: "Tech",
-    title: "Polar Vector",
-    copy: "Product reveal with interactive storytelling and rapid load times.",
-    stats: ["2.1s load", "custom cursor", "GSAP core"],
+    tag: "Institucional",
+    title: "Semana Farroupilha",
+    copy:
+      "Cobertura audiovisual do município de Xangri-lá com foco em memória, alcance e credibilidade pública.",
+    stats: ["entrega em tempo real", "registro oficial", "reconhecimento regional"],
   },
   {
-    tag: "Retail",
-    title: "Lumen Market",
-    copy: "Shoppable narrative that blends tactile textures and data layers.",
-    stats: ["24 modules", "soft scroll", "50% lift"],
+    tag: "Campanhas",
+    title: "Presença que Converte",
+    copy:
+      "Peças para campanhas e eventos que unem identidade visual, clareza de mensagem e impacto.",
+    stats: ["roteiro objetivo", "motion e design", "consistência multicanal"],
   },
 ];
 
 const process = [
   {
     step: "01",
-    title: "Signal capture",
-    copy: "We decode brand energy, audience intent, and launch purpose.",
+    title: "Diagnóstico e objetivo",
+    copy:
+      "Entendemos o cenário da marca, o público e o resultado esperado para definir direção clara.",
   },
   {
     step: "02",
-    title: "Experience map",
-    copy: "We blueprint layout rhythm, motion beats, and interaction flow.",
+    title: "Roteiro e direção criativa",
+    copy:
+      "Planejamos narrativa, linguagem e estética para que cada cena comunique valor.",
   },
   {
     step: "03",
-    title: "Build and polish",
-    copy: "We craft components, animate with intent, and tune performance.",
+    title: "Captação e pós-produção",
+    copy:
+      "Executamos com padrão profissional em filmagem, edição, motion design e finalização.",
   },
   {
     step: "04",
-    title: "Launch system",
-    copy: "We ship with documentation, analytics hooks, and future modules.",
+    title: "Entrega estratégica",
+    copy:
+      "Você recebe materiais prontos para publicação, com consistência visual e foco em performance.",
   },
 ];
 
 const studioValues = [
-  "Bold typography",
-  "Scroll storytelling",
-  "Tactile color",
-  "Premium motion",
-  "Modular scenes",
+  "Desde 2017",
+  "8 anos de experiência",
+  "Construção civil",
+  "Mercado imobiliário",
+  "Eventos e campanhas",
 ];
 
 const navSections = [
@@ -124,6 +136,7 @@ export default function Home() {
     let onHeroLeave: (() => void) | null = null;
     let onHeroLayoutRefresh: (() => void) | null = null;
     let onNavProgressRefresh: (() => void) | null = null;
+    let capabilityHoverCleanups: Array<() => void> = [];
     let recordingTimerId: ReturnType<typeof setInterval> | null = null;
     const pad2 = (value: number) => String(value).padStart(2, "0");
 
@@ -265,48 +278,132 @@ export default function Home() {
         });
 
         const capabilityCards = gsap.utils.toArray<HTMLElement>(".card-grid .card");
-        capabilityCards.forEach((card, index) => {
-          gsap.set(card, {
+        if (capabilityCards.length) {
+          gsap.set(capabilityCards, {
             transformPerspective: 980,
             transformOrigin: "50% 62%",
+            autoAlpha: 0,
+            y: 72,
+            rotateX: (index: number) => (index % 2 === 0 ? 12 : -12),
+            rotateY: (index: number) => (index % 2 === 0 ? -10 : 10),
+            scale: 0.88,
+            filter: "blur(8px)",
+            clipPath: "inset(0 0 100% 0 round 22px)",
+            "--card-reveal": 0,
+            "--card-glow": 0.08,
+            "--card-hover": 0,
+            "--card-tilt-x": 0,
+            "--card-tilt-y": 0,
+            "--card-mx": 50,
+            "--card-my": 50,
           });
 
-          gsap.fromTo(
-            card,
-            {
-              rotateX: 12,
-              rotateY: index % 2 === 0 ? -7 : 7,
-              scale: 0.92,
-              "--card-glow": 0.14,
+          const capabilityTimeline = gsap.timeline({
+            scrollTrigger: {
+              trigger: "#capabilities",
+              start: "top 78%",
+              end: "top 30%",
+              scrub: 0.58,
             },
+          });
+
+          capabilityTimeline.to(
+            capabilityCards,
             {
+              autoAlpha: 1,
+              y: 0,
               rotateX: 0,
               rotateY: 0,
               scale: 1,
-              "--card-glow": 1,
-              ease: "none",
-              scrollTrigger: {
-                trigger: card,
-                start: "top 90%",
-                end: "center 56%",
-                scrub: 0.65,
+              filter: "blur(0px)",
+              clipPath: "inset(0 0 0% 0 round 22px)",
+              "--card-reveal": 1,
+              "--card-glow": 0.92,
+              ease: "power3.out",
+              stagger: {
+                each: 0.14,
+                from: "start",
               },
-            }
+            },
+            0
           );
 
-          gsap.to(card, {
-            rotateX: -3,
-            scale: 0.97,
-            "--card-glow": 0.22,
-            ease: "none",
-            scrollTrigger: {
-              trigger: card,
-              start: "center 56%",
-              end: "bottom 24%",
-              scrub: 0.65,
+          capabilityTimeline.to(
+            capabilityCards,
+            {
+              y: -10,
+              scale: 0.985,
+              rotateX: -3,
+              "--card-glow": 0.26,
+              ease: "none",
+              stagger: {
+                each: 0.08,
+                from: "start",
+              },
             },
-          });
-        });
+            0.66
+          );
+
+          if (window.matchMedia("(pointer: fine)").matches) {
+            capabilityCards.forEach((card) => {
+              const setHover = gsap.quickTo(card, "--card-hover", {
+                duration: 0.22,
+                ease: "power2.out",
+              });
+              const setTiltX = gsap.quickTo(card, "--card-tilt-x", {
+                duration: 0.24,
+                ease: "power2.out",
+              });
+              const setTiltY = gsap.quickTo(card, "--card-tilt-y", {
+                duration: 0.24,
+                ease: "power2.out",
+              });
+              const setMx = gsap.quickTo(card, "--card-mx", {
+                duration: 0.22,
+                ease: "power2.out",
+              });
+              const setMy = gsap.quickTo(card, "--card-my", {
+                duration: 0.22,
+                ease: "power2.out",
+              });
+
+              const onMove = (event: MouseEvent) => {
+                const bounds = card.getBoundingClientRect();
+                const nx = gsap.utils.clamp(
+                  0,
+                  1,
+                  (event.clientX - bounds.left) / Math.max(bounds.width, 1)
+                );
+                const ny = gsap.utils.clamp(
+                  0,
+                  1,
+                  (event.clientY - bounds.top) / Math.max(bounds.height, 1)
+                );
+
+                setHover(1);
+                setMx(nx * 100);
+                setMy(ny * 100);
+                setTiltY((nx - 0.5) * 7.6);
+                setTiltX((0.5 - ny) * 6.4);
+              };
+
+              const onLeave = () => {
+                setHover(0);
+                setTiltX(0);
+                setTiltY(0);
+                setMx(50);
+                setMy(50);
+              };
+
+              card.addEventListener("mousemove", onMove);
+              card.addEventListener("mouseleave", onLeave);
+              capabilityHoverCleanups.push(() => {
+                card.removeEventListener("mousemove", onMove);
+                card.removeEventListener("mouseleave", onLeave);
+              });
+            });
+          }
+        }
 
         const processCards = gsap.utils.toArray<HTMLElement>(".process-card");
         processCards.forEach((card, index) => {
@@ -387,25 +484,6 @@ export default function Home() {
             },
           });
         });
-
-        const statsPanel =
-          rootRef.current?.querySelector<HTMLElement>(".stats-panel") ?? null;
-        if (statsPanel) {
-          gsap.fromTo(
-            statsPanel,
-            { "--panel-glow": 0.08 },
-            {
-              "--panel-glow": 1,
-              ease: "none",
-              scrollTrigger: {
-                trigger: statsPanel,
-                start: "top 86%",
-                end: "bottom 34%",
-                scrub: 0.6,
-              },
-            }
-          );
-        }
 
         const ctaInner =
           rootRef.current?.querySelector<HTMLElement>(".cta-inner") ?? null;
@@ -1154,6 +1232,8 @@ export default function Home() {
     }, rootRef);
 
     return () => {
+      capabilityHoverCleanups.forEach((cleanup) => cleanup());
+      capabilityHoverCleanups = [];
       if (updateFilmStrip) {
         window.removeEventListener("resize", updateFilmStrip);
       }
@@ -1280,15 +1360,15 @@ export default function Home() {
                       <span className="hero-text-fragments" aria-hidden="true">
                         ESTRAT&Eacute;GICOS
                       </span>
-                    </span>
-                  </span>
-                  <span className="hero-line hero-line--main">
+                    </span>{" "}
                     <span className="hero-main-word hero-disintegrate-word" data-hero-main-word>
                       <span className="hero-text-core">PARA</span>
                       <span className="hero-text-fragments" aria-hidden="true">
                         PARA
                       </span>
-                    </span>{" "}
+                    </span>
+                  </span>
+                  <span className="hero-line hero-line--main">
                     <span className="hero-main-word hero-disintegrate-word" data-hero-main-word>
                       <span className="hero-text-core">MARCAS</span>
                       <span className="hero-text-fragments" aria-hidden="true">
@@ -1357,19 +1437,19 @@ export default function Home() {
         <section className="section section--cinematic" id="capabilities">
           <div className="section-head">
             <p className="eyebrow" data-reveal="left">
-              Capabilities
+              Capacidades
             </p>
             <h2 className="section-title--hero-font hero-line--main" data-reveal="left">
-              A studio tuned for premium launches.
+              Audiovisual estratégico para marcas que querem ser lembradas.
             </h2>
             <p className="section-lead" data-reveal="right">
-              We combine editorial systems, motion direction, and technical
-              excellence to shape experiences with intent.
+              A RMA FILMS nasceu da prática real: iniciativa, visão e evolução
+              constante para transformar imagem em posicionamento e resultado.
             </p>
           </div>
-          <div className="card-grid" data-stagger>
+          <div className="card-grid">
             {capabilities.map((card) => (
-              <article className="card" key={card.title} data-stagger-item>
+              <article className="card" key={card.title}>
                 <span className="card-label">{card.label}</span>
                 <h3>{card.title}</h3>
                 <p>{card.copy}</p>
@@ -1382,13 +1462,13 @@ export default function Home() {
           <div className="rail-head">
             <div>
               <p className="eyebrow" data-reveal="left">
-                Selected work
+                Projetos selecionados
               </p>
-              <h2 data-reveal="left">A curated set of launches.</h2>
+              <h2 data-reveal="left">Histórias visuais com impacto comercial.</h2>
             </div>
             <p className="section-lead" data-reveal="right">
-              Horizontal scroll storytelling inspired by the highest level
-              award sites.
+              Da comunicação pública ao mercado imobiliário do Litoral Norte,
+              cada projeto é pensado para fortalecer marca e autoridade.
             </p>
           </div>
           <div className="rail-track" ref={railRef}>
@@ -1398,7 +1478,7 @@ export default function Home() {
                 <div className="rail-body">
                   <div className="rail-top">
                     <span>{project.tag}</span>
-                    <span>2026</span>
+                    <span>RMA FILMS</span>
                   </div>
                   <h3>{project.title}</h3>
                   <p>{project.copy}</p>
@@ -1416,13 +1496,14 @@ export default function Home() {
         <section className="section section--cinematic" id="process">
           <div className="section-head">
             <p className="eyebrow" data-reveal="left">
-              Process
+              Processo
             </p>
             <h2 className="section-title--hero-font hero-line--main" data-reveal="left">
-              Precision, rhythm, velocity.
+              Estratégia, execução e resultado.
             </h2>
             <p className="section-lead" data-reveal="right">
-              Every step is choreographed so the experience feels inevitable.
+              Método direto, criativo e consistente para transformar briefing em
+              conteúdo que gera percepção de valor.
             </p>
           </div>
           <div className="process-grid" data-stagger>
@@ -1442,12 +1523,15 @@ export default function Home() {
           <div className="split">
             <div>
               <p className="eyebrow" data-reveal="left">
-                Studio lens
+                Estúdio
               </p>
-              <h2 data-reveal="left">Built to feel tactile, never template.</h2>
+              <h2 data-reveal="left">
+                De um celular aos filmes de marca: evolução com propósito.
+              </h2>
               <p className="section-lead" data-reveal="right">
-                We treat every landing as a stage. Typography moves from the
-                side, sections breathe, and motion supports the narrative.
+                A trajetória começou na adolescência, em 2017. Em dezembro de
+                2025 nasceu oficialmente a RMA FILMS, consolidando anos de
+                prática em audiovisual e posicionamento de marca.
               </p>
               <div className="pill-row" data-stagger>
                 {studioValues.map((pill) => (
@@ -1457,55 +1541,27 @@ export default function Home() {
                 ))}
               </div>
             </div>
-            <div className="stats-panel" data-reveal="right">
-              <div className="stats-row">
-                <div>
-                  <strong data-count="96" data-suffix="%">
-                    0
-                  </strong>
-                  <span>client retention</span>
-                </div>
-                <div>
-                  <strong data-count="4" data-suffix="x">
-                    0
-                  </strong>
-                  <span>scroll depth lift</span>
-                </div>
-                <div>
-                  <strong data-count="18" data-suffix="">
-                    0
-                  </strong>
-                  <span>countries shipped</span>
-                </div>
-              </div>
-              <div className="stats-note">
-                <p>
-                  Built with Next.js, GSAP, and Lenis for silky scroll and
-                  precise timing.
-                </p>
-              </div>
-            </div>
           </div>
         </section>
 
         <section className="cta section--cinematic" id="contact">
           <div className="cta-inner" data-reveal="up">
             <div>
-              <p className="eyebrow">Ready to launch</p>
+              <p className="eyebrow">Entre em contato</p>
               <h2 className="section-title--hero-font hero-line--main">
-                Lets craft a landing page that feels alive.
+                Vamos transformar sua ideia em imagem que gera autoridade.
               </h2>
               <p>
-                Share your brief and receive a concept outline with timelines,
-                motion notes, and layout direction.
+                Envie seu briefing e receba uma direção criativa com proposta de
+                execução, formato ideal e próximos passos para seu projeto.
               </p>
             </div>
             <div className="cta-actions">
-              <a className="button magnetic" href="mailto:hello@lumen.studio">
-                hello@lumen.studio
+              <a className="button magnetic" href="mailto:contato@rmafilms.com.br">
+                contato@rmafilms.com.br
               </a>
               <a className="button button--ghost magnetic" href="#top">
-                Back to top
+                Voltar ao topo
               </a>
             </div>
           </div>
@@ -1514,12 +1570,12 @@ export default function Home() {
 
       <footer className="footer">
         <div>
-          <strong>Lumen Atelier</strong>
-          <p>Immersive landing systems for brands that move fast.</p>
+          <strong>RMA FILMS</strong>
+          <p>Imagem bem construída gera resultado.</p>
         </div>
         <div>
-          <span>Based in Sao Paulo, Lisbon, and Paris</span>
-          <span>2026</span>
+          <span>Litoral Norte do RS, Brasil</span>
+          <span>Desde 2017</span>
         </div>
       </footer>
     </div>
