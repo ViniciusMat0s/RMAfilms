@@ -1462,13 +1462,20 @@ export default function Home() {
           <div className="rail-head">
             <div>
               <p className="eyebrow" data-reveal="left">
-                Projetos selecionados
+                Projetos em destaque
               </p>
-              <h2 data-reveal="left">Histórias visuais com impacto comercial.</h2>
+              <h2 className="rail-title" data-reveal="left">
+                <span>N&Atilde;O &Eacute; S&Oacute; V&Iacute;DEO.</span>
+                <span>
+                  &Eacute; <em>POSICIONAMENTO</em>
+                </span>
+                <span>EM MOVIMENTO.</span>
+              </h2>
             </div>
             <p className="section-lead" data-reveal="right">
-              Da comunicação pública ao mercado imobiliário do Litoral Norte,
-              cada projeto é pensado para fortalecer marca e autoridade.
+              Da comunicação pública ao mercado imobiliário, cada projeto foi
+              desenhado para gerar percepção de valor, presença e lembrança de
+              marca.
             </p>
           </div>
           <div className="rail-track" ref={railRef}>

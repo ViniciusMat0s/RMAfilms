@@ -2248,6 +2248,33 @@ h2.section-title--hero-font {
   gap: 24px;
 }
 
+.rail-title {
+  margin: 10px 0 0;
+  display: grid;
+  gap: clamp(2px, 0.45vw, 8px);
+  font-family: var(--font-aventa), var(--font-body), "Manrope", sans-serif;
+  font-size: clamp(1.8rem, 3.4vw, 3.55rem);
+  font-weight: 300;
+  line-height: 0.98;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(247, 247, 242, 0.96);
+  text-shadow: 0 0 18px rgba(198, 222, 255, 0.16);
+}
+
+.rail-title span {
+  display: block;
+}
+
+.rail-title em {
+  font-style: normal;
+  font-family: var(--font-bierika), var(--font-heading), "Bodoni Moda", serif;
+  font-weight: 400;
+  letter-spacing: 0.07em;
+  color: rgba(247, 247, 242, 1);
+  text-shadow: 0 0 26px rgba(204, 227, 255, 0.28);
+}
+
 .rail-track {
   display: flex;
   gap: 22px;
@@ -2681,6 +2708,11 @@ h2.section-title--hero-font {
   .rail-head {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .rail-title {
+    font-size: clamp(1.58rem, 5.1vw, 2.66rem);
+    line-height: 1.02;
   }
 
   .hud-contact-button {
