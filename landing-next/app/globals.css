@@ -316,12 +316,12 @@ main {
 .hud-contact-button {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
-  min-height: 38px;
-  border-radius: 8px;
-  border: 1px solid rgba(247, 247, 242, 0.4);
-  background-color: rgba(7, 7, 7, 0.36);
+  gap: 14px;
+  padding: 14px 26px;
+  min-height: 54px;
+  border-radius: 12px;
+  border: 1px solid rgba(247, 247, 242, 0.56);
+  background-color: rgba(7, 7, 7, 0.42);
   background-image: linear-gradient(
     112deg,
     rgba(255, 255, 255, 0) 22%,
@@ -332,24 +332,25 @@ main {
   background-position: 120% 50%;
   color: rgba(247, 247, 242, 0.9);
   font-family: var(--font-body), "Manrope", sans-serif;
-  font-size: 0.64rem;
-  letter-spacing: 0.11em;
+  font-size: clamp(0.78rem, 0.95vw, 0.94rem);
+  font-weight: 620;
+  letter-spacing: 0.12em;
   line-height: 1;
-  text-transform: none;
+  text-transform: uppercase;
   white-space: nowrap;
-  box-shadow: inset 0 0 0 1px rgba(247, 247, 242, 0.12),
-    0 0 26px rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(247, 247, 242, 0.2),
+    0 0 40px rgba(214, 230, 255, 0.28);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   transition: transform 0.22s ease, border-color 0.22s ease,
-    background-color 0.22s ease, box-shadow 0.22s ease;
+    background-color 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
   position: absolute;
   top: var(--hud-rec-top);
   left: var(--hud-rec-left);
   right: auto;
   z-index: 5;
   pointer-events: auto;
-  filter: drop-shadow(0 0 8px rgba(180, 210, 255, 0.24));
+  filter: drop-shadow(0 0 14px rgba(180, 210, 255, 0.34));
   animation: hudCtaAttention 3.4s ease-in-out infinite,
     hudCtaGlow 2.8s ease-in-out infinite,
     hudRecButtonBlink 0.96s steps(1, end) infinite;
@@ -359,8 +360,8 @@ main {
 .hud-contact-button::after {
   content: "";
   position: absolute;
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   pointer-events: none;
 }
 
@@ -379,11 +380,12 @@ main {
 }
 
 .hud-contact-button:hover {
-  transform: translateY(-1px);
-  background: rgba(10, 10, 10, 0.52);
-  border-color: rgba(247, 247, 242, 0.55);
-  box-shadow: inset 0 0 0 1px rgba(247, 247, 242, 0.2),
-    0 0 34px rgba(214, 228, 255, 0.2);
+  transform: translateY(-2px);
+  background: rgba(10, 10, 10, 0.58);
+  border-color: rgba(247, 247, 242, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(247, 247, 242, 0.28),
+    0 0 52px rgba(214, 228, 255, 0.34);
+  filter: drop-shadow(0 0 18px rgba(194, 220, 255, 0.42));
 }
 
 .hud-contact-button:focus-visible {
@@ -393,11 +395,11 @@ main {
 
 .hud-contact-button-dot {
   position: relative;
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: #ff3b3b;
-  box-shadow: 0 0 12px rgba(255, 59, 59, 0.76);
+  box-shadow: 0 0 14px rgba(255, 59, 59, 0.82);
   animation: hudRecDotBlink 0.96s steps(1, end) infinite;
 }
 
@@ -968,24 +970,41 @@ main {
   z-index: 2;
   min-height: 100%;
   --hero-balance-offset: clamp(88px, 12vh, 170px);
-  padding: clamp(170px, 22vh, 280px) clamp(56px, 9vw, 140px)
+  --hero-inline-right: clamp(56px, 9vw, 140px);
+  --hero-inline-left: max(
+    clamp(56px, 9vw, 140px),
+    calc(var(--nav-content-offset) + clamp(18px, 2.2vw, 30px))
+  );
+  --hero-accent-width-limit: calc(
+    (100vw - var(--hero-inline-left) - var(--hero-inline-right)) / 7.2
+  );
+  --hero-accent-height-limit: calc(
+    (100svh - var(--hud-safe-top) - var(--hud-bottom-clearance)) * 0.34
+  );
+  --hero-main-size: clamp(
+    1.2rem,
+    min(
+      4.2vw,
+      calc(var(--hero-accent-width-limit) / 3),
+      calc(var(--hero-accent-height-limit) / 3)
+    ),
+    4.6rem
+  );
+  padding: clamp(170px, 22vh, 280px) var(--hero-inline-right)
     clamp(56px, 9vw, 140px)
-    max(
-      clamp(56px, 9vw, 140px),
-      calc(var(--nav-content-offset) + clamp(18px, 2.2vw, 30px))
-    );
+    var(--hero-inline-left);
 }
 
 .hero-text {
   position: static;
   width: 100%;
   max-width: 1400px;
-  margin: clamp(54px, 10vh, 160px) 0 0;
+  margin: clamp(18px, 5vh, 88px) 0 0;
   display: grid;
   gap: 0.1em;
   font-family: var(--font-body), "Manrope", sans-serif;
   font-weight: 500;
-  font-size: clamp(2.2rem, 4.2vw, 4.6rem);
+  font-size: var(--hero-main-size);
   line-height: 1.08;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -1108,15 +1127,20 @@ main {
 
 .hero-line--accent {
   position: absolute;
-  left: 50%;
-  top: calc(50% + var(--hero-balance-offset));
-  transform: translate(-50%, -50%);
+  left: auto;
+  right: var(--hero-inline-left);
+  top: min(
+    calc(50% + var(--hero-balance-offset)),
+    calc(100% - var(--hud-bottom-clearance) - clamp(24px, 4vh, 56px))
+  );
+  transform: translateY(-50%);
   z-index: 4;
   width: max-content;
-  font-size: clamp(5.4rem, 14.2vw, 15.8rem);
-  letter-spacing: 0.12em;
+  max-width: calc(100vw - var(--hero-inline-left) - var(--hero-inline-right));
+  font-size: calc(var(--hero-main-size) * 3);
+  letter-spacing: clamp(0.07em, 0.24vw, 0.12em);
   line-height: 0.95;
-  text-align: center;
+  text-align: right;
   margin-top: 0;
   font-weight: 700;
 }
@@ -1318,21 +1342,27 @@ main {
 }
 
 .hero-right {
+  position: absolute;
+  top: calc(var(--hud-safe-top) + clamp(6px, 1.2vh, 18px));
+  right: clamp(56px, 9vw, 140px);
+  z-index: 4;
+  margin: 0;
+  max-width: min(34vw, 440px);
   justify-self: end;
-  align-self: end;
-  margin-top: clamp(26px, 8vw, 120px);
-  margin-bottom: calc(var(--hud-content-bottom) + var(--hud-bottom-clearance));
+  align-self: start;
   text-transform: uppercase;
-  letter-spacing: 0.24em;
-  font-size: clamp(1rem, 2vw, 1.6rem);
+  letter-spacing: clamp(0.12em, 0.3vw, 0.2em);
+  font-size: clamp(0.86rem, 1.5vw, 1.36rem);
   color: rgba(247, 247, 242, 0.7);
+  text-align: right;
 }
 
 .hero-words {
   position: relative;
-  min-height: 1.2em;
+  min-height: 1.25em;
   display: grid;
   align-items: center;
+  justify-items: end;
 }
 
 .hero-word {
@@ -2445,6 +2475,13 @@ h2.section-title--hero-font {
     align-items: flex-start;
   }
 
+  .hud-contact-button {
+    padding: 12px 20px;
+    min-height: 48px;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+  }
+
   .hero-stage {
     --hud-res-block-height: clamp(58px, 9vh, 96px);
     --hud-bottom-clearance: calc(
@@ -2495,24 +2532,47 @@ h2.section-title--hero-font {
   }
 
   .hero-text {
-    margin-top: clamp(34px, 8vh, 96px);
+    margin-top: clamp(10px, 3.6vh, 40px);
   }
 
   .hero-grid {
+    --hero-inline-right: clamp(16px, 5vw, 24px);
+    --hero-inline-left: max(
+      clamp(16px, 5vw, 24px),
+      calc(var(--nav-content-offset) + clamp(8px, 2.4vw, 18px))
+    );
+    --hero-accent-width-limit: calc(
+      (100vw - var(--hero-inline-left) - var(--hero-inline-right)) / 6.8
+    );
+    --hero-accent-height-limit: calc(
+      (100svh - var(--hud-safe-top) - var(--hud-bottom-clearance)) * 0.28
+    );
+    --hero-main-size: clamp(
+      0.86rem,
+      min(
+        4.4vw,
+        calc(var(--hero-accent-width-limit) / 3),
+        calc(var(--hero-accent-height-limit) / 3)
+      ),
+      2.26rem
+    );
     grid-template-columns: 1fr;
     gap: 32px;
-    padding: clamp(124px, 22vw, 176px) clamp(16px, 5vw, 24px)
+    padding: clamp(124px, 22vw, 176px) var(--hero-inline-right)
       clamp(36px, 8vw, 56px)
-      max(
-        clamp(16px, 5vw, 24px),
-        calc(var(--nav-content-offset) + clamp(8px, 2.4vw, 18px))
-      );
+      var(--hero-inline-left);
   }
 
   .hero-right {
-    justify-self: start;
-    margin-top: 0;
-    margin-bottom: calc(var(--hud-content-bottom) + var(--hud-bottom-clearance));
+    top: calc(var(--hud-safe-top) + clamp(8px, 1.8vh, 22px));
+    right: clamp(16px, 5vw, 24px);
+    max-width: min(46vw, 360px);
+    justify-self: end;
+    align-self: start;
+    margin: 0;
+    font-size: clamp(0.78rem, 2.7vw, 1.02rem);
+    letter-spacing: clamp(0.1em, 0.45vw, 0.16em);
+    text-align: right;
   }
 
   .hero-stage {
@@ -2530,9 +2590,9 @@ h2.section-title--hero-font {
   }
 
   .hud-contact-button {
-    padding: 8px 12px;
-    min-height: 32px;
-    font-size: 0.56rem;
+    padding: 11px 16px;
+    min-height: 44px;
+    font-size: 0.66rem;
     letter-spacing: 0.09em;
   }
 
@@ -2567,6 +2627,24 @@ h2.section-title--hero-font {
       var(--hud-content-bottom) + clamp(96px, 16vh, 180px)
     );
     --hud-meter-bottom: calc(var(--hud-content-bottom) + clamp(12px, 2.4vh, 24px));
+  }
+
+  .hero-grid {
+    --hero-accent-width-limit: calc(
+      (100vw - var(--hero-inline-left) - var(--hero-inline-right)) / 6.2
+    );
+    --hero-accent-height-limit: calc(
+      (100svh - var(--hud-safe-top) - var(--hud-bottom-clearance)) * 0.31
+    );
+    --hero-main-size: clamp(
+      0.95rem,
+      min(
+        4.6vw,
+        calc(var(--hero-accent-width-limit) / 2.7),
+        calc(var(--hero-accent-height-limit) / 2.7)
+      ),
+      2.72rem
+    );
   }
 }
 
