@@ -119,6 +119,7 @@ export default function Home() {
       lerp: 0.08,
       smoothWheel: true,
     });
+    const enableHeroTrail = false;
 
     let updateNavProgress: (() => void) | null = null;
     const onLenisScroll = () => {
@@ -477,6 +478,9 @@ export default function Home() {
       const heroZoomValue =
         heroStage?.querySelector<HTMLElement>(".hud-zoom-value") ?? null;
       const heroMainWords = gsap.utils.toArray<HTMLElement>("[data-hero-main-word]");
+      const heroLideramWord =
+        heroMainWords.find((word) => word.classList.contains("hero-highlight--glitch")) ??
+        null;
       const heroWords = gsap.utils.toArray<HTMLElement>(".hero-word");
       const navItems = gsap.utils.toArray<HTMLElement>("[data-nav-item]");
 
@@ -658,12 +662,29 @@ export default function Home() {
             0
           );
           heroTimeline.eventCallback("onUpdate", () => {
-            if (!heroZoomValue) return;
-            const minZoom = 1;
-            const maxZoom = 3;
-            const zoom =
-              minZoom + (maxZoom - minZoom) * heroTimeline.progress();
-            heroZoomValue.textContent = `${zoom.toFixed(1)}x`;
+            if (heroZoomValue) {
+              const minZoom = 1;
+              const maxZoom = 3;
+              const zoom =
+                minZoom + (maxZoom - minZoom) * heroTimeline.progress();
+              heroZoomValue.textContent = `${zoom.toFixed(1)}x`;
+            }
+
+            if (heroLideramWord) {
+              const alpha = Number(gsap.getProperty(heroLideramWord, "autoAlpha"));
+              const rect = heroLideramWord.getBoundingClientRect();
+              const isInViewport =
+                rect.bottom > 0 && rect.top < window.innerHeight && rect.right > 0;
+              const shouldRunGlitch = alpha > 0.08 && isInViewport;
+              heroLideramWord.style.setProperty(
+                "--lideram-play",
+                shouldRunGlitch ? "running" : "paused"
+              );
+              heroLideramWord.style.setProperty(
+                "--tv-scroll",
+                shouldRunGlitch ? "1" : "0"
+              );
+            }
           });
         }
 
@@ -674,47 +695,34 @@ export default function Home() {
             scale: 0.992,
             "--word-glow": 0,
             "--tv-scroll": 0,
+            "--tv-hover": 0,
+            "--lideram-play": "paused",
           });
           gsap.set(heroMainWords[0], {
             autoAlpha: 1,
             y: 0,
             scale: 1,
             "--word-glow": 0,
-            "--tv-scroll": 0,
           });
 
           const mainWordStops = [0.14, 0.24, 0.34, 0.46, 0.6];
+          const getMainWordPosition = (wordIndex: number) =>
+            mainWordStops[wordIndex - 1] ??
+            0.14 + (0.56 * (wordIndex - 1)) / Math.max(heroMainWords.length - 2, 1);
+
           heroMainWords.forEach((word, index) => {
             if (index === 0) return;
-            const position =
-              mainWordStops[index - 1] ??
-              0.14 + (0.56 * (index - 1)) / Math.max(heroMainWords.length - 2, 1);
+            const position = getMainWordPosition(index);
+            const isLideramWord = word.classList.contains("hero-highlight--glitch");
 
             heroTimeline.to(
               word,
               { autoAlpha: 1, y: 0, scale: 1, duration: 0.26, ease: "power2.out" },
               position
             );
-            heroTimeline.to(
-              word,
-              { "--tv-scroll": 1, duration: 0.1, ease: "steps(2)" },
-              position + 0.02
-            );
-            heroTimeline.to(
-              word,
-              { "--tv-scroll": 0.32, duration: 0.12, ease: "steps(2)" },
-              position + 0.14
-            );
-            heroTimeline.to(
-              word,
-              { "--tv-scroll": 0.82, duration: 0.1, ease: "steps(2)" },
-              position + 0.22
-            );
-            heroTimeline.to(
-              word,
-              { "--tv-scroll": 0, duration: 0.22, ease: "power1.out" },
-              position + 0.34
-            );
+            if (isLideramWord) {
+              heroTimeline.set(word, { "--lideram-play": "running" }, position + 0.02);
+            }
             heroTimeline.to(
               word,
               { "--word-glow": 1.22, duration: 0.16, ease: "sine.out" },
@@ -738,10 +746,21 @@ export default function Home() {
           gsap.set(heroWords[0], { autoAlpha: 1, y: 0, "--tv-scroll": 0 });
 
           const wordStops = [0.2, 0.52, 0.84];
+          const getWordPosition = (wordIndex: number) =>
+            wordStops[wordIndex] ?? wordIndex / heroWords.length;
           heroWords.forEach((word, index) => {
             if (index === 0) return;
             const prev = heroWords[index - 1];
-            const position = wordStops[index] ?? index / heroWords.length;
+            const position = getWordPosition(index);
+            const nextPosition =
+              index < heroWords.length - 1 ? getWordPosition(index + 1) : null;
+            const tvStart = position + 0.015;
+            const tvDuration =
+              nextPosition !== null
+                ? Math.max(0.08, Math.min(0.14, (nextPosition - position) * 0.42))
+                : 0.12;
+            const tvFadeEnd = tvStart + tvDuration;
+
             heroTimeline.to(
               prev,
               {
@@ -758,26 +777,13 @@ export default function Home() {
               { autoAlpha: 1, y: 0, duration: 0.18, ease: "power2.out" },
               position + 0.02
             );
+            heroTimeline.set(word, { "--tv-scroll": 1 }, tvStart);
             heroTimeline.to(
               word,
-              { "--tv-scroll": 1, duration: 0.08, ease: "steps(2)" },
-              position + 0.03
+              { "--tv-scroll": 0, duration: tvDuration, ease: "power2.out" },
+              tvStart + 0.01
             );
-            heroTimeline.to(
-              word,
-              { "--tv-scroll": 0.26, duration: 0.12, ease: "steps(2)" },
-              position + 0.12
-            );
-            heroTimeline.to(
-              word,
-              { "--tv-scroll": 0.72, duration: 0.08, ease: "steps(2)" },
-              position + 0.2
-            );
-            heroTimeline.to(
-              word,
-              { "--tv-scroll": 0, duration: 0.18, ease: "power1.out" },
-              position + 0.3
-            );
+            heroTimeline.set(word, { "--tv-scroll": 0 }, tvFadeEnd + 0.01);
           });
         }
       }
@@ -893,32 +899,100 @@ export default function Home() {
         });
       }
 
-      if (heroStage && window.matchMedia("(pointer: fine)").matches) {
+      if (heroStage && enableHeroTrail) {
         const currentHeroStage = heroStage;
+        const clampPercent = (value: number) => Math.min(100, Math.max(0, value));
+        let lastX = 50;
+        let lastY = 50;
         const setX = gsap.quickTo(heroStage, "--mx", {
-          duration: 0.5,
+          duration: 0.36,
           ease: "power3.out",
         });
         const setY = gsap.quickTo(heroStage, "--my", {
-          duration: 0.5,
+          duration: 0.36,
           ease: "power3.out",
+        });
+        const setTrailX1 = gsap.quickTo(heroStage, "--trail-x1", {
+          duration: 0.72,
+          ease: "power3.out",
+        });
+        const setTrailY1 = gsap.quickTo(heroStage, "--trail-y1", {
+          duration: 0.72,
+          ease: "power3.out",
+        });
+        const setTrailX2 = gsap.quickTo(heroStage, "--trail-x2", {
+          duration: 1.04,
+          ease: "power3.out",
+        });
+        const setTrailY2 = gsap.quickTo(heroStage, "--trail-y2", {
+          duration: 1.04,
+          ease: "power3.out",
+        });
+        const setTrailEnergy = gsap.quickTo(heroStage, "--trail-energy", {
+          duration: 0.38,
+          ease: "power2.out",
+        });
+        const setTrailActive = gsap.quickTo(heroStage, "--trail-active", {
+          duration: 0.14,
+          ease: "power2.out",
+        });
+        const setTrailStretch = gsap.quickTo(heroStage, "--trail-stretch", {
+          duration: 0.46,
+          ease: "power2.out",
+        });
+        const setTrailAngle = gsap.quickTo(heroStage, "--trail-angle", {
+          duration: 0.14,
+          ease: "power2.out",
         });
 
         onHeroMove = (event: MouseEvent) => {
           const bounds = currentHeroStage.getBoundingClientRect();
           const x = ((event.clientX - bounds.left) / bounds.width) * 100;
           const y = ((event.clientY - bounds.top) / bounds.height) * 100;
+          const deltaX = x - lastX;
+          const deltaY = y - lastY;
+          lastX = x;
+          lastY = y;
+          const speed = Math.min(1, Math.hypot(deltaX, deltaY) / 8);
+          const angleDeg = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
+          const energy = 0.46 + speed * 0.34;
+          const stretch = 0.16 + speed * 0.58;
+
           setX(x);
           setY(y);
+          setTrailX1(clampPercent(x - deltaX * 8.4));
+          setTrailY1(clampPercent(y - deltaY * 8.4));
+          setTrailX2(clampPercent(x - deltaX * 14.8));
+          setTrailY2(clampPercent(y - deltaY * 14.8));
+          setTrailActive(1);
+          setTrailEnergy(energy);
+          setTrailStretch(stretch);
+          setTrailAngle(angleDeg);
         };
 
         onHeroLeave = () => {
+          lastX = 50;
+          lastY = 50;
           setX(50);
           setY(50);
+          setTrailX1(50);
+          setTrailY1(50);
+          setTrailX2(50);
+          setTrailY2(50);
+          setTrailActive(0);
+          setTrailEnergy(0.02);
+          setTrailStretch(0);
+          setTrailAngle(0);
         };
 
-        currentHeroStage.addEventListener("mousemove", onHeroMove);
-        currentHeroStage.addEventListener("mouseleave", onHeroLeave);
+        const usePointerEvents = "onpointermove" in window;
+        if (usePointerEvents) {
+          currentHeroStage.addEventListener("pointermove", onHeroMove);
+          currentHeroStage.addEventListener("pointerleave", onHeroLeave);
+        } else {
+          currentHeroStage.addEventListener("mousemove", onHeroMove);
+          currentHeroStage.addEventListener("mouseleave", onHeroLeave);
+        }
       }
     }, rootRef);
 
@@ -931,6 +1005,8 @@ export default function Home() {
         ScrollTrigger.removeEventListener("refresh", onNavProgressRefresh);
       }
       if (heroStage && onHeroMove && onHeroLeave) {
+        heroStage.removeEventListener("pointermove", onHeroMove);
+        heroStage.removeEventListener("pointerleave", onHeroLeave);
         heroStage.removeEventListener("mousemove", onHeroMove);
         heroStage.removeEventListener("mouseleave", onHeroLeave);
       }
@@ -1053,10 +1129,13 @@ export default function Home() {
                 </span>
                 <span className="hero-line hero-line--accent">
                   <span
-                    className="hero-highlight hero-main-word"
+                    className="hero-highlight hero-main-word hero-highlight--glitch"
                     data-hero-main-word
+                    data-text="LIDERAM"
                   >
-                    LIDERAM
+                    <span className="hero-highlight-label" data-text="LIDERAM">
+                      LIDERAM
+                    </span>
                   </span>
                 </span>
               </h1>
