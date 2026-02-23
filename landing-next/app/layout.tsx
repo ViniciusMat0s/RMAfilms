@@ -32,9 +32,9 @@ const bierikaFont = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Lumen Atelier | Editorial Landing Craft",
+  title: "RMA Films",
   description:
-    "Award level landing experiences with cinematic motion, refined layouts, and scroll storytelling.",
+    "Produzimos filmes estratégicos para posicionar marcas com autoridade, presença e lembrança.",
 };
 
 export default function RootLayout({

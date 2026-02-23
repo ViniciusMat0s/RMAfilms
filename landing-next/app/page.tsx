@@ -132,19 +132,38 @@ const process = [
   },
 ];
 
-const studioValues = [
-  "Desde 2017",
-  "8 anos de experiência",
-  "Construção civil",
-  "Mercado imobiliário",
-  "Eventos e campanhas",
+const teamMembers = [
+  {
+    name: "Rodrigo Mazzoni",
+    role: "Founder & Filmmaker",
+    bio:
+      "Direção criativa e storytelling para filmes que posicionam marcas com autoridade.",
+    initials: "RM",
+    photo: "/team/rodrigo.jpeg",
+  },
+  {
+    name: "Nicolas Novaski",
+    role: "Filmmaker & Editor",
+    bio:
+      "Captação e montagem com ritmo preciso para transformar cenas em narrativa.",
+    initials: "NN",
+    photo: "/team/nicolas.jpeg",
+  },
+  {
+    name: "Robson Nunes",
+    role: "Automação & Inteligência Artificial",
+    bio:
+      "Sistemas e IA para escalar entregas e manter consistência criativa.",
+    initials: "RN",
+    photo: "/team/robson.jpeg",
+  },
 ];
 
 const navSections = [
   { id: "capabilities", label: "Capacidades" },
   { id: "work", label: "Projetos" },
   { id: "process", label: "Processo" },
-  { id: "studio", label: "Estúdio" },
+  { id: "team", label: "Equipe" },
 ];
 
 export default function Home() {
@@ -1685,33 +1704,45 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="section section--cinematic" id="studio">
-          <div className="split">
-            <div>
-              <p className="eyebrow" data-reveal="left">
-                Estúdio
-              </p>
-              <h2 className="section-title--hero-font section-title-cinematic" data-title-fx>
-                <span className="title-line">
-                  DE UM CELULAR
-                </span>
-                <span className="title-line">
-                  A FILMES DE MARCA.
-                </span>
-              </h2>
-              <p className="section-lead" data-reveal="right">
-                A trajetória começou na adolescência, em 2017. Em dezembro de
-                2025 nasceu oficialmente a RMA FILMS, consolidando anos de
-                prática em audiovisual e posicionamento de marca.
-              </p>
-              <div className="pill-row" data-stagger>
-                {studioValues.map((pill) => (
-                  <span className="pill" key={pill} data-stagger-item>
-                    {pill}
-                  </span>
-                ))}
-              </div>
-            </div>
+        <section className="section section--cinematic" id="team">
+          <div className="section-head">
+            <p className="eyebrow" data-reveal="left">
+              Equipe
+            </p>
+            <h2 className="section-title--hero-font section-title-cinematic" data-title-fx>
+              <span className="title-line">
+                PESSOAS POR TR&Aacute;S
+              </span>
+              <span className="title-line">
+                DA DIRE&Ccedil;&Atilde;O.
+              </span>
+            </h2>
+            <p className="section-lead" data-reveal="right">
+              Tr&ecirc;s perfis complementares para criar filmes que unem dire&ccedil;&atilde;o,
+              execu&ccedil;&atilde;o precisa e resultado de marca.
+            </p>
+          </div>
+          <div className="team-grid" data-stagger>
+            {teamMembers.map((member) => (
+              <article className="team-card" key={member.name} data-stagger-item>
+                <div
+                  className="team-photo"
+                  role="img"
+                  aria-label={member.name}
+                  data-has-photo={member.photo ? "true" : "false"}
+                >
+                  {member.photo ? (
+                    <img src={member.photo} alt={member.name} loading="lazy" />
+                  ) : null}
+                  <span aria-hidden="true">{member.initials}</span>
+                </div>
+                <div className="team-meta">
+                  <p className="team-role">{member.role}</p>
+                  <h3>{member.name}</h3>
+                  <p className="team-bio">{member.bio}</p>
+                </div>
+              </article>
+            ))}
           </div>
         </section>
 

@@ -2819,20 +2819,26 @@ h2.section-title--hero-font {
 }
 
 .process-card span {
-  font-family: var(--font-heading), "Bodoni Moda", serif;
-  font-size: 1.1rem;
-  letter-spacing: 0.18em;
-  color: rgba(247, 247, 242, 0.82);
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
+  font-family: var(--font-aventa), var(--font-body), "Manrope", sans-serif;
+  font-size: 1.15rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: rgba(247, 247, 242, 0.9);
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(247, 247, 242, 0.16);
-  background: rgba(10, 10, 10, 0.6);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 0 16px rgba(198, 222, 255, 0.12);
+  border: 1px solid rgba(247, 247, 242, 0.22);
+  background: radial-gradient(
+      120% 120% at 30% 20%,
+      rgba(255, 255, 255, 0.12),
+      rgba(255, 255, 255, 0) 60%
+    ),
+    rgba(12, 12, 12, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 0 18px rgba(198, 222, 255, 0.14);
   transition: transform 0.35s ease, box-shadow 0.35s ease,
     border-color 0.35s ease;
 }
@@ -2858,9 +2864,9 @@ h2.section-title--hero-font {
   }
 
   .process-card:hover span {
-    border-color: rgba(247, 247, 242, 0.32);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08),
-      0 0 22px rgba(198, 222, 255, 0.22);
+    border-color: rgba(247, 247, 242, 0.38);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+      0 0 26px rgba(198, 222, 255, 0.26);
     transform: translateY(-2px);
   }
 }
@@ -2877,6 +2883,173 @@ h2.section-title--hero-font {
   }
   100% {
     opacity: 0.08;
+  }
+}
+
+#team.section {
+  padding-top: clamp(86px, 11vw, 170px);
+  padding-bottom: clamp(86px, 11vw, 170px);
+}
+
+.team-grid {
+  margin-top: var(--section-content-gap);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(18px, 3vw, 28px);
+}
+
+.team-card {
+  --team-glow: 0;
+  --team-sheen: 0;
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 16px;
+  padding: clamp(22px, 2.6vw, 32px);
+  border-radius: 28px;
+  border: 1px solid rgba(247, 247, 242, calc(0.12 + var(--team-glow) * 0.18));
+  background: linear-gradient(
+      140deg,
+      rgba(255, 255, 255, calc(0.05 + var(--team-glow) * 0.08)),
+      rgba(255, 255, 255, 0) 52%
+    ),
+    rgba(12, 12, 12, 0.92);
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.46),
+    0 0 calc(30px * var(--team-glow))
+      rgba(198, 222, 255, calc(0.06 + var(--team-glow) * 0.2));
+  overflow: hidden;
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+  will-change: transform, box-shadow, border-color;
+}
+
+.team-card::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  opacity: calc(0.06 + var(--team-glow) * 0.2);
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0.16) 50%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  background-size: 220% 100%;
+  background-position: calc(120% - var(--team-sheen) * 220%) 0;
+  mix-blend-mode: screen;
+  transition: background-position 0.8s ease, opacity 0.35s ease;
+}
+
+.team-photo {
+  position: relative;
+  z-index: 1;
+  aspect-ratio: 4 / 5;
+  width: 100%;
+  border-radius: 22px;
+  border: 1px solid rgba(247, 247, 242, 0.18);
+  background-color: rgba(10, 10, 10, 0.7);
+  background-image: radial-gradient(
+      120% 120% at 20% 20%,
+      rgba(255, 255, 255, 0.14),
+      rgba(255, 255, 255, 0) 60%
+    );
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 0 24px rgba(198, 222, 255, 0.16);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.team-photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 0.4s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.team-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.05),
+    rgba(0, 0, 0, 0.55)
+  );
+  opacity: 0.4;
+  transition: opacity 0.35s ease;
+}
+
+.team-photo span {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-aventa), var(--font-body), "Manrope", sans-serif;
+  letter-spacing: 0.22em;
+  font-size: 0.9rem;
+  color: rgba(247, 247, 242, 0.9);
+  opacity: 0.6;
+}
+
+.team-photo[data-has-photo="true"] span {
+  opacity: 0;
+}
+
+.team-meta {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 6px;
+}
+
+.team-role {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-size: 0.6rem;
+  color: rgba(247, 247, 242, 0.55);
+}
+
+.team-card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  letter-spacing: 0.01em;
+}
+
+.team-bio {
+  margin: 0;
+  color: var(--muted);
+}
+
+@media (pointer: fine) {
+  .team-card:hover {
+    --team-glow: 1;
+    --team-sheen: 1;
+    transform: translateY(-4px);
+    box-shadow: 0 26px 52px rgba(0, 0, 0, 0.46),
+      0 0 46px rgba(198, 222, 255, 0.2);
+  }
+
+  .team-card:hover .team-photo {
+    border-color: rgba(247, 247, 242, 0.32);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+      0 0 28px rgba(198, 222, 255, 0.26);
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  .team-card:hover .team-photo::after {
+    opacity: 0.2;
+  }
+
+  .team-card:hover .team-photo img {
+    filter: grayscale(0) contrast(1);
+    transform: scale(1.03);
   }
 }
 
@@ -3233,6 +3406,14 @@ h2.section-title--hero-font {
 
   .process-card::before {
     animation: none !important;
+  }
+
+  .team-card::before {
+    animation: none !important;
+  }
+
+  .team-photo {
+    transition: none !important;
   }
 
   .section-title-cinematic::before {
