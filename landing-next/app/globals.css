@@ -14,6 +14,7 @@
   --radius: 28px;
   --nav-content-offset: clamp(122px, 9.6vw, 162px);
   --nav-content-offset-rail: clamp(114px, 8.8vw, 144px);
+  --section-content-gap: clamp(44px, 6vw, 68px);
 }
 
 * {
@@ -2296,13 +2297,14 @@ h2.section-title--hero-font {
 #process .section-head {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
-  grid-template-rows: auto auto;
+  grid-template-rows: auto auto auto;
   grid-template-areas:
     "eyebrow ."
-    "title lead";
+    "line1 ."
+    "line2 lead";
   column-gap: clamp(28px, 6vw, 80px);
   row-gap: 18px;
-  align-items: start;
+  align-items: baseline;
   max-width: none;
   width: 100%;
 }
@@ -2314,37 +2316,42 @@ h2.section-title--hero-font {
 
 #capabilities .section-head-title,
 #process .section-head-title {
-  grid-area: title;
+  display: contents;
 }
 
 #capabilities .section-lead--side,
 #process .section-lead--side {
   grid-area: lead;
-  align-self: center;
   margin-top: 0;
   max-width: clamp(360px, 40vw, 600px);
+  align-self: baseline;
+}
+
+#capabilities .section-head-title .title-line:first-child,
+#process .section-head-title .title-line:first-child {
+  grid-area: line1;
+}
+
+#capabilities .section-head-title .title-line:last-child,
+#process .section-head-title .title-line:last-child {
+  grid-area: line2;
 }
 
 @media (max-width: 720px) {
   #capabilities .section-head,
   #process .section-head {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
-    grid-template-areas:
-      "eyebrow"
-      "title"
-      "lead";
+    column-gap: clamp(16px, 4vw, 24px);
+    row-gap: 12px;
   }
 
   #capabilities .section-lead--side,
   #process .section-lead--side {
-    grid-area: lead;
     max-width: none;
   }
 }
 
 .card-grid {
-  margin-top: 36px;
+  margin-top: var(--section-content-gap);
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   gap: 18px;
@@ -2467,7 +2474,7 @@ h2.section-title--hero-font {
 }
 
 .rail-head {
-  padding: 0 clamp(20px, 6vw, 90px) 32px
+  padding: 0 clamp(20px, 6vw, 90px) calc(var(--section-content-gap) - 20px)
     max(clamp(20px, 6vw, 90px), var(--nav-content-offset-rail));
   display: flex;
   align-items: flex-end;
@@ -2733,31 +2740,60 @@ h2.section-title--hero-font {
 }
 
 .process-grid {
-  margin-top: 32px;
+  margin-top: var(--section-content-gap);
   display: grid;
-  gap: 16px;
+  gap: 20px;
 }
 
 .process-card {
   --process-scan: 0;
   --process-glow: 0;
+  --process-hover: 0;
+  --process-sheen: 0;
   display: grid;
-  grid-template-columns: 80px 1fr;
-  gap: 20px;
+  grid-template-columns: 86px 1fr;
+  gap: 22px;
   align-items: center;
-  padding: 20px 24px;
-  border-radius: 20px;
+  padding: 22px 28px;
+  border-radius: 22px;
   border: 1px solid
-    rgba(247, 247, 242, calc(0.15 + var(--process-glow) * 0.2));
-  background: rgba(15, 15, 15, 0.88);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.4),
-    0 0 calc(34px * var(--process-glow))
-      rgba(198, 222, 255, calc(0.05 + var(--process-glow) * 0.2));
+    rgba(247, 247, 242, calc(0.12 + var(--process-glow) * 0.24));
+  background: linear-gradient(
+      130deg,
+      rgba(255, 255, 255, calc(0.05 + var(--process-hover) * 0.06)),
+      rgba(255, 255, 255, 0) 48%
+    ),
+    rgba(12, 12, 12, 0.92);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.42),
+    0 0 calc(36px * var(--process-glow))
+      rgba(198, 222, 255, calc(0.06 + var(--process-glow) * 0.24));
   position: relative;
   overflow: hidden;
   transform-style: preserve-3d;
   backface-visibility: hidden;
+  transition: border-color 0.35s ease, box-shadow 0.35s ease,
+    transform 0.35s ease, background-color 0.35s ease;
   will-change: transform, box-shadow, border-color;
+}
+
+.process-card::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  opacity: calc(0.08 + var(--process-hover) * 0.32);
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  background-size: 220% 100%;
+  background-position: calc(120% - var(--process-sheen) * 220%) 0;
+  mix-blend-mode: screen;
+  animation: processCardSheen 6s linear infinite;
 }
 
 .process-card::after {
@@ -2774,7 +2810,7 @@ h2.section-title--hero-font {
     rgba(247, 247, 242, 0.86),
     rgba(247, 247, 242, 0.12)
   );
-  opacity: calc(0.16 + var(--process-scan) * 0.84);
+  opacity: calc(0.2 + var(--process-scan) * 0.8);
   transform: scaleY(calc(0.28 + var(--process-scan) * 0.72));
   transform-origin: top;
   box-shadow: 0 0 calc(18px * var(--process-scan))
@@ -2784,8 +2820,21 @@ h2.section-title--hero-font {
 
 .process-card span {
   font-family: var(--font-heading), "Bodoni Moda", serif;
-  font-size: 1.4rem;
-  color: var(--accent-2);
+  font-size: 1.1rem;
+  letter-spacing: 0.18em;
+  color: rgba(247, 247, 242, 0.82);
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(247, 247, 242, 0.16);
+  background: rgba(10, 10, 10, 0.6);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 16px rgba(198, 222, 255, 0.12);
+  transition: transform 0.35s ease, box-shadow 0.35s ease,
+    border-color 0.35s ease;
 }
 
 .process-card h3 {
@@ -2796,6 +2845,39 @@ h2.section-title--hero-font {
 .process-card p {
   margin: 0;
   color: var(--muted);
+}
+
+@media (pointer: fine) {
+  .process-card:hover {
+    --process-hover: 1;
+    --process-sheen: 1;
+    border-color: rgba(247, 247, 242, 0.28);
+    transform: translateY(-4px);
+    box-shadow: 0 26px 50px rgba(0, 0, 0, 0.46),
+      0 0 48px rgba(198, 222, 255, 0.18);
+  }
+
+  .process-card:hover span {
+    border-color: rgba(247, 247, 242, 0.32);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+      0 0 22px rgba(198, 222, 255, 0.22);
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes processCardSheen {
+  0% {
+    opacity: 0.08;
+  }
+  30% {
+    opacity: 0.16;
+  }
+  60% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 0.08;
+  }
 }
 
 .split {
@@ -3146,6 +3228,10 @@ h2.section-title--hero-font {
 
   .rail-card::after,
   .card::after {
+    animation: none !important;
+  }
+
+  .process-card::before {
     animation: none !important;
   }
 
