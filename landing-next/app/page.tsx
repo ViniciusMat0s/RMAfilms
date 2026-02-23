@@ -1214,6 +1214,11 @@ export default function Home() {
         </nav>
       </header>
 
+      <a className="hud-contact-button magnetic" href="#contact">
+        <span className="hud-contact-button-dot" aria-hidden="true" />
+        Entre em contato
+      </a>
+
       <main>
         <section className="hero hero--statement" id="top">
           <div className="hero-stage">
@@ -1254,10 +1259,6 @@ export default function Home() {
                 HD 2K 4K 6K FPS60<br />3840x2160<br />1h30m
               </div>
             </div>
-            <a className="hud-contact-button magnetic" href="#contact">
-              <span className="hud-contact-button-dot" aria-hidden="true" />
-              Entre em contato
-            </a>
             <div className="hero-grid">
               <h1 className="hero-text">
                 <span className="hero-main-block">

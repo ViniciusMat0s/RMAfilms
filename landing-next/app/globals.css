@@ -344,11 +344,14 @@ main {
   -webkit-backdrop-filter: blur(4px);
   transition: transform 0.22s ease, border-color 0.22s ease,
     background-color 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
-  position: absolute;
-  top: var(--hud-rec-top);
-  left: var(--hud-rec-left);
+  position: fixed;
+  top: calc(
+    env(safe-area-inset-top, 0px) + clamp(16px, 2.4vw, 32px) +
+      clamp(10px, 1.6vw, 16px)
+  );
+  left: calc(env(safe-area-inset-left, 0px) + clamp(14px, 2.4vw, 36px) + 48px);
   right: auto;
-  z-index: 5;
+  z-index: 54;
   pointer-events: auto;
   filter: drop-shadow(0 0 14px rgba(180, 210, 255, 0.34));
   animation: hudCtaAttention 3.4s ease-in-out infinite,
@@ -469,7 +472,7 @@ main {
   padding: 0;
   border-radius: 0;
   overflow: hidden;
-  contain: layout paint style;
+  contain: none;
   background: radial-gradient(
       920px circle at 76% 68%,
       rgba(122, 153, 191, 0.16),
@@ -1389,9 +1392,12 @@ main {
 
 @media (pointer: fine) {
   .hero-stage .hero-word,
-  .hero-stage .hero-main-word:not(.hero-highlight--glitch),
-  .hero-stage .hud-contact-button {
+  .hero-stage .hero-main-word:not(.hero-highlight--glitch) {
     position: relative;
+    isolation: isolate;
+  }
+
+  .hud-contact-button {
     isolation: isolate;
   }
 
@@ -1492,7 +1498,7 @@ main {
     animation-play-state: running;
   }
 
-  .hero-stage .hud-contact-button:hover {
+  .hud-contact-button:hover {
     animation: heroTvFlicker 0.46s steps(2, end) infinite;
   }
 }
@@ -2594,6 +2600,11 @@ h2.section-title--hero-font {
     min-height: 44px;
     font-size: 0.66rem;
     letter-spacing: 0.09em;
+    top: calc(
+      env(safe-area-inset-top, 0px) + clamp(10px, 4vw, 16px) +
+        clamp(10px, 1.6vw, 16px)
+    );
+    left: calc(env(safe-area-inset-left, 0px) + clamp(10px, 4vw, 16px) + 48px);
   }
 
   .hud-time,
