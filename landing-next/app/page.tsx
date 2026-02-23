@@ -1565,11 +1565,18 @@ export default function Home() {
                 Projetos em destaque
               </p>
               <h2 className="rail-title section-title-cinematic section-title-cinematic--work" data-title-fx>
-                <span className="title-line">N&Atilde;O &Eacute; S&Oacute; V&Iacute;DEO.</span>
+                <span className="title-line">N&atilde;o &eacute; s&oacute; v&iacute;deo.</span>
                 <span className="title-line">
-                  &Eacute; <em>POSICIONAMENTO</em>
+                  &Eacute;&nbsp;<em>POSICIONAMENTO</em>
                 </span>
-                <span className="title-line">EM MOVIMENTO.</span>
+                <span className="title-line">
+                  <span className="title-line-lock">
+                    EM{" "}
+                    <span className="title-glitch" data-text="MOVIMENTO">
+                      MOVIMENTO
+                    </span>
+                  </span>
+                </span>
               </h2>
             </div>
             <p className="section-lead" data-reveal="right">

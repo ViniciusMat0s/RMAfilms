@@ -1860,6 +1860,54 @@ main {
   }
 }
 
+@keyframes titleGlitchShift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.34;
+  }
+  16% {
+    transform: translate3d(-0.022em, 0.01em, 0);
+    opacity: 0.62;
+  }
+  32% {
+    transform: translate3d(0.02em, -0.009em, 0);
+    opacity: 0.58;
+  }
+  48% {
+    transform: translate3d(-0.018em, 0.008em, 0);
+    opacity: 0.6;
+  }
+  64% {
+    transform: translate3d(0.022em, -0.01em, 0);
+    opacity: 0.66;
+  }
+  80% {
+    transform: translate3d(-0.02em, 0.008em, 0);
+    opacity: 0.56;
+  }
+}
+
+@keyframes titleGlitchFlicker {
+  0%,
+  100% {
+    text-shadow: -0.026em 0 rgba(123, 196, 255, 0.34),
+      0.026em 0 rgba(255, 86, 108, 0.32);
+  }
+  24% {
+    text-shadow: -0.038em 0 rgba(123, 196, 255, 0.5),
+      0.038em 0 rgba(255, 86, 108, 0.46);
+  }
+  52% {
+    text-shadow: -0.022em 0 rgba(123, 196, 255, 0.28),
+      0.022em 0 rgba(255, 86, 108, 0.26);
+  }
+  76% {
+    text-shadow: -0.034em 0 rgba(123, 196, 255, 0.42),
+      0.034em 0 rgba(255, 86, 108, 0.38);
+  }
+}
+
 @keyframes hudDotPulse {
   0%,
   100% {
@@ -2149,6 +2197,44 @@ h2.section-title--hero-font {
   box-shadow: none;
   transform-origin: 0 50%;
   will-change: transform, opacity, filter;
+}
+
+.section-title-cinematic .title-line-lock {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.18em;
+  white-space: nowrap;
+}
+
+.title-glitch {
+  position: relative;
+  display: inline-block;
+  letter-spacing: inherit;
+  isolation: isolate;
+  animation: titleGlitchFlicker 2.8s steps(2, end) infinite;
+}
+
+.title-glitch::before,
+.title-glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.62;
+  mix-blend-mode: screen;
+  filter: blur(0.1px);
+}
+
+.title-glitch::before {
+  color: rgba(123, 196, 255, 0.8);
+  text-shadow: 0 0 12px rgba(123, 196, 255, 0.34);
+  animation: titleGlitchShift 2.4s steps(2, end) infinite;
+}
+
+.title-glitch::after {
+  color: rgba(255, 86, 108, 0.75);
+  text-shadow: 0 0 12px rgba(255, 86, 108, 0.3);
+  animation: titleGlitchShift 2.6s steps(2, end) infinite reverse;
 }
 
 .section-title-cinematic > * {
@@ -3014,6 +3100,17 @@ h2.section-title--hero-font {
 
   .section-title-cinematic::before {
     animation: none !important;
+  }
+
+  .title-glitch {
+    animation: none !important;
+  }
+
+  .title-glitch::before,
+  .title-glitch::after {
+    animation: none !important;
+    opacity: 0.2 !important;
+    transform: translate3d(0.01em, 0, 0) !important;
   }
 
   .hero-highlight-label,
