@@ -2126,33 +2126,27 @@ h2.section-title--hero-font {
   letter-spacing: clamp(0.03em, 0.18vw, 0.06em);
   text-transform: uppercase;
   color: rgba(247, 247, 242, 0.96);
-  text-shadow: 0 0 calc(22px * var(--title-glow))
-    rgba(198, 222, 255, calc(0.08 + var(--title-glow) * 0.24));
+  text-shadow: none;
+  background: none;
+  box-shadow: none;
+  mix-blend-mode: normal;
   position: relative;
   isolation: isolate;
 }
 
-.section-title-cinematic::before {
-  content: "";
-  position: absolute;
-  inset: -0.08em -0.04em;
-  pointer-events: none;
-  z-index: 1;
-  opacity: calc(0.02 + var(--title-scan) * 0.22);
-  mix-blend-mode: screen;
-  background-image: repeating-linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.24) 0,
-    rgba(255, 255, 255, 0.24) 1px,
-    rgba(255, 255, 255, 0) 1px,
-    rgba(255, 255, 255, 0) 3px
-  );
-  background-size: 100% 220%;
-  animation: heroTvScan 0.18s linear infinite;
+.section-title-cinematic::before,
+.section-title-cinematic::after,
+.section-title-cinematic .title-line::before,
+.section-title-cinematic .title-line::after {
+  content: none !important;
+  background: none !important;
+  box-shadow: none !important;
 }
 
 .section-title-cinematic .title-line {
   display: block;
+  background: none;
+  box-shadow: none;
   transform-origin: 0 50%;
   will-change: transform, opacity, filter;
 }
