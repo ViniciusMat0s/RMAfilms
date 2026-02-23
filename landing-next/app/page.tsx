@@ -61,6 +61,48 @@ const projects = [
       "Peças para campanhas e eventos que unem identidade visual, clareza de mensagem e impacto.",
     stats: ["roteiro objetivo", "motion e design", "consistência multicanal"],
   },
+  {
+    tag: "Varejo",
+    title: "Experiências de Marca",
+    copy:
+      "Conteúdo para lançamentos e ativações que reforçam identidade e elevam desejo pelo produto.",
+    stats: ["captação ágil", "recortes para social", "aumento de tráfego"],
+  },
+  {
+    tag: "Institucional",
+    title: "Visão de Futuro",
+    copy:
+      "Filme manifesto para traduzir propósito e liderança com direção de arte precisa.",
+    stats: ["narrativa autoral", "linguagem premium", "posicionamento sólido"],
+  },
+  {
+    tag: "Evento Corporativo",
+    title: "Conexões em Movimento",
+    copy:
+      "Cobertura completa com ritmo cinematográfico e material pronto para comunicação interna e externa.",
+    stats: ["entrega rápida", "highlight principal", "reaproveitamento inteligente"],
+  },
+  {
+    tag: "Educacional",
+    title: "Formação que Inspira",
+    copy:
+      "Conteúdo audiovisual para cursos e programas que precisam clareza, ritmo e retenção.",
+    stats: ["roteiro didático", "captação em estúdio", "conteúdo modular"],
+  },
+  {
+    tag: "Saúde",
+    title: "Cuidado em Evidência",
+    copy:
+      "Histórias reais e depoimentos que fortalecem confiança e humanizam a marca.",
+    stats: ["entrevistas guiadas", "tratamento sensível", "credibilidade"],
+  },
+  {
+    tag: "Governo",
+    title: "Impacto Público",
+    copy:
+      "Séries informativas para comunicar ações, resultados e prestação de contas.",
+    stats: ["linguagem acessível", "captação institucional", "alcance regional"],
+  },
 ];
 
 const process = [
@@ -1121,7 +1163,8 @@ export default function Home() {
       const railTrack = railRef.current;
       if (railTrack) {
         const getScrollDistance = () =>
-          railTrack.scrollWidth - window.innerWidth + 120;
+          Math.max(0, railTrack.scrollWidth - window.innerWidth + 120);
+        const railSpeed = 0.6;
 
         const railTween = gsap.to(railTrack, {
           x: () => -getScrollDistance(),
@@ -1129,10 +1172,11 @@ export default function Home() {
           scrollTrigger: {
             trigger: ".rail-section",
             start: "top top",
-            end: () => `+=${railTrack.scrollWidth}`,
-            scrub: 0.6,
+            end: () => `+=${getScrollDistance() * railSpeed}`,
+            scrub: 0.5,
             pin: true,
             anticipatePin: 1,
+            invalidateOnRefresh: true,
           },
         });
 
@@ -1144,39 +1188,36 @@ export default function Home() {
               transformOrigin: "50% 50%",
             });
 
-            gsap.fromTo(
-              card,
-              {
-                scale: 0.88,
-                rotateY: index % 2 === 0 ? -7 : 7,
-                "--rail-focus": 0.14,
-              },
-              {
-                scale: 1,
-                rotateY: 0,
-                "--rail-focus": 1,
-                ease: "none",
-                scrollTrigger: {
-                  trigger: card,
-                  containerAnimation: railTween,
-                  start: "left 82%",
-                  end: "center center",
-                  scrub: 0.5,
-                },
-              }
-            );
-
             gsap.to(card, {
-              scale: 0.9,
-              rotateY: index % 2 === 0 ? 6 : -6,
-              "--rail-focus": 0.2,
-              ease: "none",
+              keyframes: [
+                {
+                  scale: 0.92,
+                  rotateY: index % 2 === 0 ? -6 : 6,
+                  "--rail-focus": 0.28,
+                  duration: 0.28,
+                  ease: "power2.out",
+                },
+                {
+                  scale: 1,
+                  rotateY: 0,
+                  "--rail-focus": 1,
+                  duration: 0.44,
+                  ease: "power2.inOut",
+                },
+                {
+                  scale: 0.92,
+                  rotateY: index % 2 === 0 ? 6 : -6,
+                  "--rail-focus": 0.28,
+                  duration: 0.28,
+                  ease: "power2.in",
+                },
+              ],
               scrollTrigger: {
                 trigger: card,
                 containerAnimation: railTween,
-                start: "center center",
-                end: "right 18%",
-                scrub: 0.5,
+                start: "left 90%",
+                end: "right 10%",
+                scrub: 0.65,
               },
             });
           });
