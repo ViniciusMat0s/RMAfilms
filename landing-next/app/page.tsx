@@ -1822,11 +1822,11 @@ export default function Home() {
                     <img src={member.photo} alt={member.name} loading="lazy" />
                   ) : null}
                   <span aria-hidden="true">{member.initials}</span>
-                </div>
-                <div className="team-meta">
-                  <p className="team-role">{member.role}</p>
-                  <h3>{member.name}</h3>
-                  <p className="team-bio">{member.bio}</p>
+                  <div className="team-meta">
+                    <p className="team-role">{member.role}</p>
+                    <h3>{member.name}</h3>
+                    <p className="team-bio">{member.bio}</p>
+                  </div>
                 </div>
               </article>
             ))}
