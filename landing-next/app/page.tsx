@@ -1736,6 +1736,7 @@ export default function Home() {
         </section>
 
         <section className="section section--cinematic" id="team">
+          <div className="section-flare section-flare--team" aria-hidden="true" />
           <div className="section-head">
             <h2
               className="section-title--hero-font section-title-cinematic section-title-cinematic--work"
