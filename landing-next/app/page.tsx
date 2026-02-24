@@ -569,6 +569,21 @@ export default function Home() {
           });
         });
 
+        const roadmapSteps = gsap.utils.toArray<HTMLElement>(".roadmap-step");
+        roadmapSteps.forEach((step) => {
+          gsap.set(step, { "--step-focus": 0 });
+          ScrollTrigger.create({
+            trigger: step,
+            start: "top 80%",
+            end: "bottom 20%",
+            scrub: true,
+            onUpdate: (self) => {
+              const focus = 1 - Math.abs(self.progress * 2 - 1);
+              step.style.setProperty("--step-focus", focus.toFixed(3));
+            },
+          });
+        });
+
         const roadmapTrack =
           rootRef.current?.querySelector<HTMLElement>(".process-roadmap") ?? null;
         if (roadmapTrack) {
@@ -1739,6 +1754,7 @@ export default function Home() {
             </p>
           </div>
           <div className="process-roadmap" data-stagger>
+            <div className="roadmap-orb" aria-hidden="true" />
             {process.map((step, index) => (
               <div
                 className={`roadmap-step ${index % 2 === 0 ? "is-left" : "is-right"}`}
