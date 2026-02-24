@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
@@ -209,7 +209,6 @@ export default function Home() {
     let onHeroLeave: (() => void) | null = null;
     let onHeroLayoutRefresh: (() => void) | null = null;
     let onNavProgressRefresh: (() => void) | null = null;
-    let capabilityHoverCleanups: Array<() => void> = [];
     let teamHoverCleanups: Array<() => void> = [];
     let recordingTimerId: ReturnType<typeof setInterval> | null = null;
     const pad2 = (value: number) => String(value).padStart(2, "0");
@@ -322,6 +321,7 @@ export default function Home() {
         );
 
         cinematicSections.forEach((section, index) => {
+          if (section.id === "capabilities") return;
           gsap.set(section, {
             transformPerspective: 1000,
             transformOrigin: "50% 50%",
@@ -449,132 +449,68 @@ export default function Home() {
           }
         });
 
-        const capabilityCards = gsap.utils.toArray<HTMLElement>(".card-grid .card");
-        if (capabilityCards.length) {
-          gsap.set(capabilityCards, {
-            transformPerspective: 980,
-            transformOrigin: "50% 62%",
-            autoAlpha: 0,
-            y: 72,
-            rotateX: (index: number) => (index % 2 === 0 ? 12 : -12),
-            rotateY: (index: number) => (index % 2 === 0 ? -10 : 10),
-            scale: 0.88,
-            filter: "blur(8px)",
-            clipPath: "inset(0 0 100% 0 round 22px)",
-            "--card-reveal": 0,
-            "--card-glow": 0.08,
-            "--card-hover": 0,
-            "--card-tilt-x": 0,
-            "--card-tilt-y": 0,
-            "--card-mx": 50,
-            "--card-my": 50,
+        const capabilityRows = gsap.utils.toArray<HTMLElement>(".capability-row");
+        if (capabilityRows.length) {
+          gsap.set(capabilityRows, {
+            "--row-progress": 0,
           });
 
-          const capabilityTimeline = gsap.timeline({
-            scrollTrigger: {
-              trigger: "#capabilities",
-              start: "top 78%",
-              end: "top 30%",
-              scrub: 0.58,
-            },
-          });
-
-          capabilityTimeline.to(
-            capabilityCards,
+          gsap.fromTo(
+            capabilityRows,
+            { autoAlpha: 0 },
             {
               autoAlpha: 1,
-              y: 0,
-              rotateX: 0,
-              rotateY: 0,
-              scale: 1,
-              filter: "blur(0px)",
-              clipPath: "inset(0 0 0% 0 round 22px)",
-              "--card-reveal": 1,
-              "--card-glow": 0.92,
+              duration: 0.9,
               ease: "power3.out",
-              stagger: {
-                each: 0.14,
-                from: "start",
+              stagger: 0.12,
+              scrollTrigger: {
+                trigger: "#capabilities",
+                start: "top 82%",
               },
-            },
-            0
+            }
           );
 
-          capabilityTimeline.to(
-            capabilityCards,
-            {
-              y: -10,
-              scale: 0.985,
-              rotateX: -3,
-              "--card-glow": 0.26,
-              ease: "none",
-              stagger: {
-                each: 0.08,
-                from: "start",
+          const capabilityStack =
+            rootRef.current?.querySelector<HTMLElement>(".capabilities-stack");
+          if (capabilityStack) {
+            const clearActive = () => {
+              capabilityRows.forEach((row) => row.classList.remove("is-active"));
+            };
+
+            const focusTrigger = ScrollTrigger.create({
+              trigger: capabilityStack,
+              start: "top 70%",
+              end: "bottom 30%",
+              onUpdate: (self) => {
+                const count = capabilityRows.length;
+                if (!count) return;
+                const index = Math.round(self.progress * (count - 1));
+                capabilityRows.forEach((row, rowIndex) => {
+                  row.classList.toggle("is-active", rowIndex === index);
+                });
               },
-            },
-            0.66
-          );
-
-          if (window.matchMedia("(pointer: fine)").matches) {
-            capabilityCards.forEach((card) => {
-              const setHover = gsap.quickTo(card, "--card-hover", {
-                duration: 0.22,
-                ease: "power2.out",
-              });
-              const setTiltX = gsap.quickTo(card, "--card-tilt-x", {
-                duration: 0.24,
-                ease: "power2.out",
-              });
-              const setTiltY = gsap.quickTo(card, "--card-tilt-y", {
-                duration: 0.24,
-                ease: "power2.out",
-              });
-              const setMx = gsap.quickTo(card, "--card-mx", {
-                duration: 0.22,
-                ease: "power2.out",
-              });
-              const setMy = gsap.quickTo(card, "--card-my", {
-                duration: 0.22,
-                ease: "power2.out",
-              });
-
-              const onMove = (event: MouseEvent) => {
-                const bounds = card.getBoundingClientRect();
-                const nx = gsap.utils.clamp(
-                  0,
-                  1,
-                  (event.clientX - bounds.left) / Math.max(bounds.width, 1)
-                );
-                const ny = gsap.utils.clamp(
-                  0,
-                  1,
-                  (event.clientY - bounds.top) / Math.max(bounds.height, 1)
-                );
-
-                setHover(1);
-                setMx(nx * 100);
-                setMy(ny * 100);
-                setTiltY((nx - 0.5) * 7.6);
-                setTiltX((0.5 - ny) * 6.4);
-              };
-
-              const onLeave = () => {
-                setHover(0);
-                setTiltX(0);
-                setTiltY(0);
-                setMx(50);
-                setMy(50);
-              };
-
-              card.addEventListener("mousemove", onMove);
-              card.addEventListener("mouseleave", onLeave);
-              capabilityHoverCleanups.push(() => {
-                card.removeEventListener("mousemove", onMove);
-                card.removeEventListener("mouseleave", onLeave);
-              });
+              onLeave: clearActive,
+              onLeaveBack: clearActive,
             });
+
+            focusTrigger?.vars?.onUpdate?.(focusTrigger);
           }
+
+          capabilityRows.forEach((row, index) => {
+            const nextRow = capabilityRows[index + 1];
+            if (nextRow) {
+              gsap.to(row, {
+                "--row-progress": 1,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: nextRow,
+                  start: "top 74%",
+                  end: "top 36%",
+                  scrub: 0.9,
+                },
+              });
+            }
+          });
         }
 
         const processCards = gsap.utils.toArray<HTMLElement>(".process-card");
@@ -1467,8 +1403,6 @@ export default function Home() {
     }, rootRef);
 
     return () => {
-      capabilityHoverCleanups.forEach((cleanup) => cleanup());
-      capabilityHoverCleanups = [];
       teamHoverCleanups.forEach((cleanup) => cleanup());
       teamHoverCleanups = [];
       if (updateFilmStrip) {
@@ -1672,6 +1606,7 @@ export default function Home() {
         </div>
 
         <section className="section section--cinematic" id="capabilities">
+          <div className="capabilities-bg" aria-hidden="true" />
           <div className="section-head section-head--split">
             <p className="eyebrow section-head-eyebrow" data-reveal="left">
               Capacidades
@@ -1692,20 +1627,28 @@ export default function Home() {
               constante para transformar imagem em posicionamento e resultado.
             </p>
           </div>
-          <div className="card-grid">
-            {capabilities.map((card) => (
-              <article className="card" key={card.title} data-card-id={card.label}>
-                <span className="card-ghost" aria-hidden="true">
+          <div className="capabilities-stack">
+            {capabilities.map((card, index) => (
+              <article
+                className="capability-row"
+                key={card.title}
+                data-card-id={card.label}
+                style={{ "--stack-index": index } as CSSProperties}
+              >
+                <div className="capability-title">
+                  <h3>{card.title}</h3>
+                </div>
+                <div className="capability-body">
+                  <p>{card.copy}</p>
+                  <ul className="capability-signals">
+                    {card.signals.map((signal) => (
+                      <li key={signal}>{signal}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="capability-number" aria-hidden="true">
                   {card.label}
-                </span>
-                <span className="card-label">{card.label}</span>
-                <h3>{card.title}</h3>
-                <p>{card.copy}</p>
-                <ul className="card-signals">
-                  {card.signals.map((signal) => (
-                    <li key={signal}>{signal}</li>
-                  ))}
-                </ul>
+                </div>
               </article>
             ))}
           </div>
