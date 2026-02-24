@@ -351,6 +351,9 @@ export default function Home() {
         sectionTitles.forEach((title) => {
           const lines = gsap.utils.toArray<HTMLElement>(".title-line", title);
           const accent = title.querySelector<HTMLElement>("em");
+          const titleTrigger =
+            title.closest<HTMLElement>(".section-head, .rail-head, .cta-inner") ??
+            title;
           const isWorkTitle = title.classList.contains(
             "section-title-cinematic--work"
           );
@@ -374,7 +377,7 @@ export default function Home() {
 
           const titleTimeline = gsap.timeline({
             scrollTrigger: {
-              trigger: title,
+              trigger: titleTrigger,
               start: isWorkTitle ? "top 88%" : "top 90%",
               end: isWorkTitle ? "top 28%" : "top 44%",
               scrub: isWorkTitle ? 0.68 : 0.56,
