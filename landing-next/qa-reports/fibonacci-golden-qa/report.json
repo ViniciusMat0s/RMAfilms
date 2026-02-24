@@ -1,0 +1,177 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "generatedAt": "2026-02-24T03:52:56.548Z",
+  "viewports": [
+    {
+      "id": "desktop",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "media": {
+        "max1097": false,
+        "max987": false,
+        "max610": false,
+        "maxH754": false
+      },
+      "tokens": {
+        "phi": "1.61803",
+        "fib": [
+          "5px",
+          "8px",
+          "13px",
+          "21px",
+          "34px",
+          "55px",
+          "89px",
+          "144px",
+          "233px"
+        ]
+      },
+      "capabilities": {
+        "eyebrowText": "Capacidades",
+        "titleVisible": false,
+        "sectionHeadGridCols": "841.047px 756.938px",
+        "colRatio": 1.111,
+        "colRatioPhiErrorPct": 31.33,
+        "contentRatio": null,
+        "contentRatioPhiErrorPct": null
+      },
+      "team": {
+        "cards": 4,
+        "gridCols": "396.25px 396.25px 396.25px 396.25px",
+        "computedColCount": 4,
+        "rows": [
+          {
+            "top": 294,
+            "cards": [
+              1,
+              2,
+              3,
+              4
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "tablet",
+      "viewport": {
+        "width": 1024,
+        "height": 1366
+      },
+      "media": {
+        "max1097": true,
+        "max987": false,
+        "max610": false,
+        "maxH754": false
+      },
+      "tokens": {
+        "phi": "1.61803",
+        "fib": [
+          "5px",
+          "8px",
+          "13px",
+          "21px",
+          "34px",
+          "55px",
+          "89px",
+          "144px",
+          "233px"
+        ]
+      },
+      "capabilities": {
+        "eyebrowText": "Capacidades",
+        "titleVisible": false,
+        "sectionHeadGridCols": "421.609px 379.453px",
+        "colRatio": 1.111,
+        "colRatioPhiErrorPct": 31.33,
+        "contentRatio": null,
+        "contentRatioPhiErrorPct": null
+      },
+      "team": {
+        "cards": 4,
+        "gridCols": "198.266px 198.266px 198.266px 198.281px",
+        "computedColCount": 4,
+        "rows": [
+          {
+            "top": 499,
+            "cards": [
+              1,
+              2,
+              3,
+              4
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "mobile",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "media": {
+        "max1097": true,
+        "max987": true,
+        "max610": true,
+        "maxH754": false
+      },
+      "tokens": {
+        "phi": "1.61803",
+        "fib": [
+          "5px",
+          "8px",
+          "13px",
+          "21px",
+          "34px",
+          "55px",
+          "89px",
+          "144px",
+          "233px"
+        ]
+      },
+      "capabilities": {
+        "eyebrowText": "Capacidades",
+        "titleVisible": false,
+        "sectionHeadGridCols": "157.156px 141.438px",
+        "colRatio": 1.111,
+        "colRatioPhiErrorPct": 31.33,
+        "contentRatio": null,
+        "contentRatioPhiErrorPct": null
+      },
+      "team": {
+        "cards": 4,
+        "gridCols": "311.609px",
+        "computedColCount": 1,
+        "rows": [
+          {
+            "top": -614,
+            "cards": [
+              1
+            ]
+          },
+          {
+            "top": -65,
+            "cards": [
+              2
+            ]
+          },
+          {
+            "top": 483,
+            "cards": [
+              3
+            ]
+          },
+          {
+            "top": 1007,
+            "cards": [
+              4
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

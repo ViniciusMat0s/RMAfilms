@@ -60,6 +60,9 @@
   --title-size-work: clamp(2.236rem, 5vw, 5.236rem);
   --title-size-cta: clamp(1.618rem, 3.6vw, 3.236rem);
   --title-size-team: clamp(2rem, 4.2vw, 4.236rem);
+
+  --golden-col-wide: 1.618fr;
+  --golden-col-narrow: 1fr;
 }
 
 * {
@@ -1012,7 +1015,8 @@ main {
 .hero-grid {
   width: 100%;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(144px, 377px);
+  grid-template-columns: minmax(0, var(--golden-col-wide))
+    minmax(var(--fib-5), var(--golden-col-narrow));
   gap: clamp(var(--fib-4), 6vw, var(--fib-7));
   align-items: stretch;
   position: relative;
@@ -2341,7 +2345,8 @@ h2.section-title--hero-font {
 #capabilities .section-head,
 #process .section-head {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  grid-template-columns: minmax(0, var(--golden-col-wide))
+    minmax(0, var(--golden-col-narrow));
   grid-template-rows: auto auto auto;
   grid-template-areas:
     "eyebrow ."
@@ -2977,7 +2982,8 @@ h2.section-title--hero-font {
 #team .section-head {
   max-width: none;
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  grid-template-columns: minmax(0, var(--golden-col-wide))
+    minmax(0, var(--golden-col-narrow));
   grid-template-areas:
     "eyebrow ."
     "title lead";
