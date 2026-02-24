@@ -157,6 +157,14 @@ const teamMembers = [
     initials: "RN",
     photo: "/team/robson.jpeg",
   },
+  {
+    name: "Vinícius Matos",
+    role: "Software & IA Engineer",
+    bio:
+      "Especialista na criação de páginas e sistemas de alto padrão, lidera o desenvolvimento do código ao deploy. Responsável por arquiteturas avançadas e infraestruturas complexas, convertendo desafios técnicos em soluções criativas e de alta performance.",
+    initials: "VM",
+    photo: "/team/vinicius.jpeg",
+  },
 ];
 
 const navSections = [
