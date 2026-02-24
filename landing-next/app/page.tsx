@@ -569,6 +569,22 @@ export default function Home() {
           });
         });
 
+        const roadmapTrack =
+          rootRef.current?.querySelector<HTMLElement>(".process-roadmap") ?? null;
+        if (roadmapTrack) {
+          gsap.set(roadmapTrack, { "--roadmap-progress": 0 });
+          gsap.to(roadmapTrack, {
+            "--roadmap-progress": 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: roadmapTrack,
+              start: "top 80%",
+              end: "bottom 30%",
+              scrub: 0.6,
+            },
+          });
+        }
+
         const teamCards = gsap.utils.toArray<HTMLElement>(".team-card");
         if (teamCards.length && window.matchMedia("(pointer: fine)").matches) {
           teamCards.forEach((card) => {
@@ -1722,15 +1738,21 @@ export default function Home() {
               conteúdo que gera percepção de valor.
             </p>
           </div>
-          <div className="process-grid" data-stagger>
-            {process.map((step) => (
-              <article className="process-card" key={step.step} data-stagger-item>
-                <span>{step.step}</span>
-                <div>
+          <div className="process-roadmap" data-stagger>
+            {process.map((step, index) => (
+              <div
+                className={`roadmap-step ${index % 2 === 0 ? "is-left" : "is-right"}`}
+                key={step.step}
+                data-stagger-item
+                style={{ "--roadmap-index": index } as CSSProperties}
+              >
+                <article className="process-card roadmap-card" data-step={step.step}>
+                  <span className="roadmap-kicker">ETAPA</span>
                   <h3>{step.title}</h3>
                   <p>{step.copy}</p>
-                </div>
-              </article>
+                </article>
+                <div className="roadmap-node" aria-hidden="true" />
+              </div>
             ))}
           </div>
         </section>
