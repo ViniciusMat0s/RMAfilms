@@ -1784,17 +1784,26 @@ export default function Home() {
             <p className="eyebrow" data-reveal="left">
               Equipe
             </p>
-            <h2 className="section-title--hero-font section-title-cinematic" data-title-fx>
+            <h2
+              className="section-title--hero-font section-title-cinematic section-title-cinematic--work"
+              data-title-fx
+            >
               <span className="title-line">
                 PESSOAS POR TR&Aacute;S
               </span>
               <span className="title-line">
-                DA DIRE&Ccedil;&Atilde;O.
+                DA{" "}
+                <em>
+                  <span className="title-glitch" data-text="DIRE&Ccedil;&Atilde;O">
+                    DIRE&Ccedil;&Atilde;O
+                  </span>
+                </em>
+                .
               </span>
             </h2>
             <p className="section-lead" data-reveal="right">
-              Tr&ecirc;s perfis complementares para criar filmes que unem dire&ccedil;&atilde;o,
-              execu&ccedil;&atilde;o precisa e resultado de marca.
+              Uma equipe de alto n&iacute;vel que une dire&ccedil;&atilde;o, execu&ccedil;&atilde;o
+              precisa e resultado de marca.
             </p>
           </div>
           <div className="team-grid" data-stagger>

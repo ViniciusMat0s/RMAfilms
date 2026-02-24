@@ -2491,7 +2491,7 @@ h2.section-title--hero-font {
   display: block;
 }
 
-.rail-title em {
+.section-title-cinematic--work em {
   --title-accent: 0;
   font-style: normal;
   font-family: var(--font-bierika), var(--font-heading), "Bodoni Moda", serif;
