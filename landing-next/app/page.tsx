@@ -1216,9 +1216,9 @@ export default function Home() {
         const railTween = gsap.to(railTrack, {
           x: () => -getScrollDistance(),
           ease: "none",
-          scrollTrigger: {
-            trigger: ".rail-section",
-            start: "top -12%",
+            scrollTrigger: {
+              trigger: ".rail-section",
+            start: "top -6%",
             end: () => `+=${getScrollDistance() * railSpeed}`,
             scrub: 0.5,
             pin: true,
@@ -1631,9 +1631,9 @@ export default function Home() {
                 QUE POSICIONA MARCAS.
               </span>
             </h2>
-            <p className="section-lead section-lead--side" data-reveal="right">
-              A RMA FILMS nasceu da prática real: iniciativa, visão e evolução
-              constante para transformar imagem em posicionamento e resultado.
+            <p className="section-lead section-lead--aux" data-reveal="right">
+              Iniciativa, visão e evolução constante para transformar imagem em
+              posicionamento e resultado.
             </p>
           </div>
           <div className="capabilities-stack">
@@ -1681,11 +1681,6 @@ export default function Home() {
                 </span>
               </h2>
             </div>
-            <p className="section-lead" data-reveal="right">
-              Da comunicação pública ao mercado imobiliário, cada projeto foi
-              desenhado para gerar percepção de valor, presença e lembrança de
-              marca.
-            </p>
           </div>
           <div className="rail-track" ref={railRef}>
             {projects.map((project) => (
