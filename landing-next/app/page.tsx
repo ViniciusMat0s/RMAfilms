@@ -210,6 +210,7 @@ export default function Home() {
     let onHeroLayoutRefresh: (() => void) | null = null;
     let onNavProgressRefresh: (() => void) | null = null;
     let teamHoverCleanups: Array<() => void> = [];
+    let roadmapHoverCleanups: Array<() => void> = [];
     let recordingTimerId: ReturnType<typeof setInterval> | null = null;
     const pad2 = (value: number) => String(value).padStart(2, "0");
 
@@ -568,6 +569,92 @@ export default function Home() {
             },
           });
         });
+
+        const roadmapCardWraps =
+          gsap.utils.toArray<HTMLElement>(".roadmap-card-wrap");
+        roadmapCardWraps.forEach((wrap) => {
+          gsap.set(wrap, { "--reveal-y": "28px", "--reveal-alpha": 0, "--reveal-blur": "8px" });
+          gsap.to(wrap, {
+            "--reveal-y": "0px",
+            "--reveal-alpha": 1,
+            "--reveal-blur": "0px",
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: wrap,
+              start: "top 92%",
+              end: "top 48%",
+              scrub: 0.9,
+            },
+          });
+        });
+
+        if (roadmapCardWraps.length && window.matchMedia("(pointer: fine)").matches) {
+          roadmapCardWraps.forEach((wrap) => {
+            gsap.set(wrap, {
+              "--tilt-x": 0,
+              "--tilt-y": 0,
+              "--tilt-z": 0,
+              "--tilt-scale": 1,
+              "--tilt-glow": 0,
+            });
+
+            const setTiltX = gsap.quickTo(wrap, "--tilt-x", {
+              duration: 0.28,
+              ease: "power3.out",
+            });
+            const setTiltY = gsap.quickTo(wrap, "--tilt-y", {
+              duration: 0.28,
+              ease: "power3.out",
+            });
+            const setTiltZ = gsap.quickTo(wrap, "--tilt-z", {
+              duration: 0.32,
+              ease: "power3.out",
+            });
+            const setScale = gsap.quickTo(wrap, "--tilt-scale", {
+              duration: 0.3,
+              ease: "power3.out",
+            });
+            const setGlow = gsap.quickTo(wrap, "--tilt-glow", {
+              duration: 0.3,
+              ease: "power3.out",
+            });
+
+            const onMove = (event: MouseEvent) => {
+              const bounds = wrap.getBoundingClientRect();
+              const nx = gsap.utils.clamp(
+                0,
+                1,
+                (event.clientX - bounds.left) / Math.max(bounds.width, 1)
+              );
+              const ny = gsap.utils.clamp(
+                0,
+                1,
+                (event.clientY - bounds.top) / Math.max(bounds.height, 1)
+              );
+
+              setTiltY((nx - 0.5) * 8);
+              setTiltX((0.5 - ny) * 7);
+              setTiltZ(18);
+              setScale(1.01);
+              setGlow(1);
+            };
+
+            const onLeave = () => {
+              setTiltX(0);
+              setTiltY(0);
+              setTiltZ(0);
+              setScale(1);
+              setGlow(0);
+            };
+
+            wrap.addEventListener("mousemove", onMove);
+            wrap.addEventListener("mouseleave", onLeave);
+            roadmapHoverCleanups.push(() => {
+              wrap.removeEventListener("mousemove", onMove);
+              wrap.removeEventListener("mouseleave", onLeave);
+            });
+          });
+        }
 
         const roadmapSteps = gsap.utils.toArray<HTMLElement>(".roadmap-step");
         roadmapSteps.forEach((step) => {
@@ -1448,6 +1535,8 @@ export default function Home() {
     return () => {
       teamHoverCleanups.forEach((cleanup) => cleanup());
       teamHoverCleanups = [];
+      roadmapHoverCleanups.forEach((cleanup) => cleanup());
+      roadmapHoverCleanups = [];
       if (updateFilmStrip) {
         window.removeEventListener("resize", updateFilmStrip);
       }
@@ -1753,20 +1842,20 @@ export default function Home() {
               conteúdo que gera percepção de valor.
             </p>
           </div>
-          <div className="process-roadmap" data-stagger>
-            <div className="roadmap-orb" aria-hidden="true" />
+          <div className="process-roadmap">
             {process.map((step, index) => (
               <div
                 className={`roadmap-step ${index % 2 === 0 ? "is-left" : "is-right"}`}
                 key={step.step}
-                data-stagger-item
                 style={{ "--roadmap-index": index } as CSSProperties}
               >
-                <article className="process-card roadmap-card" data-step={step.step}>
-                  <span className="roadmap-kicker">ETAPA</span>
-                  <h3>{step.title}</h3>
-                  <p>{step.copy}</p>
-                </article>
+                <div className="roadmap-card-wrap">
+                  <article className="process-card roadmap-card" data-step={step.step}>
+                    <span className="roadmap-kicker">ETAPA</span>
+                    <h3>{step.title}</h3>
+                    <p>{step.copy}</p>
+                  </article>
+                </div>
                 <div className="roadmap-node" aria-hidden="true" />
               </div>
             ))}
