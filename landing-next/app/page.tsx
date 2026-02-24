@@ -1620,9 +1620,6 @@ export default function Home() {
         <section className="section section--cinematic" id="capabilities">
           <div className="capabilities-bg" aria-hidden="true" />
           <div className="section-head section-head--split">
-            <p className="eyebrow section-head-eyebrow" data-reveal="left">
-              Capacidades
-            </p>
             <h2
               className="section-title--hero-font section-title-cinematic section-head-title"
               data-title-fx
@@ -1669,9 +1666,6 @@ export default function Home() {
         <section className="rail-section section--cinematic" id="work">
           <div className="rail-head">
             <div>
-              <p className="eyebrow" data-reveal="left">
-                Projetos em destaque
-              </p>
               <h2 className="rail-title section-title-cinematic section-title-cinematic--work" data-title-fx>
                 <span className="title-line">N&atilde;o &eacute; s&oacute; v&iacute;deo.</span>
                 <span className="title-line">
@@ -1717,9 +1711,6 @@ export default function Home() {
 
         <section className="section section--cinematic" id="process">
           <div className="section-head section-head--split">
-            <p className="eyebrow section-head-eyebrow" data-reveal="left">
-              Processo
-            </p>
             <h2
               className="section-title--hero-font section-title-cinematic section-head-title"
               data-title-fx
@@ -1751,9 +1742,6 @@ export default function Home() {
 
         <section className="section section--cinematic" id="team">
           <div className="section-head">
-            <p className="eyebrow" data-reveal="left">
-              Equipe
-            </p>
             <h2
               className="section-title--hero-font section-title-cinematic section-title-cinematic--work"
               data-title-fx
@@ -1803,7 +1791,6 @@ export default function Home() {
         <section className="cta section--cinematic" id="contact">
           <div className="cta-inner" data-reveal="up">
             <div>
-              <p className="eyebrow">Entre em contato</p>
               <h2 className="section-title--hero-font section-title-cinematic section-title-cinematic--cta" data-title-fx>
                 <span className="title-line">
                   SUA IDEIA EM IMAGEM
