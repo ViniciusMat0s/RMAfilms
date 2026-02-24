@@ -2340,7 +2340,7 @@ h2.section-title--hero-font {
 .section-lead {
   margin: 0;
   color: var(--muted);
-  font-size: var(--type-md);
+  font-size: clamp(0.68rem, 0.78vw, 0.86rem);
 }
 
 #capabilities.section {
@@ -2354,7 +2354,7 @@ h2.section-title--hero-font {
   position: relative;
   overflow: visible;
   isolation: isolate;
-  padding-top: clamp(var(--fib-4), 6vw, var(--fib-5));
+  padding-top: clamp(var(--fib-7), 11vw, var(--fib-8));
   padding-bottom: clamp(var(--fib-4), 6vw, var(--fib-5));
 }
 
@@ -2420,11 +2420,12 @@ h2.section-title--hero-font {
   display: grid;
   grid-template-columns: minmax(0, var(--golden-col-wide))
     minmax(0, var(--golden-col-narrow));
-  grid-template-rows: auto auto auto;
+  grid-template-rows: auto auto auto auto;
   grid-template-areas:
     "eyebrow ."
     "line1 ."
-    "line2 lead";
+    "line2 ."
+    "lead lead";
   column-gap: var(--space-xl);
   row-gap: var(--space-sm);
   align-items: baseline;
@@ -2445,6 +2446,16 @@ h2.section-title--hero-font {
   margin-top: 0;
   max-width: clamp(377px, 40vw, 610px);
   align-self: baseline;
+  justify-self: start;
+  grid-column: 1 / -1;
+}
+
+#process .section-lead--side,
+#team .section-lead {
+  font-family: var(--font-aventa), var(--font-body), "Manrope", sans-serif;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
 }
 
 #process .section-head-title .title-line:first-child {
@@ -3375,12 +3386,14 @@ h2.section-title--hero-font {
   display: grid;
   grid-template-columns: minmax(0, var(--golden-col-wide))
     minmax(0, var(--golden-col-narrow));
+  grid-template-rows: auto auto auto;
   grid-template-areas:
     "eyebrow ."
-    "title lead";
+    "title ."
+    "lead lead";
   column-gap: var(--space-xl);
   row-gap: var(--space-sm);
-  align-items: end;
+  align-items: baseline;
 }
 
 #team .eyebrow {
@@ -3395,9 +3408,10 @@ h2.section-title--hero-font {
 
 #team .section-lead {
   max-width: 520px;
-  font-size: var(--type-md);
   grid-area: lead;
-  align-self: end;
+  align-self: baseline;
+  justify-self: start;
+  grid-column: 1 / -1;
 }
 
 .team-grid {
