@@ -2928,7 +2928,8 @@ h2.section-title--hero-font {
   display: flex;
   gap: var(--space-md);
   padding: var(--space-xs) max(var(--layout-inline), var(--nav-content-offset-rail))
-    var(--space-xl) max(var(--layout-inline), var(--nav-content-offset-rail));
+    calc(var(--space-xl) + var(--space-md))
+    max(var(--layout-inline), var(--nav-content-offset-rail));
   will-change: transform;
 }
 

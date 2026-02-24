@@ -1218,7 +1218,7 @@ export default function Home() {
           ease: "none",
           scrollTrigger: {
             trigger: ".rail-section",
-            start: "top top",
+            start: "top -12%",
             end: () => `+=${getScrollDistance() * railSpeed}`,
             scrub: 0.5,
             pin: true,
