@@ -11,24 +11,28 @@ const capabilities = [
     title: "Narrativa que posiciona",
     copy:
       "Cada vídeo é estruturado para construir autoridade, percepção de valor e conexão com o público certo.",
+    signals: ["Storytelling estratégico", "Percepção premium"],
   },
   {
     label: "02",
     title: "Direção criativa e motion",
     copy:
       "Roteiro, captação, edição e motion design alinhados para transformar ideia em imagem memorável.",
+    signals: ["Direção autoral", "Motion de alto impacto"],
   },
   {
     label: "03",
     title: "Audiovisual para construção e imóveis",
     copy:
       "Produções que valorizam empreendimentos, destacam diferenciais e aceleram a decisão de compra.",
+    signals: ["Visual arquitetônico", "Vendas com contexto"],
   },
   {
     label: "04",
     title: "Cobertura de eventos e campanhas",
     copy:
       "Conteúdo ágil e estratégico para marcas e instituições que precisam presença forte e consistência.",
+    signals: ["Entrega em ritmo real", "Distribuição multicanal"],
   },
 ];
 
@@ -1690,10 +1694,18 @@ export default function Home() {
           </div>
           <div className="card-grid">
             {capabilities.map((card) => (
-              <article className="card" key={card.title}>
+              <article className="card" key={card.title} data-card-id={card.label}>
+                <span className="card-ghost" aria-hidden="true">
+                  {card.label}
+                </span>
                 <span className="card-label">{card.label}</span>
                 <h3>{card.title}</h3>
                 <p>{card.copy}</p>
+                <ul className="card-signals">
+                  {card.signals.map((signal) => (
+                    <li key={signal}>{signal}</li>
+                  ))}
+                </ul>
               </article>
             ))}
           </div>

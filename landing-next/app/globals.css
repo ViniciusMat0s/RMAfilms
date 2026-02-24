@@ -2342,6 +2342,65 @@ h2.section-title--hero-font {
   font-size: var(--type-md);
 }
 
+#capabilities.section {
+  --cap-card-template: repeat(6, minmax(0, 1fr));
+  --cap-card-gap: clamp(var(--fib-1), 0.95vw, var(--fib-2));
+  --cap-card-row-min: clamp(146px, 8.4vw, 172px);
+  --cap-card-title: clamp(0.82rem, 0.92vw, 1.08rem);
+  --cap-card-copy: clamp(0.68rem, 0.7vw, 0.78rem);
+  --cap-card-ghost: clamp(1.52rem, 3.1vw, 2.8rem);
+  --cap-grid-max: clamp(1148px, 100.8vw, 1848px);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  padding-top: clamp(var(--fib-4), 6vw, var(--fib-5));
+  padding-bottom: clamp(var(--fib-4), 6vw, var(--fib-5));
+}
+
+#capabilities.section::before {
+  content: "";
+  position: absolute;
+  inset: -22% -14% auto -14%;
+  height: clamp(420px, 60vw, 760px);
+  background:
+    radial-gradient(
+      58% 52% at 14% 22%,
+      rgba(129, 186, 255, 0.24),
+      rgba(129, 186, 255, 0) 70%
+    ),
+    radial-gradient(
+      52% 48% at 88% 16%,
+      rgba(255, 121, 162, 0.16),
+      rgba(255, 121, 162, 0) 72%
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
+#capabilities.section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.16;
+  background-image:
+    linear-gradient(180deg, rgba(247, 247, 242, 0.08) 0 1px, transparent 1px 100%),
+    linear-gradient(90deg, rgba(247, 247, 242, 0.06) 0 1px, transparent 1px 100%);
+  background-size: 100% 28px, 28px 100%;
+  mask-image: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.84) 0%,
+    rgba(0, 0, 0, 0.52) 46%,
+    rgba(0, 0, 0, 0) 88%
+  );
+}
+
+#capabilities.section > * {
+  position: relative;
+  z-index: 1;
+}
+
 #capabilities .section-head,
 #process .section-head {
   display: grid;
@@ -2401,10 +2460,14 @@ h2.section-title--hero-font {
 }
 
 .card-grid {
-  margin-top: var(--section-content-gap);
+  margin-top: clamp(var(--fib-2), 2.6vw, var(--fib-4));
+  width: min(100%, var(--cap-grid-max));
+  margin-inline: auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--fib-8), 1fr));
-  gap: var(--space-sm);
+  grid-template-columns: var(--cap-card-template);
+  grid-auto-rows: minmax(var(--cap-card-row-min), auto);
+  gap: var(--cap-card-gap);
+  align-content: stretch;
 }
 
 .card {
@@ -2415,37 +2478,62 @@ h2.section-title--hero-font {
   --card-my: 50;
   --card-tilt-x: 0;
   --card-tilt-y: 0;
-  padding: clamp(var(--fib-3), 2.2vw, var(--fib-4));
-  border-radius: var(--radius-md);
-  background: linear-gradient(
-      145deg,
-      rgba(255, 255, 255, calc(0.02 + var(--card-glow) * 0.08)),
-      rgba(255, 255, 255, 0) 44%
+  min-height: 0;
+  height: 100%;
+  padding: clamp(var(--fib-1), 1vw, var(--fib-2));
+  border-radius: calc(var(--radius-xl) + var(--fib-0));
+  background:
+    radial-gradient(
+      128% 112% at calc(var(--card-mx) * 1%) calc(var(--card-my) * 1%),
+      rgba(214, 236, 255, calc(0.04 + var(--card-hover) * 0.26)),
+      rgba(214, 236, 255, 0) 58%
     ),
-    rgba(15, 15, 15, 0.92);
+    linear-gradient(
+      152deg,
+      rgba(14, 18, 24, 0.96),
+      rgba(5, 7, 10, 0.96) 52%,
+      rgba(8, 13, 19, 0.96)
+    ),
+    rgba(6, 8, 12, 0.92);
   border: 1px solid
-    rgba(247, 247, 242, calc(0.14 + var(--card-glow) * 0.24));
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45),
-    0 0 calc(44px * var(--card-glow))
-      rgba(198, 222, 255, calc(0.06 + var(--card-glow) * 0.14));
+    rgba(247, 247, 242, calc(0.12 + var(--card-glow) * 0.3));
+  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.5),
+    0 0 calc(74px * var(--card-glow))
+      rgba(186, 221, 255, calc(0.06 + var(--card-glow) * 0.22));
   display: grid;
-  gap: var(--space-xs);
-  min-height: var(--fib-8);
+  grid-template-rows: auto auto 1fr auto;
+  gap: var(--space-sm);
   position: relative;
   isolation: isolate;
   overflow: hidden;
   transform: perspective(980px)
     rotateX(calc(var(--card-tilt-x) * 1deg))
     rotateY(calc(var(--card-tilt-y) * 1deg))
-    translate3d(0, calc(var(--card-hover) * -6px), 0)
-    scale(calc(1 + var(--card-hover) * 0.015));
+    translate3d(0, calc(var(--card-hover) * -8px), 0)
+    scale(calc(1 + var(--card-hover) * 0.018));
   transform-style: preserve-3d;
   backface-visibility: hidden;
-  filter: saturate(calc(0.84 + var(--card-reveal) * 0.16 + var(--card-hover) * 0.24))
-    brightness(calc(0.95 + var(--card-reveal) * 0.08 + var(--card-hover) * 0.08));
+  filter: saturate(calc(0.8 + var(--card-reveal) * 0.16 + var(--card-hover) * 0.32))
+    brightness(calc(0.92 + var(--card-reveal) * 0.1 + var(--card-hover) * 0.12));
   transition: border-color 0.34s ease, box-shadow 0.34s ease,
     background-color 0.34s ease, filter 0.34s ease, transform 0.34s ease;
   will-change: transform, box-shadow, border-color, filter;
+}
+
+.card:nth-child(1) {
+  grid-column: 1 / span 4;
+}
+
+.card:nth-child(2) {
+  grid-column: 5 / span 2;
+}
+
+.card:nth-child(3) {
+  grid-column: 1 / span 2;
+}
+
+.card:nth-child(4) {
+  grid-column: 3 / span 4;
 }
 
 .card::before {
@@ -2455,21 +2543,32 @@ h2.section-title--hero-font {
   border-radius: inherit;
   pointer-events: none;
   z-index: 1;
-  opacity: calc(0.08 + var(--card-reveal) * 0.2 + var(--card-hover) * 0.48);
+  opacity: calc(0.14 + var(--card-reveal) * 0.24 + var(--card-hover) * 0.52);
   background:
     radial-gradient(
-      140% 92% at calc(var(--card-mx) * 1%) calc(var(--card-my) * 1%),
-      rgba(215, 231, 255, calc(0.08 + var(--card-hover) * 0.24)),
-      rgba(215, 231, 255, 0) 54%
+      150% 96% at calc(var(--card-mx) * 1%) calc(var(--card-my) * 1%),
+      rgba(230, 240, 255, calc(0.07 + var(--card-hover) * 0.25)),
+      rgba(230, 240, 255, 0) 56%
     ),
     radial-gradient(
-      92% 118% at 100% 100%,
-      rgba(120, 186, 255, calc(0.06 + var(--card-hover) * 0.18)),
-      rgba(120, 186, 255, 0) 72%
+      100% 138% at 100% 100%,
+      rgba(128, 189, 255, calc(0.06 + var(--card-hover) * 0.22)),
+      rgba(128, 189, 255, 0) 70%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(247, 247, 242, calc(0.06 + var(--card-hover) * 0.06)),
+      rgba(215, 231, 255, 0) 54%
     );
   mix-blend-mode: screen;
-  transition: opacity 0.26s ease, filter 0.3s ease;
-  filter: blur(calc(1px - var(--card-hover) * 0.35px));
+  transition: opacity 0.26s ease, filter 0.3s ease, transform 0.3s ease;
+  filter: blur(calc(0.9px - var(--card-hover) * 0.3px));
+  transform: translate3d(
+      calc((var(--card-mx) - 50) * 0.08px),
+      calc((var(--card-my) - 50) * -0.08px),
+      0
+    )
+    scale(calc(1 + var(--card-hover) * 0.02));
 }
 
 .card::after {
@@ -2481,14 +2580,14 @@ h2.section-title--hero-font {
   z-index: 2;
   background: linear-gradient(
     112deg,
-    transparent 34%,
-    rgba(255, 255, 255, 0.42) 50%,
-    rgba(255, 255, 255, 0.08) 58%,
+    transparent 30%,
+    rgba(255, 255, 255, 0.38) 48%,
+    rgba(255, 255, 255, 0.07) 58%,
     transparent 72%
   );
   background-size: 220% 100%;
   background-position: 120% 0;
-  opacity: calc(0.02 + var(--card-hover) * 0.26);
+  opacity: calc(0.02 + var(--card-hover) * 0.32);
   mix-blend-mode: screen;
   animation: railCardSheen 1.25s cubic-bezier(0.22, 1, 0.36, 1) infinite;
   animation-play-state: paused;
@@ -2499,24 +2598,112 @@ h2.section-title--hero-font {
   z-index: 3;
 }
 
+.card > .card-ghost {
+  position: absolute;
+  top: clamp(var(--fib-2), 1.3vw, var(--fib-3));
+  right: clamp(var(--fib-2), 1.4vw, var(--fib-4));
+  margin: 0;
+  z-index: 2;
+  line-height: 0.84;
+  font-family: var(--font-bierika), var(--font-heading), "Bodoni Moda", serif;
+  font-size: var(--cap-card-ghost);
+  letter-spacing: 0.03em;
+  color: rgba(247, 247, 242, 0.07);
+  pointer-events: none;
+  transform: translate3d(
+      calc(var(--card-tilt-y) * 0.6px),
+      calc(var(--card-tilt-x) * -0.6px),
+      0
+    )
+    scale(calc(1 + var(--card-hover) * 0.03));
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
 .card-label {
+  width: max-content;
+  padding: 7px 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(247, 247, 242, 0.2);
+  background: rgba(9, 12, 16, 0.66);
   text-transform: uppercase;
-  font-size: var(--type-xs);
+  font-size: 0.6rem;
   letter-spacing: 0.2em;
-  color: var(--accent-3);
-  transition: color 0.28s ease, letter-spacing 0.28s ease;
+  color: rgba(247, 247, 242, 0.66);
+  transition: color 0.28s ease, letter-spacing 0.28s ease, border-color 0.28s ease,
+    background-color 0.28s ease;
 }
 
 .card h3 {
   margin: 0;
-  font-size: var(--type-md);
+  max-width: min(26ch, 100%);
+  font-size: var(--cap-card-title);
+  line-height: 1.04;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
   transition: letter-spacing 0.3s ease, text-shadow 0.3s ease;
 }
 
 .card p {
   margin: 0;
-  color: var(--muted);
+  max-width: 56ch;
+  color: rgba(247, 247, 242, 0.74);
+  font-size: var(--cap-card-copy);
+  line-height: 1.4;
   transition: color 0.3s ease;
+}
+
+.card-signals {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.card-signals li {
+  padding: 5px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(247, 247, 242, 0.18);
+  background: rgba(7, 9, 12, 0.72);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.5rem;
+  color: rgba(247, 247, 242, 0.68);
+  transition: color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+@media (max-width: 1280px) {
+  #capabilities.section {
+    --cap-grid-max: clamp(1064px, 123.2vw, 1624px);
+    --cap-card-row-min: clamp(168px, 15vw, 214px);
+  }
+}
+
+@media (max-width: 987px) {
+  .card-grid {
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: minmax(176px, auto);
+  }
+
+  .card:nth-child(1),
+  .card:nth-child(2),
+  .card:nth-child(3),
+  .card:nth-child(4) {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 610px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: minmax(178px, auto);
+  }
+
+  .card h3 {
+    font-size: clamp(0.94rem, 4.8vw, 1.2rem);
+  }
 }
 
 .rail-section {
@@ -2722,7 +2909,7 @@ h2.section-title--hero-font {
   }
 
   .card-grid:hover .card {
-    --card-glow: 0.22;
+    --card-glow: 0.3;
   }
 
   .card-grid:hover .card:hover {
@@ -2734,18 +2921,30 @@ h2.section-title--hero-font {
     animation-play-state: running;
   }
 
+  .card-grid:hover .card:hover .card-ghost {
+    color: rgba(247, 247, 242, 0.14);
+  }
+
   .card-grid:hover .card:hover .card-label {
-    color: rgba(247, 247, 242, 0.82);
+    color: rgba(247, 247, 242, 0.9);
     letter-spacing: 0.22em;
+    border-color: rgba(247, 247, 242, 0.34);
+    background: rgba(16, 20, 26, 0.88);
   }
 
   .card-grid:hover .card:hover h3 {
-    letter-spacing: 0.01em;
-    text-shadow: 0 0 18px rgba(198, 222, 255, 0.22);
+    letter-spacing: 0.012em;
+    text-shadow: 0 0 24px rgba(198, 222, 255, 0.28);
   }
 
   .card-grid:hover .card:hover p {
-    color: rgba(247, 247, 242, 0.84);
+    color: rgba(247, 247, 242, 0.88);
+  }
+
+  .card-grid:hover .card:hover .card-signals li {
+    color: rgba(247, 247, 242, 0.86);
+    border-color: rgba(247, 247, 242, 0.28);
+    transform: translateY(-1px);
   }
 
   .rail-track:hover .rail-card {
