@@ -2403,7 +2403,7 @@ h2.section-title--hero-font {
 .card-grid {
   margin-top: var(--section-content-gap);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--fib-8), 1fr));
   gap: var(--space-sm);
 }
 
@@ -2415,8 +2415,8 @@ h2.section-title--hero-font {
   --card-my: 50;
   --card-tilt-x: 0;
   --card-tilt-y: 0;
-  padding: 24px;
-  border-radius: 22px;
+  padding: clamp(var(--fib-3), 2.2vw, var(--fib-4));
+  border-radius: var(--radius-md);
   background: linear-gradient(
       145deg,
       rgba(255, 255, 255, calc(0.02 + var(--card-glow) * 0.08)),
@@ -2429,8 +2429,8 @@ h2.section-title--hero-font {
     0 0 calc(44px * var(--card-glow))
       rgba(198, 222, 255, calc(0.06 + var(--card-glow) * 0.14));
   display: grid;
-  gap: 12px;
-  min-height: 200px;
+  gap: var(--space-xs);
+  min-height: var(--fib-8);
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -2501,7 +2501,7 @@ h2.section-title--hero-font {
 
 .card-label {
   text-transform: uppercase;
-  font-size: 0.7rem;
+  font-size: var(--type-xs);
   letter-spacing: 0.2em;
   color: var(--accent-3);
   transition: color 0.28s ease, letter-spacing 0.28s ease;
@@ -2509,7 +2509,7 @@ h2.section-title--hero-font {
 
 .card h3 {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: var(--type-md);
   transition: letter-spacing 0.3s ease, text-shadow 0.3s ease;
 }
 
@@ -2575,7 +2575,7 @@ h2.section-title--hero-font {
       rgba(255, 255, 255, 0) 42%
     ),
     rgba(12, 12, 12, 0.92);
-  border-radius: 28px;
+  border-radius: var(--radius-xl);
   border: 1px solid rgba(247, 247, 242, calc(0.12 + var(--rail-signal) * 0.28));
   box-shadow: var(--shadow),
     0 0 calc(32px + 34px * var(--rail-signal))
@@ -2583,7 +2583,7 @@ h2.section-title--hero-font {
     0 20px 42px rgba(0, 0, 0, calc(0.44 - var(--rail-hover) * 0.12));
   overflow: hidden;
   display: grid;
-  grid-template-rows: 200px 1fr;
+  grid-template-rows: var(--fib-8) 1fr;
   position: relative;
   isolation: isolate;
   transform-style: preserve-3d;
@@ -2609,9 +2609,9 @@ h2.section-title--hero-font {
 .rail-body {
   position: relative;
   z-index: 2;
-  padding: 22px 24px 26px;
+  padding: var(--fib-3) var(--fib-4) var(--fib-3);
   display: grid;
-  gap: 12px;
+  gap: var(--space-xs);
   transition: transform 0.34s ease;
 }
 
@@ -2664,7 +2664,7 @@ h2.section-title--hero-font {
   display: flex;
   justify-content: space-between;
   text-transform: uppercase;
-  font-size: 0.7rem;
+  font-size: var(--type-xs);
   letter-spacing: 0.22em;
   color: rgba(247, 247, 242, 0.55);
   transition: color 0.3s ease;
@@ -2672,7 +2672,7 @@ h2.section-title--hero-font {
 
 .rail-card h3 {
   margin: 0;
-  font-size: 1.4rem;
+  font-size: var(--type-lg);
   transition: letter-spacing 0.32s ease, text-shadow 0.32s ease;
 }
 
@@ -2687,14 +2687,14 @@ h2.section-title--hero-font {
   padding: 0;
   margin: 0;
   display: grid;
-  gap: 10px;
+  gap: var(--space-xs);
   font-size: 0.85rem;
 }
 
 .rail-card li {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-xs);
 }
 
 .rail-card li::before {
@@ -2792,7 +2792,7 @@ h2.section-title--hero-font {
 .process-grid {
   margin-top: var(--section-content-gap);
   display: grid;
-  gap: 20px;
+  gap: var(--space-md);
 }
 
 .process-card {
@@ -2801,11 +2801,11 @@ h2.section-title--hero-font {
   --process-hover: 0;
   --process-sheen: 0;
   display: grid;
-  grid-template-columns: 86px 1fr;
-  gap: 22px;
+  grid-template-columns: var(--fib-6) 1fr;
+  gap: var(--fib-3);
   align-items: center;
-  padding: 22px 28px;
-  border-radius: 22px;
+  padding: var(--fib-3) var(--fib-4);
+  border-radius: var(--radius-md);
   border: 1px solid
     rgba(247, 247, 242, calc(0.12 + var(--process-glow) * 0.24));
   background: linear-gradient(
@@ -2874,9 +2874,9 @@ h2.section-title--hero-font {
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.04em;
   color: rgba(247, 247, 242, 0.9);
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
+  width: var(--fib-5);
+  height: var(--fib-5);
+  border-radius: var(--fib-2);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2894,8 +2894,8 @@ h2.section-title--hero-font {
 }
 
 .process-card h3 {
-  margin: 0 0 6px;
-  font-size: 1.15rem;
+  margin: 0 0 var(--fib-1);
+  font-size: var(--type-md);
 }
 
 .process-card p {
@@ -3031,9 +3031,9 @@ h2.section-title--hero-font {
   position: relative;
   display: grid;
   grid-template-rows: auto 1fr;
-  gap: 18px;
+  gap: var(--space-sm);
   padding: clamp(var(--fib-3), 2.6vw, var(--fib-4));
-  border-radius: 28px;
+  border-radius: var(--radius-xl);
   border: 1px solid
     rgba(
       247,
@@ -3141,9 +3141,9 @@ h2.section-title--hero-font {
   position: relative;
   z-index: 1;
   --team-photo-pop: 0;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1 / 1.6180339887;
   width: 100%;
-  border-radius: 22px;
+  border-radius: var(--radius-md);
   border: 1px solid rgba(247, 247, 242, 0.18);
   background-color: rgba(10, 10, 10, 0.7);
   background-image: radial-gradient(
@@ -3205,7 +3205,7 @@ h2.section-title--hero-font {
   position: relative;
   z-index: 1;
   display: grid;
-  gap: 8px;
+  gap: var(--space-xs);
   transform: translateZ(calc(8px + var(--team-hover) * 6px));
   transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -3214,13 +3214,13 @@ h2.section-title--hero-font {
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 0.24em;
-  font-size: 0.6rem;
+  font-size: var(--type-xs);
   color: rgba(247, 247, 242, 0.55);
 }
 
 .team-card h3 {
   margin: 0;
-  font-size: 1.18rem;
+  font-size: var(--type-md);
   letter-spacing: 0.01em;
   transition: letter-spacing 0.3s ease, text-shadow 0.3s ease,
     color 0.3s ease;
