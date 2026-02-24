@@ -473,24 +473,36 @@ export default function Home() {
           const capabilityStack =
             rootRef.current?.querySelector<HTMLElement>(".capabilities-stack");
           if (capabilityStack) {
-            const clearActive = () => {
-              capabilityRows.forEach((row) => row.classList.remove("is-active"));
+            const focusSetters = capabilityRows.map((row) =>
+              gsap.quickTo(row, "--row-focus", {
+                duration: 0.35,
+                ease: "power2.out",
+              })
+            );
+            const clamp = gsap.utils.clamp(0, 1);
+
+            const applyFocus = (progress: number) => {
+              const virtualIndex = progress * (capabilityRows.length - 1);
+              capabilityRows.forEach((_, rowIndex) => {
+                const distance = Math.abs(rowIndex - virtualIndex);
+                const raw = clamp(1 - distance * 0.9);
+                const eased = raw * raw;
+                focusSetters[rowIndex](eased);
+              });
+            };
+
+            const clearFocus = () => {
+              capabilityRows.forEach((_, rowIndex) => focusSetters[rowIndex](0));
             };
 
             const focusTrigger = ScrollTrigger.create({
               trigger: capabilityStack,
               start: "top 70%",
               end: "bottom 30%",
-              onUpdate: (self) => {
-                const count = capabilityRows.length;
-                if (!count) return;
-                const index = Math.round(self.progress * (count - 1));
-                capabilityRows.forEach((row, rowIndex) => {
-                  row.classList.toggle("is-active", rowIndex === index);
-                });
-              },
-              onLeave: clearActive,
-              onLeaveBack: clearActive,
+              scrub: 0.7,
+              onUpdate: (self) => applyFocus(self.progress),
+              onLeave: clearFocus,
+              onLeaveBack: clearFocus,
             });
 
             focusTrigger?.vars?.onUpdate?.(focusTrigger);
