@@ -4550,7 +4550,10 @@ h2.section-title--hero-font {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  --footer-inline: clamp(var(--fib-4), 5.5vw, var(--fib-7));
+  --footer-inline: max(
+    clamp(var(--fib-4), 5.5vw, var(--fib-7)),
+    calc(var(--nav-content-offset) + clamp(var(--fib-2), 2.2vw, var(--fib-4)))
+  );
   padding: clamp(var(--fib-5), 8vw, var(--fib-7)) 0
     clamp(var(--fib-3), 4vw, var(--fib-5));
   background:
@@ -4599,12 +4602,17 @@ h2.section-title--hero-font {
 
 .footer-links {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(var(--fib-3), 3.4vw, var(--fib-5));
-  margin-bottom: clamp(var(--fib-4), 4.6vw, var(--fib-6));
+  grid-template-columns: repeat(auto-fit, minmax(200px, max-content));
+  column-gap: clamp(140px, 12vw, 240px);
+  row-gap: clamp(var(--fib-2), 2.6vw, var(--fib-4));
+  margin-bottom: clamp(var(--fib-2), 3vw, var(--fib-5));
+  justify-content: center;
+  margin-inline: auto;
+  width: 100%;
+  max-width: 1400px;
+  padding-inline: clamp(var(--fib-2), 4vw, var(--fib-5));
 }
 
-.footer-links,
 .footer-divider,
 .footer-newsletter,
 .footer-bottom {
@@ -4613,8 +4621,10 @@ h2.section-title--hero-font {
 
 .footer-menu {
   display: grid;
-  gap: clamp(12px, 1.5vw, 15px);
+  gap: clamp(10px, 1.2vw, 14px);
   min-width: 0;
+  align-items: center;
+  text-align: center;
 }
 
 .footer-menu-title {
@@ -4628,7 +4638,8 @@ h2.section-title--hero-font {
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 12px;
+  gap: clamp(6px, 0.7vw, 9px);
+  justify-items: center;
 }
 
 .footer-menu-link {
@@ -4649,7 +4660,7 @@ h2.section-title--hero-font {
     rgba(247, 247, 242, 0.24) 50%,
     rgba(247, 247, 242, 0.14) 100%
   );
-  margin-bottom: clamp(26px, 4vw, 40px);
+  margin-bottom: clamp(16px, 2.6vw, 28px);
 }
 
 .footer-newsletter {
@@ -4775,12 +4786,15 @@ h2.section-title--hero-font {
 
 @media (max-width: 987px) {
   .footer {
-    --footer-inline: clamp(var(--fib-3), 6vw, var(--fib-5));
+    --footer-inline: max(
+      clamp(var(--fib-3), 6vw, var(--fib-5)),
+      calc(var(--nav-content-offset) + clamp(var(--fib-2), 2.2vw, var(--fib-4)))
+    );
     padding-bottom: clamp(var(--fib-4), 6vw, var(--fib-6));
   }
 
   .footer-links {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(40px, 6vw, 90px);
   }
 
   .footer-newsletter {
@@ -4800,22 +4814,29 @@ h2.section-title--hero-font {
 
 @media (max-width: 1280px) {
   .footer {
-    --footer-inline: clamp(var(--fib-4), 5.2vw, var(--fib-6));
+    --footer-inline: max(
+      clamp(var(--fib-4), 5.2vw, var(--fib-6)),
+      calc(var(--nav-content-offset) + clamp(var(--fib-2), 2.2vw, var(--fib-4)))
+    );
   }
 
   .footer-links {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: clamp(90px, 9vw, 160px);
   }
 }
 
 @media (max-width: 610px) {
   .footer {
-    --footer-inline: clamp(var(--fib-2), 6vw, var(--fib-4));
+    --footer-inline: max(
+      clamp(var(--fib-2), 6vw, var(--fib-4)),
+      calc(var(--nav-content-offset) + clamp(var(--fib-2), 2.2vw, var(--fib-4)))
+    );
     padding-bottom: var(--space-md);
   }
 
   .footer-links {
     grid-template-columns: 1fr;
+    column-gap: clamp(24px, 6vw, 48px);
   }
 
   .footer-newsletter-input-row {
