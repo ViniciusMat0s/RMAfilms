@@ -5022,12 +5022,14 @@ h2.section-title--hero-font {
     margin: 0;
     font-size: clamp(0.78rem, 2.7vw, 1.02rem);
     letter-spacing: clamp(0.1em, 0.45vw, 0.16em);
-    text-align: left;
+    text-align: right;
   }
 
   .hero-words,
   .hero-word {
-    justify-items: start;
+    justify-items: end;
+    width: 100%;
+    text-align: right;
   }
 
   .hero-stage {
@@ -5051,7 +5053,8 @@ h2.section-title--hero-font {
     letter-spacing: 0.09em;
     top: calc(
       env(safe-area-inset-top, 0px) + clamp(var(--fib-1), 4vw, var(--fib-2)) +
-        clamp(var(--fib-1), 1.6vw, var(--fib-2))
+        clamp(var(--fib-1), 1.6vw, var(--fib-2)) +
+        clamp(var(--fib-2), 3vh, var(--fib-4))
     );
     left: calc(env(safe-area-inset-left, 0px) + clamp(var(--fib-1), 4vw, var(--fib-2)) + 48px);
   }
@@ -5112,20 +5115,22 @@ h2.section-title--hero-font {
 
   .hero-right {
     position: static;
-    right: auto;
-    top: auto;
     max-width: 100%;
-    margin-top: clamp(var(--fib-2), 3.6vh, var(--fib-4));
-    text-align: left;
-    justify-self: start;
-    align-self: start;
+    margin-top: 0;
+    width: 100%;
+    text-align: right;
+    justify-self: end;
+    align-self: end;
     font-size: clamp(0.68rem, 3vw, 0.9rem);
     letter-spacing: clamp(0.08em, 0.4vw, 0.14em);
+    position: absolute;
+    right: var(--hero-inline-right);
+    bottom: calc(var(--hud-bottom-clearance) + clamp(36px, 8vh, 96px));
   }
 
   .hero-words,
   .hero-word {
-    justify-items: start;
+    justify-items: end;
   }
 }
 
