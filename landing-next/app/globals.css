@@ -4146,8 +4146,13 @@ h2.section-title--hero-font {
 
 .cta {
   position: relative;
-  padding: var(--layout-block) max(var(--layout-inline), var(--nav-content-offset))
-    var(--layout-block) max(var(--layout-inline), var(--nav-content-offset));
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  display: flex;
+  align-items: flex-end;
+  padding-top: var(--layout-block);
+  padding-bottom: 0;
+  padding-inline: 0;
 }
 
 .cta-inner {
@@ -4163,20 +4168,19 @@ h2.section-title--hero-font {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  background: linear-gradient(135deg, #050505 0%, #0e0f12 55%, #141417 100%);
-  background-size: 170% 170%;
-  background-position: calc(50% + var(--cta-sweep) * 18%) 50%;
+  background: transparent;
   color: var(--ink);
-  border-radius: var(--radius-xl);
+  width: 100%;
+  min-height: clamp(520px, 72vh, 760px);
+  border-radius: 0;
   padding: clamp(var(--fib-4), 6vw, var(--fib-6));
   box-shadow: var(--shadow),
     0 0 calc(110px * (0.2 + var(--cta-glow) * 0.8))
       rgba(160, 202, 255, calc(0.08 + var(--cta-glow) * 0.28)),
     0 0 calc(26px * var(--cta-hover)) rgba(255, 255, 255, 0.14);
-  border: 1px solid
-    rgba(255, 255, 255, calc(0.12 + (var(--cta-glow) + var(--cta-hover)) * 0.22));
+  border: none;
   perspective: 1200px;
-  will-change: box-shadow, border-color, background-position;
+  will-change: box-shadow, border-color;
 }
 
 .cta-inner::before,
@@ -4276,6 +4280,8 @@ h2.section-title--hero-font {
   z-index: 2;
   display: grid;
   gap: var(--space-md);
+  justify-items: center;
+  text-align: center;
   transform-style: preserve-3d;
   transform: translateZ(0)
     rotateX(calc(var(--cta-tilt-x) * 1deg))
@@ -4286,6 +4292,7 @@ h2.section-title--hero-font {
 
 .cta-copy {
   max-width: 640px;
+  margin-inline: auto;
   transform: translateZ(12px);
 }
 
@@ -4308,6 +4315,7 @@ h2.section-title--hero-font {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-xs);
+  justify-content: center;
   transform: translateZ(18px);
 }
 
@@ -4321,6 +4329,35 @@ h2.section-title--hero-font {
   background: rgba(10, 10, 10, 0.35);
   box-shadow: inset 0 0 0 1px rgba(247, 247, 242, 0.18),
     0 0 calc(24px * var(--cta-glow)) rgba(160, 200, 255, 0.2);
+}
+
+#contact.cta .cta-inner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+}
+
+#contact.cta .cta-inner::before,
+#contact.cta .cta-inner::after {
+  border-radius: 0 !important;
+}
+
+#contact.cta .cta-surface {
+  width: min(100%, 1100px);
+  justify-items: center !important;
+  text-align: center !important;
+}
+
+#contact.cta .cta-copy {
+  max-width: min(900px, 100%);
+  margin-inline: auto;
+}
+
+#contact.cta .cta-actions {
+  justify-content: center !important;
 }
 
 @keyframes ctaBeam {
