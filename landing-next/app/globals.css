@@ -2687,15 +2687,36 @@ h2.section-title--hero-font {
     top: auto;
     grid-template-columns: 1fr;
     align-items: start;
-    gap: 16px;
+    gap: 12px;
     transform: none;
     filter: none;
     opacity: 1;
+    padding: clamp(14px, 4vw, 20px) clamp(12px, 4vw, 18px);
+    min-height: clamp(110px, 22vw, 160px);
+    --row-reveal: clamp(0.35, calc(var(--row-focus) * 1.4 + 0.1), 1);
+  }
+
+  .capability-title h3 {
+    font-size: clamp(1.1rem, 5.2vw, 1.6rem);
+  }
+
+  .capability-body {
+    gap: 10px;
+    max-height: calc(220px * var(--row-reveal));
+  }
+
+  .capability-body p {
+    font-size: clamp(0.85rem, 3.8vw, 1rem);
+  }
+
+  .capability-signals {
+    gap: 6px;
+    font-size: clamp(0.75rem, 3.2vw, 0.9rem);
   }
 
   .capability-number {
     justify-self: start;
-    font-size: clamp(2.2rem, 14vw, 4.4rem);
+    font-size: clamp(1.8rem, 12vw, 3.2rem);
   }
 }
 
@@ -3657,6 +3678,50 @@ h2.section-title--hero-font {
   .roadmap-card-wrap {
     grid-column: 2;
     justify-self: start;
+  }
+}
+
+@media (max-width: 900px) {
+  .process-roadmap {
+    --roadmap-line-x: clamp(16px, 4.6vw, 22px);
+    gap: clamp(var(--fib-3), 5vw, var(--fib-5));
+    perspective: none;
+  }
+
+  .process-roadmap::before,
+  .process-roadmap::after {
+    left: var(--roadmap-line-x);
+    transform: translateX(-50%);
+  }
+
+  .roadmap-step {
+    grid-template-columns: calc(var(--roadmap-line-x) * 2) minmax(0, 1fr);
+    column-gap: clamp(12px, 4vw, 20px);
+    row-gap: var(--space-sm);
+    align-items: start;
+    transform: none;
+  }
+
+  .roadmap-node {
+    grid-column: 1;
+    align-self: start;
+    margin-top: clamp(6px, 1.4vw, 10px);
+  }
+
+  .roadmap-step.is-left .roadmap-card-wrap,
+  .roadmap-step.is-right .roadmap-card-wrap {
+    grid-column: 2;
+    justify-self: start;
+    align-self: center;
+  }
+
+  .roadmap-card-wrap {
+    width: 100%;
+    max-width: none;
+  }
+
+  .roadmap-step::after {
+    content: none;
   }
 }
 
@@ -5086,6 +5151,89 @@ h2.section-title--hero-font {
     padding-bottom: clamp(var(--fib-2), 4.2svh, var(--fib-4));
   }
 
+  .process-roadmap {
+    --roadmap-line-x: clamp(12px, 4vw, 18px);
+    --roadmap-offset: clamp(24px, 8vw, 38px);
+    padding-left: var(--roadmap-offset);
+    gap: clamp(var(--fib-3), 5vw, var(--fib-5));
+    perspective: none;
+  }
+
+  .process-roadmap::before,
+  .process-roadmap::after {
+    left: var(--roadmap-line-x);
+    transform: translateX(-50%);
+  }
+
+  .roadmap-step {
+    display: block;
+    position: relative;
+    padding-left: 0;
+    transform: none;
+  }
+
+  .roadmap-step::after {
+    content: none;
+  }
+
+  .roadmap-node {
+    position: absolute;
+    left: calc(var(--roadmap-line-x) - 6px);
+    top: clamp(10px, 2.2vw, 16px);
+    grid-column: auto;
+    margin-top: 0;
+  }
+
+  .roadmap-card-wrap,
+  .roadmap-step.is-left .roadmap-card-wrap,
+  .roadmap-step.is-right .roadmap-card-wrap {
+    grid-column: auto;
+    width: 100%;
+    max-width: none;
+    justify-self: stretch;
+  }
+
+  .process-card.roadmap-card {
+    padding: clamp(var(--fib-2), 4vw, var(--fib-3));
+  }
+
+  .process-card.roadmap-card h3 {
+    font-size: clamp(1rem, 4.8vw, 1.3rem);
+  }
+
+  .process-card.roadmap-card p {
+    font-size: clamp(0.85rem, 3.8vw, 1rem);
+  }
+
+  .roadmap-kicker {
+    font-size: clamp(0.52rem, 2.2vw, 0.65rem);
+    letter-spacing: 0.24em;
+  }
+
+  #capabilities .section-head .section-title-cinematic {
+    font-size: clamp(2.1rem, 7.6vw, 3rem);
+    line-height: 1.04;
+  }
+
+  #capabilities .section-head .section-lead {
+    font-size: clamp(0.98rem, 3.6vw, 1.2rem);
+    line-height: 1.65;
+  }
+
+  .section-title-cinematic--work {
+    font-size: clamp(1.9rem, 7.2vw, 2.8rem);
+    line-height: 1.02;
+    max-width: min(92vw, 26ch);
+  }
+
+  .section-title-cinematic--work .title-line-lock {
+    white-space: normal;
+  }
+
+  .section-title-cinematic--work .title-line:nth-child(2) {
+    padding-left: 0;
+  }
+
   .hero-text {
     margin-top: clamp(var(--fib-5), 10vh, var(--fib-7));
     max-width: min(16ch, 100%);
@@ -5108,7 +5256,7 @@ h2.section-title--hero-font {
     width: 100%;
     max-width: none;
     margin-top: clamp(var(--fib-1), 2vh, var(--fib-3));
-    font-size: calc(var(--hero-main-size) * 1.95);
+    font-size: calc(var(--hero-main-size) * 2.4);
     text-align: left;
     line-height: 0.98;
   }
