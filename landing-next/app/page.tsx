@@ -770,6 +770,39 @@ export default function Home() {
             );
           }
 
+          const ctaTitle =
+            ctaInner.querySelector<HTMLElement>(".cta-title") ?? null;
+          if (ctaTitle) {
+            gsap.set(ctaTitle, {
+              "--cta-glow-x": "20%",
+              "--cta-glow-y": "10%",
+              "--cta-glow-alpha": 0,
+            });
+
+            ScrollTrigger.create({
+              trigger: ctaInner,
+              start: "top 85%",
+              end: "bottom 30%",
+              scrub: true,
+              onUpdate: (self) => {
+                const progress = self.progress;
+                const pulse = 1 - Math.abs(progress * 2 - 1);
+                const alpha = 0.1 + pulse * 0.9;
+                const x = 18 + progress * 64;
+                const y = 8 + progress * 84;
+                ctaTitle.style.setProperty("--cta-glow-x", `${x.toFixed(2)}%`);
+                ctaTitle.style.setProperty("--cta-glow-y", `${y.toFixed(2)}%`);
+                ctaTitle.style.setProperty("--cta-glow-alpha", alpha.toFixed(3));
+              },
+              onLeave: () => {
+                ctaTitle.style.setProperty("--cta-glow-alpha", "0");
+              },
+              onLeaveBack: () => {
+                ctaTitle.style.setProperty("--cta-glow-alpha", "0");
+              },
+            });
+          }
+
           const ctaSurface =
             ctaInner.querySelector<HTMLElement>(".cta-surface");
           if (ctaSurface && window.matchMedia("(pointer: fine)").matches) {
@@ -2048,14 +2081,20 @@ export default function Home() {
             <div className="cta-surface">
               <div className="cta-copy">
                 <h2
-                  className="section-title--hero-font section-title-cinematic section-title-cinematic--cta"
+                  className="section-title--hero-font section-title-cinematic section-title-cinematic--cta cta-title"
                   data-title-fx
                 >
                   <span className="title-line">
-                    SUA IDEIA EM IMAGEM
+                    <span className="cta-title-core">SUA IDEIA EM IMAGEM</span>
+                    <span className="cta-title-glow" aria-hidden="true">
+                      SUA IDEIA EM IMAGEM
+                    </span>
                   </span>
                   <span className="title-line">
-                    QUE GERA AUTORIDADE.
+                    <span className="cta-title-core">QUE GERA AUTORIDADE.</span>
+                    <span className="cta-title-glow" aria-hidden="true">
+                      QUE GERA AUTORIDADE.
+                    </span>
                   </span>
                 </h2>
                 <p>
@@ -2096,37 +2135,6 @@ export default function Home() {
         </div>
 
         <div className="footer-divider" aria-hidden="true" data-footer-reveal />
-
-        <div className="footer-newsletter" data-footer-reveal>
-          <div className="footer-newsletter-copy">
-            <h3>Nunca perca uma atualização</h3>
-            <p>
-              Receba novidades, bastidores e atualizações da{" "}
-              <strong>RMA Films</strong> direto no seu e-mail. Enviamos conteúdos
-              com frequência baixa e objetiva.
-            </p>
-          </div>
-
-          <form
-            className="footer-newsletter-form"
-            onSubmit={(event) => event.preventDefault()}
-          >
-            <div className="footer-newsletter-input-row">
-              <input
-                type="email"
-                name="email"
-                placeholder="seuemail@exemplo.com"
-                aria-label="Email"
-                required
-              />
-              <button type="submit">Receber</button>
-            </div>
-            <label className="footer-newsletter-check">
-              <input type="checkbox" name="consent" />
-              <span>Concordo em receber comunicações da RMA Films</span>
-            </label>
-          </form>
-        </div>
 
         <div className="footer-bottom" data-footer-reveal>
           <span>
