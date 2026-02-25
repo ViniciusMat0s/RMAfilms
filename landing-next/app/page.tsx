@@ -178,6 +178,51 @@ const navSections = [
   { id: "team", label: "Equipe" },
 ];
 
+const footerLinkColumns = [
+  {
+    title: "Navegação",
+    links: [
+      { label: "Início", href: "#top" },
+      { label: "Capacidades", href: "#capabilities" },
+      { label: "Projetos", href: "#work" },
+      { label: "Processo", href: "#process" },
+      { label: "Equipe", href: "#team" },
+      { label: "Contato", href: "#contact" },
+    ],
+  },
+  {
+    title: "Destaques",
+    links: [
+      { label: "Narrativa estratégica", href: "#capabilities" },
+      { label: "Direção criativa", href: "#capabilities" },
+      { label: "Captação e pós-produção", href: "#process" },
+      { label: "Autoridade de marca", href: "#work" },
+    ],
+  },
+  {
+    title: "Atalhos",
+    links: [
+      { label: "Enviar briefing", href: "mailto:contato@rmafilms.com.br" },
+      { label: "Ver projetos", href: "#work" },
+      { label: "Conhecer equipe", href: "#team" },
+      { label: "Voltar ao topo", href: "#top" },
+    ],
+  },
+  {
+    title: "Contato",
+    links: [
+      { label: "contato@rmafilms.com.br", href: "mailto:contato@rmafilms.com.br" },
+      { label: "Litoral Norte do RS, Brasil", href: "#contact" },
+      { label: "Desde 2017", href: "#contact" },
+    ],
+  },
+];
+
+const footerLegalLinks = [
+  { label: "Início", href: "#top" },
+  { label: "Contato", href: "#contact" },
+];
+
 export default function Home() {
   const rootRef = useRef<HTMLDivElement>(null);
   const railRef = useRef<HTMLDivElement>(null);
@@ -911,7 +956,8 @@ export default function Home() {
           });
         });
 
-        const footerColumns = gsap.utils.toArray<HTMLElement>(".footer > div");
+        const footerColumns =
+          gsap.utils.toArray<HTMLElement>(".footer [data-footer-reveal]");
         if (footerColumns.length) {
           gsap.fromTo(
             footerColumns,
@@ -1999,8 +2045,11 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="cta section--cinematic" id="contact">
-          <div className="cta-inner" data-reveal="up">
+      </main>
+
+      <footer className="footer" id="contact">
+        <div className="footer-cta" data-footer-reveal>
+          <div className="cta-inner">
             <div className="cta-effects" aria-hidden="true" />
             <div className="cta-surface">
               <div className="cta-copy">
@@ -2030,17 +2079,69 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section>
-      </main>
-
-      <footer className="footer">
-        <div>
-          <strong>RMA FILMS</strong>
-          <p>Imagem bem construída gera resultado.</p>
         </div>
-        <div>
-          <span>Litoral Norte do RS, Brasil</span>
-          <span>Desde 2017</span>
+
+        <div className="footer-links" data-footer-reveal>
+          {footerLinkColumns.map((column) => (
+            <div className="footer-menu" key={column.title}>
+              <span className="footer-menu-title">// {column.title}</span>
+              <ul>
+                {column.links.map((link) => (
+                  <li key={`${column.title}-${link.label}`}>
+                    <a className="footer-menu-link" href={link.href}>
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div className="footer-divider" aria-hidden="true" data-footer-reveal />
+
+        <div className="footer-newsletter" data-footer-reveal>
+          <div className="footer-newsletter-copy">
+            <h3>Nunca perca uma atualização</h3>
+            <p>
+              Receba novidades, bastidores e atualizações da{" "}
+              <strong>RMA Films</strong> direto no seu e-mail. Enviamos conteúdos
+              com frequência baixa e objetiva.
+            </p>
+          </div>
+
+          <form
+            className="footer-newsletter-form"
+            onSubmit={(event) => event.preventDefault()}
+          >
+            <div className="footer-newsletter-input-row">
+              <input
+                type="email"
+                name="email"
+                placeholder="seuemail@exemplo.com"
+                aria-label="Email"
+                required
+              />
+              <button type="submit">Receber</button>
+            </div>
+            <label className="footer-newsletter-check">
+              <input type="checkbox" name="consent" />
+              <span>Concordo em receber comunicações da RMA Films</span>
+            </label>
+          </form>
+        </div>
+
+        <div className="footer-bottom" data-footer-reveal>
+          <span>
+            &copy;{new Date().getFullYear()} RMA Films. Todos os direitos reservados.
+          </span>
+          <div className="footer-bottom-links">
+            {footerLegalLinks.map((item) => (
+              <a key={item.label} href={item.href}>
+                {item.label}
+              </a>
+            ))}
+          </div>
         </div>
       </footer>
     </div>
