@@ -41,71 +41,61 @@ const projects = [
     tag: "Construção Civil",
     title: "Lançamentos Imobiliários",
     copy:
-      "Filmes e cortes verticais para posicionar empreendimentos com estética premium e foco comercial.",
-    stats: ["captação em obra", "vídeo principal + social", "posicionamento de marca"],
+      "Filmes e cortes verticais para posicionar empreendimentos com estética premium.",
   },
   {
     tag: "Mercado Imobiliário",
     title: "Imóveis de Alto Valor",
     copy:
-      "Narrativas visuais que aumentam percepção de qualidade e reforçam confiança no atendimento.",
-    stats: ["tour estratégico", "edição cinematográfica", "mais autoridade digital"],
+      "Narrativas visuais que ampliam a percepção de qualidade no atendimento.",
   },
   {
     tag: "Institucional",
     title: "Semana Farroupilha",
     copy:
-      "Cobertura audiovisual do município de Xangri-lá com foco em memória, alcance e credibilidade pública.",
-    stats: ["entrega em tempo real", "registro oficial", "reconhecimento regional"],
+      "Cobertura audiovisual do município de Xangri-lá com foco em memória e alcance.",
   },
   {
     tag: "Campanhas",
     title: "Presença que Converte",
     copy:
-      "Peças para campanhas e eventos que unem identidade visual, clareza de mensagem e impacto.",
-    stats: ["roteiro objetivo", "motion e design", "consistência multicanal"],
+      "Peças para campanhas e eventos com identidade visual e mensagem clara.",
   },
   {
     tag: "Varejo",
     title: "Experiências de Marca",
     copy:
-      "Conteúdo para lançamentos e ativações que reforçam identidade e elevam desejo pelo produto.",
-    stats: ["captação ágil", "recortes para social", "aumento de tráfego"],
+      "Conteúdo para lançamentos e ativações que reforçam identidade da marca.",
   },
   {
     tag: "Institucional",
     title: "Visão de Futuro",
     copy:
-      "Filme manifesto para traduzir propósito e liderança com direção de arte precisa.",
-    stats: ["narrativa autoral", "linguagem premium", "posicionamento sólido"],
+      "Filme manifesto para traduzir propósito e liderança com direção autoral.",
   },
   {
     tag: "Evento Corporativo",
     title: "Conexões em Movimento",
     copy:
-      "Cobertura completa com ritmo cinematográfico e material pronto para comunicação interna e externa.",
-    stats: ["entrega rápida", "highlight principal", "reaproveitamento inteligente"],
+      "Cobertura com ritmo cinematográfico e material pronto para comunicação interna e externa.",
   },
   {
     tag: "Educacional",
     title: "Formação que Inspira",
     copy:
-      "Conteúdo audiovisual para cursos e programas que precisam clareza, ritmo e retenção.",
-    stats: ["roteiro didático", "captação em estúdio", "conteúdo modular"],
+      "Conteúdo audiovisual para cursos e programas com clareza e bom ritmo.",
   },
   {
     tag: "Saúde",
     title: "Cuidado em Evidência",
     copy:
-      "Histórias reais e depoimentos que fortalecem confiança e humanizam a marca.",
-    stats: ["entrevistas guiadas", "tratamento sensível", "credibilidade"],
+      "Histórias reais e depoimentos que fortalecem confiança na marca.",
   },
   {
     tag: "Governo",
     title: "Impacto Público",
     copy:
-      "Séries informativas para comunicar ações, resultados e prestação de contas.",
-    stats: ["linguagem acessível", "captação institucional", "alcance regional"],
+      "Séries informativas para comunicar ações e resultados públicos.",
   },
 ];
 
@@ -1947,11 +1937,6 @@ export default function Home() {
                   </div>
                   <h3>{project.title}</h3>
                   <p>{project.copy}</p>
-                  <ul>
-                    {project.stats.map((stat) => (
-                      <li key={stat}>{stat}</li>
-                    ))}
-                  </ul>
                 </div>
               </article>
             ))}
