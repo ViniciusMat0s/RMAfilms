@@ -3141,12 +3141,13 @@ h2.section-title--hero-font {
   font-size: var(--type-xs);
   letter-spacing: 0.22em;
   color: rgba(247, 247, 242, 0.55);
+  margin-bottom: 0;
   max-height: 0;
   opacity: 0;
   overflow: hidden;
   transform: translateY(8px);
   transition: color 0.3s ease, max-height 0.34s ease, opacity 0.28s ease,
-    transform 0.34s ease;
+    transform 0.34s ease, margin-bottom 0.34s ease;
 }
 
 .rail-card h3 {
@@ -3158,6 +3159,10 @@ h2.section-title--hero-font {
   text-overflow: ellipsis;
   transition: letter-spacing 0.32s ease, text-shadow 0.32s ease,
     transform 0.34s ease;
+}
+
+.rail-top + h3 {
+  margin-top: 0;
 }
 
 .rail-card p {
@@ -3256,7 +3261,7 @@ h2.section-title--hero-font {
   .rail-track:hover .rail-card:hover {
     --rail-hover: 1;
     --rail-dim: 0;
-    min-height: clamp(468px, 60svh, 596px);
+    min-height: clamp(372px, 46svh, 468px);
   }
 
   .rail-track:hover .rail-card:hover::after {
@@ -3275,12 +3280,14 @@ h2.section-title--hero-font {
 
   .rail-track:hover .rail-card:hover .rail-top {
     color: rgba(247, 247, 242, 0.86);
-    max-height: 28px;
+    max-height: 34px;
+    margin-bottom: clamp(8px, 1.2svh, 14px);
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(-4px);
   }
 
   .rail-track:hover .rail-card:hover h3 {
+    margin-top: clamp(12px, 1.8svh, 20px);
     letter-spacing: 0.012em;
     text-shadow: 0 0 20px rgba(198, 222, 255, 0.24);
     transform: translateY(-1px);
@@ -3316,7 +3323,13 @@ h2.section-title--hero-font {
     transform: none;
   }
 
+  .rail-top {
+    margin-bottom: clamp(8px, 1.2svh, 14px);
+    transform: translateY(-2px);
+  }
+
   .rail-card h3 {
+    margin-top: clamp(12px, 1.8svh, 20px);
     white-space: normal;
     text-overflow: clip;
   }
