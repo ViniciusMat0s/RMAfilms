@@ -3712,7 +3712,7 @@ h2.section-title--hero-font {
 #team.section {
   position: relative;
   padding-top: calc(var(--layout-block) + var(--space-xs));
-  padding-bottom: clamp(var(--fib-6), 13vw, var(--fib-8));
+  padding-bottom: clamp(var(--fib-4), 6vw, var(--fib-6));
   overflow: hidden;
   isolation: isolate;
 }
@@ -4150,7 +4150,7 @@ h2.section-title--hero-font {
   margin-left: calc(50% - 50vw);
   display: flex;
   align-items: flex-end;
-  padding-top: var(--layout-block);
+  padding-top: clamp(var(--fib-3), 4vw, var(--fib-5));
   padding-bottom: 0;
   padding-inline: 0;
 }
