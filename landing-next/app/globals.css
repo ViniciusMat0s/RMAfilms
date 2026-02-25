@@ -4967,6 +4967,7 @@ h2.section-title--hero-font {
 
   .hero-text {
     margin-top: clamp(var(--fib-1), 3.6vh, var(--fib-4));
+    max-width: min(18ch, 100%);
   }
 
   .hero-grid {
@@ -4982,32 +4983,51 @@ h2.section-title--hero-font {
       (100svh - var(--hud-safe-top) - var(--hud-bottom-clearance)) * 0.28
     );
     --hero-main-size: clamp(
-      0.86rem,
+      1.15rem,
       min(
-        4.4vw,
-        calc(var(--hero-accent-width-limit) / 3),
-        calc(var(--hero-accent-height-limit) / 3)
+        6.2vw,
+        calc(var(--hero-accent-width-limit) / 2.6),
+        calc(var(--hero-accent-height-limit) / 2.6)
       ),
-      2.236rem
+      2.6rem
     );
     grid-template-columns: 1fr;
-    gap: var(--space-lg);
+    gap: clamp(var(--fib-4), 6vw, var(--fib-6));
     padding: clamp(var(--fib-6), 22vw, calc(var(--fib-7) + var(--fib-4)))
       var(--hero-inline-right)
       clamp(var(--fib-4), 8vw, var(--fib-5))
       var(--hero-inline-left);
   }
 
+  .hero-line--accent {
+    position: static;
+    right: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    max-width: none;
+    margin-top: clamp(var(--fib-1), 2vh, var(--fib-3));
+    font-size: calc(var(--hero-main-size) * 2.2);
+    text-align: left;
+    line-height: 0.98;
+  }
+
   .hero-right {
-    top: calc(var(--hud-safe-top) + var(--space-xs));
-    right: clamp(var(--fib-2), 5vw, var(--fib-3));
-    max-width: min(46vw, 377px);
-    justify-self: end;
+    position: static;
+    top: auto;
+    right: auto;
+    max-width: 100%;
+    justify-self: start;
     align-self: start;
     margin: 0;
     font-size: clamp(0.78rem, 2.7vw, 1.02rem);
     letter-spacing: clamp(0.1em, 0.45vw, 0.16em);
-    text-align: right;
+    text-align: left;
+  }
+
+  .hero-words,
+  .hero-word {
+    justify-items: start;
   }
 
   .hero-stage {
@@ -5061,6 +5081,51 @@ h2.section-title--hero-font {
   .rail-section {
     padding-top: clamp(var(--fib-2), 5.6svh, calc(var(--fib-5) + var(--fib-2)));
     padding-bottom: clamp(var(--fib-2), 4.2svh, var(--fib-4));
+  }
+
+  .hero-text {
+    margin-top: clamp(var(--fib-5), 10vh, var(--fib-7));
+    max-width: min(16ch, 100%);
+  }
+
+  .hero-grid {
+    --hero-main-size: clamp(0.95rem, 5.8vw, 2rem);
+    gap: clamp(var(--fib-4), 5vw, var(--fib-6));
+    padding: clamp(var(--fib-7), 34vw, calc(var(--fib-8) + var(--fib-4)))
+      var(--hero-inline-right)
+      clamp(var(--fib-4), 8vw, var(--fib-6))
+      var(--hero-inline-left);
+  }
+
+  .hero-line--accent {
+    position: static;
+    right: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    max-width: none;
+    margin-top: clamp(var(--fib-1), 2vh, var(--fib-3));
+    font-size: calc(var(--hero-main-size) * 1.95);
+    text-align: left;
+    line-height: 0.98;
+  }
+
+  .hero-right {
+    position: static;
+    right: auto;
+    top: auto;
+    max-width: 100%;
+    margin-top: clamp(var(--fib-2), 3.6vh, var(--fib-4));
+    text-align: left;
+    justify-self: start;
+    align-self: start;
+    font-size: clamp(0.68rem, 3vw, 0.9rem);
+    letter-spacing: clamp(0.08em, 0.4vw, 0.14em);
+  }
+
+  .hero-words,
+  .hero-word {
+    justify-items: start;
   }
 }
 
