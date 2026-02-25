@@ -211,6 +211,7 @@ export default function Home() {
     let onNavProgressRefresh: (() => void) | null = null;
     let teamHoverCleanups: Array<() => void> = [];
     let roadmapHoverCleanups: Array<() => void> = [];
+    let ctaHoverCleanup: (() => void) | null = null;
     let recordingTimerId: ReturnType<typeof setInterval> | null = null;
     const pad2 = (value: number) => String(value).padStart(2, "0");
 
@@ -687,6 +688,129 @@ export default function Home() {
           });
         }
 
+        const ctaInner =
+          rootRef.current?.querySelector<HTMLElement>(".cta-inner") ?? null;
+        if (ctaInner) {
+          gsap.set(ctaInner, {
+            "--cta-glow": 0,
+            "--cta-sweep": -1,
+            "--cta-pulse": 0,
+            "--cta-hover": 0,
+            "--cta-x": 50,
+            "--cta-y": 50,
+          });
+
+          gsap.to(ctaInner, {
+            "--cta-glow": 1,
+            "--cta-sweep": 1,
+            "--cta-pulse": 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: ctaInner,
+              start: "top 82%",
+              end: "top 30%",
+              scrub: 0.7,
+            },
+          });
+
+          const ctaButtons = ctaInner.querySelectorAll<HTMLElement>(
+            ".cta-actions .button"
+          );
+          if (ctaButtons.length) {
+            gsap.fromTo(
+              ctaButtons,
+              { autoAlpha: 0.45, scale: 0.92, rotateZ: -1.4 },
+              {
+                autoAlpha: 1,
+                scale: 1,
+                rotateZ: 0,
+                duration: 0.8,
+                ease: "power3.out",
+                stagger: 0.1,
+                scrollTrigger: {
+                  trigger: ctaInner,
+                  start: "top 82%",
+                },
+              }
+            );
+          }
+
+          const ctaSurface =
+            ctaInner.querySelector<HTMLElement>(".cta-surface");
+          if (ctaSurface && window.matchMedia("(pointer: fine)").matches) {
+            gsap.set(ctaSurface, {
+              "--cta-tilt-x": 0,
+              "--cta-tilt-y": 0,
+              "--cta-tilt-z": 0,
+            });
+
+            const setX = gsap.quickTo(ctaInner, "--cta-x", {
+              duration: 0.32,
+              ease: "power3.out",
+            });
+            const setY = gsap.quickTo(ctaInner, "--cta-y", {
+              duration: 0.32,
+              ease: "power3.out",
+            });
+            const setHover = gsap.quickTo(ctaInner, "--cta-hover", {
+              duration: 0.22,
+              ease: "power2.out",
+            });
+            const setTiltX = gsap.quickTo(ctaSurface, "--cta-tilt-x", {
+              duration: 0.32,
+              ease: "power3.out",
+            });
+            const setTiltY = gsap.quickTo(ctaSurface, "--cta-tilt-y", {
+              duration: 0.32,
+              ease: "power3.out",
+            });
+            const setTiltZ = gsap.quickTo(ctaSurface, "--cta-tilt-z", {
+              duration: 0.32,
+              ease: "power3.out",
+            });
+
+            const onMove = (event: MouseEvent) => {
+              const bounds = ctaInner.getBoundingClientRect();
+              const nx = gsap.utils.clamp(
+                0,
+                1,
+                (event.clientX - bounds.left) / Math.max(bounds.width, 1)
+              );
+              const ny = gsap.utils.clamp(
+                0,
+                1,
+                (event.clientY - bounds.top) / Math.max(bounds.height, 1)
+              );
+
+              setX(nx * 100);
+              setY(ny * 100);
+              setTiltY((nx - 0.5) * 7.2);
+              setTiltX((0.5 - ny) * 6.6);
+              setTiltZ(16);
+              setHover(1);
+            };
+
+            const onLeave = () => {
+              setX(50);
+              setY(50);
+              setTiltX(0);
+              setTiltY(0);
+              setTiltZ(0);
+              setHover(0);
+            };
+
+            const usePointerEvents = "onpointermove" in window;
+            const moveEvent = usePointerEvents ? "pointermove" : "mousemove";
+            const leaveEvent = usePointerEvents ? "pointerleave" : "mouseleave";
+            ctaInner.addEventListener(moveEvent, onMove);
+            ctaInner.addEventListener(leaveEvent, onLeave);
+            ctaHoverCleanup = () => {
+              ctaInner.removeEventListener(moveEvent, onMove);
+              ctaInner.removeEventListener(leaveEvent, onLeave);
+            };
+          }
+        }
+
         const teamCards = gsap.utils.toArray<HTMLElement>(".team-card");
         if (teamCards.length && window.matchMedia("(pointer: fine)").matches) {
           teamCards.forEach((card) => {
@@ -786,46 +910,6 @@ export default function Home() {
             },
           });
         });
-
-        const ctaInner =
-          rootRef.current?.querySelector<HTMLElement>(".cta-inner") ?? null;
-        if (ctaInner) {
-          gsap.fromTo(
-            ctaInner,
-            { "--cta-glow": 0.12, "--cta-sweep": -1 },
-            {
-              "--cta-glow": 1,
-              "--cta-sweep": 1,
-              ease: "none",
-              scrollTrigger: {
-                trigger: ctaInner,
-                start: "top 88%",
-                end: "bottom 34%",
-                scrub: 0.7,
-              },
-            }
-          );
-
-          const ctaButtons = ctaInner.querySelectorAll<HTMLElement>(
-            ".cta-actions .button"
-          );
-          gsap.fromTo(
-            ctaButtons,
-            { autoAlpha: 0.45, scale: 0.92, rotateZ: -1.4 },
-            {
-              autoAlpha: 1,
-              scale: 1,
-              rotateZ: 0,
-              duration: 0.8,
-              ease: "power3.out",
-              stagger: 0.1,
-              scrollTrigger: {
-                trigger: ctaInner,
-                start: "top 82%",
-              },
-            }
-          );
-        }
 
         const footerColumns = gsap.utils.toArray<HTMLElement>(".footer > div");
         if (footerColumns.length) {
@@ -1537,6 +1621,10 @@ export default function Home() {
       teamHoverCleanups = [];
       roadmapHoverCleanups.forEach((cleanup) => cleanup());
       roadmapHoverCleanups = [];
+      if (ctaHoverCleanup) {
+        ctaHoverCleanup();
+        ctaHoverCleanup = null;
+      }
       if (updateFilmStrip) {
         window.removeEventListener("resize", updateFilmStrip);
       }
@@ -1913,27 +2001,33 @@ export default function Home() {
 
         <section className="cta section--cinematic" id="contact">
           <div className="cta-inner" data-reveal="up">
-            <div>
-              <h2 className="section-title--hero-font section-title-cinematic section-title-cinematic--cta" data-title-fx>
-                <span className="title-line">
-                  SUA IDEIA EM IMAGEM
-                </span>
-                <span className="title-line">
-                  QUE GERA AUTORIDADE.
-                </span>
-              </h2>
-              <p>
-                Envie seu briefing e receba uma direção criativa com proposta de
-                execução, formato ideal e próximos passos para seu projeto.
-              </p>
-            </div>
-            <div className="cta-actions">
-              <a className="button magnetic" href="mailto:contato@rmafilms.com.br">
-                contato@rmafilms.com.br
-              </a>
-              <a className="button button--ghost magnetic" href="#top">
-                Voltar ao topo
-              </a>
+            <div className="cta-effects" aria-hidden="true" />
+            <div className="cta-surface">
+              <div className="cta-copy">
+                <h2
+                  className="section-title--hero-font section-title-cinematic section-title-cinematic--cta"
+                  data-title-fx
+                >
+                  <span className="title-line">
+                    SUA IDEIA EM IMAGEM
+                  </span>
+                  <span className="title-line">
+                    QUE GERA AUTORIDADE.
+                  </span>
+                </h2>
+                <p>
+                  Envie seu briefing e receba uma direção criativa com proposta de
+                  execução, formato ideal e próximos passos para seu projeto.
+                </p>
+              </div>
+              <div className="cta-actions">
+                <a className="button magnetic" href="mailto:contato@rmafilms.com.br">
+                  contato@rmafilms.com.br
+                </a>
+                <a className="button button--ghost magnetic" href="#top">
+                  Voltar ao topo
+                </a>
+              </div>
             </div>
           </div>
         </section>
