@@ -2042,11 +2042,8 @@ export default function Home() {
           </div>
         </section>
 
-      </main>
-
-      <footer className="footer" id="contact">
-        <div className="footer-cta" data-footer-reveal>
-          <div className="cta-inner">
+        <section className="cta section--cinematic" id="contact">
+          <div className="cta-inner" data-reveal="up">
             <div className="cta-effects" aria-hidden="true" />
             <div className="cta-surface">
               <div className="cta-copy">
@@ -2076,8 +2073,11 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
+      </main>
+
+      <footer className="footer">
         <div className="footer-links" data-footer-reveal>
           {footerLinkColumns.map((column) => (
             <div className="footer-menu" key={column.title}>

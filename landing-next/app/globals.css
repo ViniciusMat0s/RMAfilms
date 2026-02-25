@@ -4429,68 +4429,6 @@ h2.section-title--hero-font {
     0 0 calc(24px * var(--cta-glow)) rgba(160, 200, 255, 0.2);
 }
 
-#contact.footer .footer-cta {
-  width: 100vw;
-  max-width: none;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  margin-bottom: clamp(var(--fib-4), 4.8vw, var(--fib-6));
-  position: relative;
-  isolation: isolate;
-  -webkit-mask-image: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.52) 10%,
-    rgba(0, 0, 0, 0.86) 18%,
-    rgba(0, 0, 0, 1) 26%,
-    rgba(0, 0, 0, 1) 100%
-  );
-  -webkit-mask-repeat: no-repeat;
-  mask-image: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.52) 10%,
-    rgba(0, 0, 0, 0.86) 18%,
-    rgba(0, 0, 0, 1) 26%,
-    rgba(0, 0, 0, 1) 100%
-  );
-  mask-repeat: no-repeat;
-}
-
-#contact.footer .footer-cta::before {
-  content: none;
-}
-
-#contact.footer .cta-inner {
-  display: block !important;
-  min-height: clamp(calc(var(--fib-8) + var(--fib-7)), 56vh, calc(var(--fib-8) + var(--fib-8) + var(--fib-6)));
-  position: relative;
-  z-index: 1;
-  border-radius: 0 !important;
-  border: 0 !important;
-  outline: 0 !important;
-}
-
-#contact.footer .cta-inner::before,
-#contact.footer .cta-inner::after {
-  border-radius: 0 !important;
-}
-
-#contact.footer .cta-surface {
-  width: min(100%, 1100px);
-  justify-items: center !important;
-  text-align: center !important;
-}
-
-#contact.footer .cta-copy {
-  max-width: min(900px, 100%);
-  margin-inline: auto;
-}
-
-#contact.footer .cta-actions {
-  justify-content: center !important;
-}
-
 @keyframes ctaBeam {
   0% {
     transform: translateX(-32%) rotate(-10deg);
@@ -4532,7 +4470,8 @@ h2.section-title--hero-font {
   display: flex;
   flex-direction: column;
   --footer-inline: clamp(var(--fib-4), 5.5vw, var(--fib-7));
-  padding: 0 0 clamp(var(--fib-3), 4vw, var(--fib-5));
+  padding: clamp(var(--fib-5), 8vw, var(--fib-7)) 0
+    clamp(var(--fib-3), 4vw, var(--fib-5));
   background:
     radial-gradient(74% 82% at 10% 0%, rgba(114, 175, 255, 0.24), transparent 62%),
     radial-gradient(66% 72% at 100% 40%, rgba(88, 148, 226, 0.2), transparent 64%),
@@ -4585,11 +4524,6 @@ h2.section-title--hero-font {
   width: 100%;
   max-width: none;
   margin: 0;
-}
-
-.footer-cta {
-  width: 100%;
-  margin: 0 0 clamp(46px, 6vw, 76px);
 }
 
 .footer-links {
@@ -4807,10 +4741,6 @@ h2.section-title--hero-font {
   .footer {
     --footer-inline: clamp(var(--fib-2), 6vw, var(--fib-4));
     padding-bottom: var(--space-md);
-  }
-
-  #contact.footer .cta-inner {
-    min-height: clamp(calc(var(--fib-8) + var(--fib-5)), 64vh, calc(var(--fib-8) + var(--fib-8)));
   }
 
   .footer-links {
