@@ -1449,6 +1449,18 @@ export default function Home() {
       if (railTrack) {
         const getScrollDistance = () =>
           Math.max(0, railTrack.scrollWidth - window.innerWidth + 120);
+        const getRailStart = () => {
+          if (window.innerWidth <= 610) {
+            return "top 18%";
+          }
+          if (window.innerWidth <= 987) {
+            return "top 15%";
+          }
+          if (window.innerWidth <= 1280) {
+            return "top 12%";
+          }
+          return "top 10%";
+        };
         const railSpeed = 0.6;
 
         const railTween = gsap.to(railTrack, {
@@ -1456,7 +1468,7 @@ export default function Home() {
           ease: "none",
             scrollTrigger: {
               trigger: ".rail-section",
-            start: "top -6%",
+            start: () => getRailStart(),
             end: () => `+=${getScrollDistance() * railSpeed}`,
             scrub: 0.5,
             pin: true,

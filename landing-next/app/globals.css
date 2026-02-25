@@ -2947,8 +2947,8 @@ h2.section-title--hero-font {
 }
 
 .rail-section {
-  padding: clamp(var(--fib-2), 5svh, calc(var(--layout-block) * 0.6)) 0
-    clamp(var(--fib-2), 5svh, calc(var(--layout-block) * 0.6));
+  padding: clamp(var(--fib-4), 8svh, calc(var(--layout-block) * 0.88)) 0
+    clamp(var(--fib-2), 5svh, calc(var(--layout-block) * 0.58));
 }
 
 .rail-head {
@@ -4867,6 +4867,10 @@ h2.section-title--hero-font {
     align-items: flex-start;
   }
 
+  .rail-section {
+    padding-top: clamp(var(--fib-3), 7svh, calc(var(--layout-block) * 0.72));
+  }
+
   .rail-title {
     font-size: clamp(1.382rem, 5.1vw, 2.618rem);
     line-height: 1.02;
@@ -4927,6 +4931,11 @@ h2.section-title--hero-font {
   #process.section {
     padding-top: clamp(var(--fib-5), 10vw, calc(var(--fib-6) + var(--fib-3)));
     padding-bottom: clamp(var(--fib-5), 10vw, calc(var(--fib-6) + var(--fib-3)));
+  }
+
+  .rail-section {
+    padding-top: clamp(var(--fib-3), 6.6svh, calc(var(--fib-6) + var(--fib-1)));
+    padding-bottom: clamp(var(--fib-2), 4.8svh, var(--fib-5));
   }
 
   .hero-line--main {
@@ -5022,6 +5031,13 @@ h2.section-title--hero-font {
   .hud-crosshair {
     width: 28px;
     height: 28px;
+  }
+}
+
+@media (max-width: 610px) {
+  .rail-section {
+    padding-top: clamp(var(--fib-2), 5.6svh, calc(var(--fib-5) + var(--fib-2)));
+    padding-bottom: clamp(var(--fib-2), 4.2svh, var(--fib-4));
   }
 }
 
