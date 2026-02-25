@@ -4554,7 +4554,7 @@ h2.section-title--hero-font {
     clamp(var(--fib-4), 5.5vw, var(--fib-7)),
     calc(var(--nav-content-offset) + clamp(var(--fib-2), 2.2vw, var(--fib-4)))
   );
-  padding: clamp(var(--fib-5), 8vw, var(--fib-7)) 0
+  padding: clamp(var(--fib-3), 5vw, var(--fib-5)) 0
     clamp(var(--fib-3), 4vw, var(--fib-5));
   background:
     radial-gradient(74% 82% at 10% 0%, rgba(114, 175, 255, 0.24), transparent 62%),
@@ -4602,15 +4602,13 @@ h2.section-title--hero-font {
 
 .footer-links {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, max-content));
+  grid-template-columns: repeat(4, max-content);
   column-gap: clamp(140px, 12vw, 240px);
   row-gap: clamp(var(--fib-2), 2.6vw, var(--fib-4));
   margin-bottom: clamp(var(--fib-2), 3vw, var(--fib-5));
   justify-content: center;
   margin-inline: auto;
-  width: 100%;
-  max-width: 1400px;
-  padding-inline: clamp(var(--fib-2), 4vw, var(--fib-5));
+  width: fit-content;
 }
 
 .footer-divider,
@@ -4794,7 +4792,8 @@ h2.section-title--hero-font {
   }
 
   .footer-links {
-    column-gap: clamp(40px, 6vw, 90px);
+    grid-template-columns: repeat(2, max-content);
+    column-gap: clamp(48px, 7vw, 110px);
   }
 
   .footer-newsletter {
@@ -4821,7 +4820,8 @@ h2.section-title--hero-font {
   }
 
   .footer-links {
-    column-gap: clamp(90px, 9vw, 160px);
+    grid-template-columns: repeat(2, max-content);
+    column-gap: clamp(60px, 8vw, 120px);
   }
 }
 
@@ -4836,7 +4836,8 @@ h2.section-title--hero-font {
 
   .footer-links {
     grid-template-columns: 1fr;
-    column-gap: clamp(24px, 6vw, 48px);
+    justify-items: center;
+    row-gap: clamp(var(--fib-2), 3vw, var(--fib-4));
   }
 
   .footer-newsletter-input-row {
