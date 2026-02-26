@@ -3505,11 +3505,13 @@ h2.section-title--hero-font {
   --tilt-z: 0;
   --tilt-scale: 1;
   --tilt-glow: 0;
+  --reveal-x: 0px;
   --reveal-y: 0px;
   --reveal-alpha: 1;
   --reveal-blur: 0px;
   transform: translateZ(calc(var(--tilt-z) * 1px))
-    translateY(var(--reveal-y)) rotateX(calc(var(--tilt-x) * 1deg))
+    translateX(var(--reveal-x)) translateY(var(--reveal-y))
+    rotateX(calc(var(--tilt-x) * 1deg))
     rotateY(calc(var(--tilt-y) * 1deg)) scale(var(--tilt-scale));
   transition: transform 0.35s ease, filter 0.35s ease;
   filter: drop-shadow(0 0 calc(5px + var(--tilt-glow) * 10px) rgba(88, 118, 148, 0.14))
@@ -3594,6 +3596,10 @@ h2.section-title--hero-font {
   display: inline-flex;
   align-items: center;
   gap: 0.7rem;
+}
+
+.roadmap-kicker-step {
+  display: none;
 }
 
 .roadmap-kicker::before {
@@ -5151,6 +5157,14 @@ h2.section-title--hero-font {
     padding-bottom: clamp(var(--fib-2), 4.2svh, var(--fib-4));
   }
 
+  .rail-head {
+    margin-bottom: clamp(var(--fib-4), 6vw, var(--fib-6));
+  }
+
+  .rail-track {
+    margin-bottom: clamp(var(--fib-4), 6svh, var(--fib-6));
+  }
+
   .process-roadmap {
     --roadmap-line-x: clamp(12px, 4vw, 18px);
     --roadmap-offset: clamp(24px, 8vw, 38px);
@@ -5178,10 +5192,12 @@ h2.section-title--hero-font {
 
   .roadmap-node {
     position: absolute;
-    left: calc(var(--roadmap-line-x) - 6px);
-    top: clamp(10px, 2.2vw, 16px);
+    left: calc(var(--roadmap-line-x) - var(--roadmap-offset));
+    top: 50%;
+    transform: translate(-50%, -50%);
     grid-column: auto;
     margin-top: 0;
+    z-index: 2;
   }
 
   .roadmap-card-wrap,
@@ -5208,6 +5224,17 @@ h2.section-title--hero-font {
   .roadmap-kicker {
     font-size: clamp(0.52rem, 2.2vw, 0.65rem);
     letter-spacing: 0.24em;
+  }
+
+  .roadmap-kicker-step {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.2em;
+    margin-left: 0.1em;
+    letter-spacing: 0;
+    color: rgba(247, 247, 242, 0.9);
+    font-variant-numeric: tabular-nums;
   }
 
   #capabilities .section-head .section-title-cinematic {

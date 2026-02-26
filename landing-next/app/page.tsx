@@ -608,9 +608,18 @@ export default function Home() {
 
         const roadmapCardWraps =
           gsap.utils.toArray<HTMLElement>(".roadmap-card-wrap");
+        const roadmapRevealFromRight = window.matchMedia("(max-width: 900px)").matches
+          ? "56px"
+          : "0px";
         roadmapCardWraps.forEach((wrap) => {
-          gsap.set(wrap, { "--reveal-y": "28px", "--reveal-alpha": 0, "--reveal-blur": "8px" });
+          gsap.set(wrap, {
+            "--reveal-x": roadmapRevealFromRight,
+            "--reveal-y": "28px",
+            "--reveal-alpha": 0,
+            "--reveal-blur": "8px",
+          });
           gsap.to(wrap, {
+            "--reveal-x": "0px",
             "--reveal-y": "0px",
             "--reveal-alpha": 1,
             "--reveal-blur": "0px",
@@ -2015,7 +2024,12 @@ export default function Home() {
               >
                 <div className="roadmap-card-wrap">
                   <article className="process-card roadmap-card" data-step={step.step}>
-                    <span className="roadmap-kicker">ETAPA</span>
+                    <span className="roadmap-kicker">
+                      ETAPA
+                      <span className="roadmap-kicker-step" aria-hidden="true">
+                        {index + 1}
+                      </span>
+                    </span>
                     <h3>{step.title}</h3>
                     <p>{step.copy}</p>
                   </article>
