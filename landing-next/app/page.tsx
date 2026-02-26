@@ -322,54 +322,79 @@ export default function Home() {
             rootRef.current?.querySelector<HTMLElement>(".capabilities-stack");
           if (capabilityStack) {
             if (isCapabilitiesMobile) {
-              const clamp01 = gsap.utils.clamp(0, 1);
               const rowCount = capabilityRows.length;
-              const smoothstep = (value: number) => value * value * (3 - 2 * value);
+              let currentActiveIndex: number | null = null;
 
-              const applyMobileDockState = (progress: number) => {
-                const phase = clamp01(progress) * Math.max(1, rowCount - 1);
-                const openLevels = capabilityRows.map((_, rowIndex) => {
-                  const raw = clamp01(1 - Math.abs(phase - rowIndex));
-                  return smoothstep(raw);
+              capabilityRows.forEach((row) => {
+                row.classList.remove("is-active");
+                gsap.set(row, {
+                  "--row-open": 0,
+                  "--row-focus": 0,
+                  "--row-hover": 0,
+                  "--row-dim": 0,
                 });
-                const maxOpen = Math.max(...openLevels);
-                const activeIndex =
-                  maxOpen > 0.04 ? openLevels.indexOf(maxOpen) : -1;
+                gsap.fromTo(
+                  row,
+                  {
+                    "--row-enter-x": "92px",
+                    "--row-enter-alpha": 0.24,
+                  },
+                  {
+                    "--row-enter-x": "0px",
+                    "--row-enter-alpha": 1,
+                    ease: "none",
+                    scrollTrigger: {
+                      trigger: row,
+                      start: "top 95%",
+                      end: "top 70%",
+                      scrub: 0.72,
+                      invalidateOnRefresh: true,
+                    },
+                  }
+                );
+              });
+
+              const setActiveRow = (activeIndex: number | null) => {
+                if (currentActiveIndex === activeIndex) return;
+                currentActiveIndex = activeIndex;
 
                 capabilityRows.forEach((row, rowIndex) => {
-                  const open = openLevels[rowIndex];
-                  const isActive = rowIndex === activeIndex && open > 0.08;
-                  const enterRaw = clamp01(phase + 1 - rowIndex);
-                  const enter = smoothstep(enterRaw);
-                  const dim =
-                    activeIndex === -1 || isActive ? 0 : clamp01(0.42 + (1 - open) * 0.44);
-
+                  const isActive = activeIndex === rowIndex;
                   row.classList.toggle("is-active", isActive);
-                  gsap.set(row, {
-                    "--row-enter-x": `${(1 - enter) * 92}px`,
-                    "--row-enter-alpha": 0.26 + enter * 0.74,
-                    "--row-open": open,
-                    "--row-focus": open,
-                    "--row-hover": open,
-                    "--row-dim": dim,
+                  gsap.to(row, {
+                    "--row-open": isActive ? 1 : 0,
+                    "--row-focus": isActive ? 1 : 0,
+                    "--row-hover": isActive ? 1 : 0,
+                    "--row-dim": activeIndex === null || isActive ? 0 : 0.82,
+                    duration: 0.34,
+                    ease: "power2.out",
+                    overwrite: "auto",
                   });
                 });
               };
 
-              applyMobileDockState(0);
+              setActiveRow(null);
 
               ScrollTrigger.create({
                 trigger: capabilityStack,
-                start: "top 88%",
-                end: "bottom 18%",
-                scrub: 0.52,
+                start: "top 92%",
+                end: "bottom 10%",
                 invalidateOnRefresh: true,
-                onEnter: (self) => applyMobileDockState(self.progress),
-                onEnterBack: (self) => applyMobileDockState(self.progress),
-                onUpdate: (self) => applyMobileDockState(self.progress),
-                onLeave: () => applyMobileDockState(1),
-                onRefresh: (self) => applyMobileDockState(self.progress),
-                onLeaveBack: () => applyMobileDockState(0),
+                onEnter: () => setActiveRow(0),
+                onLeave: () => setActiveRow(rowCount - 1),
+                onEnterBack: () => setActiveRow(rowCount - 1),
+                onLeaveBack: () => setActiveRow(null),
+              });
+
+              capabilityRows.forEach((row, rowIndex) => {
+                ScrollTrigger.create({
+                  trigger: row,
+                  start: "top 62%",
+                  end: "bottom 62%",
+                  invalidateOnRefresh: true,
+                  onEnter: () => setActiveRow(rowIndex),
+                  onEnterBack: () => setActiveRow(rowIndex),
+                });
               });
             } else {
               const focusSetters = capabilityRows.map((row) =>

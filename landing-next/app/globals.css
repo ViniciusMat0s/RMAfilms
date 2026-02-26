@@ -2713,6 +2713,7 @@ h2.section-title--hero-font {
       242,
       calc(0.08 + var(--row-focus) * 0.08 + var(--row-hover) * 0.16 - var(--row-dim) * 0.06)
     ) !important;
+    transition: none;
   }
 
   .capability-title h3 {
@@ -2721,7 +2722,8 @@ h2.section-title--hero-font {
 
   .capability-body {
     gap: 10px;
-    max-height: calc(220px * var(--row-reveal));
+    max-height: calc(360px * var(--row-reveal));
+    transition: none;
   }
 
   .capability-body p {
