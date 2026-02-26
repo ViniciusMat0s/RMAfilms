@@ -2537,6 +2537,7 @@ h2.section-title--hero-font {
   --row-focus: 0;
   --row-hover: 0;
   --row-dim: 0;
+  --row-open: 0;
   --row-enter-x: 0px;
   --row-enter-alpha: 1;
   --row-reveal: clamp(0, calc(var(--row-focus) + var(--row-hover)), 1);
@@ -2684,6 +2685,10 @@ h2.section-title--hero-font {
 
 
 @media (max-width: 900px) {
+  .capabilities-stack {
+    margin-top: clamp(var(--fib-4), 10vw, var(--fib-6));
+  }
+
   .capability-row {
     position: relative;
     top: auto;
@@ -2701,11 +2706,7 @@ h2.section-title--hero-font {
     );
     padding: clamp(14px, 4vw, 20px) clamp(12px, 4vw, 18px);
     min-height: clamp(110px, 22vw, 160px);
-    --row-reveal: clamp(
-      0.28,
-      calc(var(--row-focus) * 0.9 + var(--row-hover) * 0.95 + 0.08),
-      1
-    );
+    --row-reveal: clamp(0, var(--row-open), 1);
     border-bottom-color: rgba(
       247,
       247,

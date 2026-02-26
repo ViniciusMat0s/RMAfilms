@@ -4,210 +4,16 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
-
-const capabilities = [
-  {
-    label: "01",
-    title: "Narrativa que posiciona",
-    copy:
-      "Cada vídeo é estruturado com storytelling estratégico e construção de percepção premium para gerar autoridade e conexão com o público certo.",
-  },
-  {
-    label: "02",
-    title: "Direção criativa e motion",
-    copy:
-      "Roteiro, captação, edição e motion design com direção autoral para transformar ideia em imagem memorável e de alto impacto.",
-  },
-  {
-    label: "03",
-    title: "Audiovisual para construção e imóveis",
-    copy:
-      "Produções com linguagem visual arquitetônica que valorizam empreendimentos, destacam diferenciais e aceleram vendas com contexto claro para o público.",
-  },
-  {
-    label: "04",
-    title: "Cobertura de eventos e campanhas",
-    copy:
-      "Conteúdo ágil e estratégico com entrega em ritmo real e distribuição multicanal para marcas e instituições que precisam presença forte e consistência.",
-  },
-];
-
-const projects = [
-  {
-    tag: "Construção Civil",
-    title: "Lançamentos Imobiliários",
-    copy:
-      "Filmes e cortes verticais para posicionar empreendimentos com estética premium.",
-  },
-  {
-    tag: "Mercado Imobiliário",
-    title: "Imóveis de Alto Valor",
-    copy:
-      "Narrativas visuais que ampliam a percepção de qualidade no atendimento.",
-  },
-  {
-    tag: "Institucional",
-    title: "Semana Farroupilha",
-    copy:
-      "Cobertura audiovisual do município de Xangri-lá com foco em memória e alcance.",
-  },
-  {
-    tag: "Campanhas",
-    title: "Presença que Converte",
-    copy:
-      "Peças para campanhas e eventos com identidade visual e mensagem clara.",
-  },
-  {
-    tag: "Varejo",
-    title: "Experiências de Marca",
-    copy:
-      "Conteúdo para lançamentos e ativações que reforçam identidade da marca.",
-  },
-  {
-    tag: "Institucional",
-    title: "Visão de Futuro",
-    copy:
-      "Filme manifesto para traduzir propósito e liderança com direção autoral.",
-  },
-  {
-    tag: "Evento Corporativo",
-    title: "Conexões em Movimento",
-    copy:
-      "Cobertura com ritmo cinematográfico e material pronto para comunicação interna e externa.",
-  },
-  {
-    tag: "Educacional",
-    title: "Formação que Inspira",
-    copy:
-      "Conteúdo audiovisual para cursos e programas com clareza e bom ritmo.",
-  },
-  {
-    tag: "Saúde",
-    title: "Cuidado em Evidência",
-    copy:
-      "Histórias reais e depoimentos que fortalecem confiança na marca.",
-  },
-  {
-    tag: "Governo",
-    title: "Impacto Público",
-    copy:
-      "Séries informativas para comunicar ações e resultados públicos.",
-  },
-];
-
-const process = [
-  {
-    step: "01",
-    title: "Diagnóstico e objetivo",
-    copy:
-      "Entendemos o cenário da marca, o público e o resultado esperado para definir direção clara.",
-  },
-  {
-    step: "02",
-    title: "Roteiro e direção criativa",
-    copy:
-      "Planejamos narrativa, linguagem e estética para que cada cena comunique valor.",
-  },
-  {
-    step: "03",
-    title: "Captação e pós-produção",
-    copy:
-      "Executamos com padrão profissional em filmagem, edição, motion design e finalização.",
-  },
-  {
-    step: "04",
-    title: "Entrega estratégica",
-    copy:
-      "Você recebe materiais prontos para publicação, com consistência visual e foco em performance.",
-  },
-];
-
-const teamMembers = [
-  {
-    name: "Rodrigo Mazzoni",
-    role: "Founder & Filmmaker",
-    bio:
-      "Direção criativa e storytelling para filmes que posicionam marcas com autoridade.",
-    initials: "RM",
-    photo: "/team/rodrigo.jpeg",
-  },
-  {
-    name: "Nicolas Novaski",
-    role: "Filmmaker & Editor",
-    bio:
-      "Captação e montagem com ritmo preciso para transformar cenas em narrativa.",
-    initials: "NN",
-    photo: "/team/nicolas.jpeg",
-  },
-  {
-    name: "Robson Nunes",
-    role: "Automação & Inteligência Artificial",
-    bio:
-      "Sistemas e IA para escalar entregas e manter consistência criativa.",
-    initials: "RN",
-    photo: "/team/robson.jpeg",
-  },
-  {
-    name: "Vinícius Matos",
-    role: "Software & IA Engineer",
-    bio:
-      "Especialista na criação de páginas e sistemas de alto padrão, lidera o desenvolvimento do código ao deploy. Responsável por arquiteturas avançadas e infraestruturas complexas, convertendo desafios técnicos em soluções criativas e de alta performance.",
-    initials: "VM",
-    photo: "/team/vinicius.jpeg",
-  },
-];
-
-const navSections = [
-  { id: "capabilities", label: "Capacidades" },
-  { id: "work", label: "Projetos" },
-  { id: "process", label: "Processo" },
-  { id: "team", label: "Equipe" },
-];
-
-const footerLinkColumns = [
-  {
-    title: "Navegação",
-    links: [
-      { label: "Início", href: "#top" },
-      { label: "Capacidades", href: "#capabilities" },
-      { label: "Projetos", href: "#work" },
-      { label: "Processo", href: "#process" },
-      { label: "Equipe", href: "#team" },
-      { label: "Contato", href: "#contact" },
-    ],
-  },
-  {
-    title: "Destaques",
-    links: [
-      { label: "Narrativa estratégica", href: "#capabilities" },
-      { label: "Direção criativa", href: "#capabilities" },
-      { label: "Captação e pós-produção", href: "#process" },
-      { label: "Autoridade de marca", href: "#work" },
-    ],
-  },
-  {
-    title: "Atalhos",
-    links: [
-      { label: "Enviar briefing", href: "mailto:contato@rmafilms.com.br" },
-      { label: "Ver projetos", href: "#work" },
-      { label: "Conhecer equipe", href: "#team" },
-      { label: "Voltar ao topo", href: "#top" },
-    ],
-  },
-  {
-    title: "Contato",
-    links: [
-      { label: "contato@rmafilms.com.br", href: "mailto:contato@rmafilms.com.br" },
-      { label: "Litoral Norte do RS, Brasil", href: "#contact" },
-      { label: "Desde 2017", href: "#contact" },
-    ],
-  },
-];
-
-const footerLegalLinks = [
-  { label: "Início", href: "#top" },
-  { label: "Contato", href: "#contact" },
-];
+import Image from "next/image";
+import {
+  capabilities,
+  footerLegalLinks,
+  footerLinkColumns,
+  navSections,
+  process,
+  projects,
+  teamMembers,
+} from "./content";
 
 export default function Home() {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -487,47 +293,15 @@ export default function Home() {
           const isCapabilitiesMobile = window.matchMedia("(max-width: 900px)").matches;
           gsap.set(capabilityRows, {
             "--row-progress": 0,
-            "--row-enter-x": "0px",
+            "--row-open": 0,
+            "--row-enter-x": isCapabilitiesMobile ? "84px" : "0px",
             "--row-enter-alpha": 1,
+            "--row-focus": 0,
+            "--row-hover": 0,
+            "--row-dim": 0,
           });
 
-          if (isCapabilitiesMobile) {
-            capabilityRows.forEach((row, rowIndex) => {
-              gsap.set(row, {
-                "--row-enter-x": "72px",
-                "--row-enter-alpha": 0,
-              });
-              ScrollTrigger.create({
-                trigger: row,
-                start: "top 88%",
-                onEnter: () => {
-                  gsap.to(row, {
-                    "--row-enter-x": "0px",
-                    "--row-enter-alpha": 1,
-                    duration: 0.55,
-                    delay: rowIndex * 0.03,
-                    ease: "power3.out",
-                    overwrite: "auto",
-                  });
-                },
-                onEnterBack: () => {
-                  gsap.to(row, {
-                    "--row-enter-x": "0px",
-                    "--row-enter-alpha": 1,
-                    duration: 0.45,
-                    ease: "power2.out",
-                    overwrite: "auto",
-                  });
-                },
-                onLeaveBack: () => {
-                  gsap.set(row, {
-                    "--row-enter-x": "72px",
-                    "--row-enter-alpha": 0,
-                  });
-                },
-              });
-            });
-          } else {
+          if (!isCapabilitiesMobile) {
             gsap.fromTo(
               capabilityRows,
               { autoAlpha: 0 },
@@ -547,57 +321,63 @@ export default function Home() {
           const capabilityStack =
             rootRef.current?.querySelector<HTMLElement>(".capabilities-stack");
           if (capabilityStack) {
-            const focusSetters = capabilityRows.map((row) =>
-              gsap.quickTo(row, "--row-focus", {
-                duration: 0.35,
-                ease: "power2.out",
-              })
-            );
-            const hoverSetters = capabilityRows.map((row) =>
-              gsap.quickTo(row, "--row-hover", {
-                duration: 0.28,
-                ease: "power2.out",
-              })
-            );
-            const dimSetters = capabilityRows.map((row) =>
-              gsap.quickTo(row, "--row-dim", {
-                duration: 0.28,
-                ease: "power2.out",
-              })
-            );
-
             if (isCapabilitiesMobile) {
-              const setActiveRow = (activeIndex: number | null) => {
-                capabilityRows.forEach((_, rowIndex) => {
-                  const isActive = activeIndex === rowIndex;
-                  focusSetters[rowIndex](isActive ? 1 : 0);
-                  hoverSetters[rowIndex](isActive ? 1 : 0);
-                  dimSetters[rowIndex](activeIndex === null || isActive ? 0 : 1);
+              const clamp01 = gsap.utils.clamp(0, 1);
+              const rowCount = capabilityRows.length;
+              const smoothstep = (value: number) => value * value * (3 - 2 * value);
+
+              const applyMobileDockState = (progress: number) => {
+                const phase = clamp01(progress) * Math.max(1, rowCount - 1);
+                const openLevels = capabilityRows.map((_, rowIndex) => {
+                  const raw = clamp01(1 - Math.abs(phase - rowIndex));
+                  return smoothstep(raw);
+                });
+                const maxOpen = Math.max(...openLevels);
+                const activeIndex =
+                  maxOpen > 0.04 ? openLevels.indexOf(maxOpen) : -1;
+
+                capabilityRows.forEach((row, rowIndex) => {
+                  const open = openLevels[rowIndex];
+                  const isActive = rowIndex === activeIndex && open > 0.08;
+                  const enterRaw = clamp01(phase + 1 - rowIndex);
+                  const enter = smoothstep(enterRaw);
+                  const dim =
+                    activeIndex === -1 || isActive ? 0 : clamp01(0.42 + (1 - open) * 0.44);
+
+                  row.classList.toggle("is-active", isActive);
+                  gsap.set(row, {
+                    "--row-enter-x": `${(1 - enter) * 92}px`,
+                    "--row-enter-alpha": 0.26 + enter * 0.74,
+                    "--row-open": open,
+                    "--row-focus": open,
+                    "--row-hover": open,
+                    "--row-dim": dim,
+                  });
                 });
               };
 
-              setActiveRow(null);
+              applyMobileDockState(0);
 
-              capabilityRows.forEach((row, rowIndex) => {
-                ScrollTrigger.create({
-                  trigger: row,
-                  start: "top 76%",
-                  end: "bottom 46%",
-                  onEnter: () => setActiveRow(rowIndex),
-                  onEnterBack: () => setActiveRow(rowIndex),
-                  onLeave: () => {
-                    if (rowIndex === capabilityRows.length - 1) {
-                      setActiveRow(null);
-                    }
-                  },
-                  onLeaveBack: () => {
-                    if (rowIndex === 0) {
-                      setActiveRow(null);
-                    }
-                  },
-                });
+              ScrollTrigger.create({
+                trigger: capabilityStack,
+                start: "top 88%",
+                end: "bottom 18%",
+                scrub: 0.52,
+                invalidateOnRefresh: true,
+                onEnter: (self) => applyMobileDockState(self.progress),
+                onEnterBack: (self) => applyMobileDockState(self.progress),
+                onUpdate: (self) => applyMobileDockState(self.progress),
+                onLeave: () => applyMobileDockState(1),
+                onRefresh: (self) => applyMobileDockState(self.progress),
+                onLeaveBack: () => applyMobileDockState(0),
               });
             } else {
+              const focusSetters = capabilityRows.map((row) =>
+                gsap.quickTo(row, "--row-focus", {
+                  duration: 0.35,
+                  ease: "power2.out",
+                })
+              );
               const clamp = gsap.utils.clamp(0, 1);
 
               const applyFocus = (progress: number) => {
@@ -628,21 +408,23 @@ export default function Home() {
             }
           }
 
-          capabilityRows.forEach((row, index) => {
-            const nextRow = capabilityRows[index + 1];
-            if (nextRow) {
-              gsap.to(row, {
-                "--row-progress": 1,
-                ease: "none",
-                scrollTrigger: {
-                  trigger: nextRow,
-                  start: "top 74%",
-                  end: "top 36%",
-                  scrub: 0.9,
-                },
-              });
-            }
-          });
+          if (!isCapabilitiesMobile) {
+            capabilityRows.forEach((row, index) => {
+              const nextRow = capabilityRows[index + 1];
+              if (nextRow) {
+                gsap.to(row, {
+                  "--row-progress": 1,
+                  ease: "none",
+                  scrollTrigger: {
+                    trigger: nextRow,
+                    start: "top 74%",
+                    end: "top 36%",
+                    scrub: 0.9,
+                  },
+                });
+              }
+            });
+          }
         }
 
         const processCards = gsap.utils.toArray<HTMLElement>(".process-card");
@@ -2150,7 +1932,12 @@ export default function Home() {
                   data-has-photo={member.photo ? "true" : "false"}
                 >
                   {member.photo ? (
-                    <img src={member.photo} alt={member.name} loading="lazy" />
+                    <Image
+                      src={member.photo}
+                      alt={member.name}
+                      fill
+                      sizes="(max-width: 610px) 90vw, (max-width: 987px) 48vw, 25vw"
+                    />
                   ) : null}
                   <span aria-hidden="true">{member.initials}</span>
                   <div className="team-meta">
@@ -2209,7 +1996,10 @@ export default function Home() {
         <div className="footer-links" data-footer-reveal>
           {footerLinkColumns.map((column) => (
             <div className="footer-menu" key={column.title}>
-              <span className="footer-menu-title">// {column.title}</span>
+              <span className="footer-menu-title">
+                {"// "}
+                {column.title}
+              </span>
               <ul>
                 {column.links.map((link) => (
                   <li key={`${column.title}-${link.label}`}>
