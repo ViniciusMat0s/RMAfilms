@@ -2541,7 +2541,7 @@ h2.section-title--hero-font {
   position: sticky;
   top: calc(var(--stack-top, 120px) + var(--stack-index) * var(--stack-gap, 18px));
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
   gap: clamp(20px, 4vw, 56px);
   align-items: center;
   padding: clamp(22px, 3vw, 34px) clamp(18px, 4vw, 36px);
@@ -5162,6 +5162,7 @@ h2.section-title--hero-font {
   }
 
   .rail-track {
+    padding-top: clamp(var(--fib-3), 4.8svh, var(--fib-5));
     margin-bottom: clamp(var(--fib-4), 6svh, var(--fib-6));
   }
 

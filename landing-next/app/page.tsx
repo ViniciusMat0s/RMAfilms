@@ -10,29 +10,25 @@ const capabilities = [
     label: "01",
     title: "Narrativa que posiciona",
     copy:
-      "Cada vídeo é estruturado para construir autoridade, percepção de valor e conexão com o público certo.",
-    signals: ["Storytelling estratégico", "Percepção premium"],
+      "Cada vídeo é estruturado com storytelling estratégico e construção de percepção premium para gerar autoridade e conexão com o público certo.",
   },
   {
     label: "02",
     title: "Direção criativa e motion",
     copy:
-      "Roteiro, captação, edição e motion design alinhados para transformar ideia em imagem memorável.",
-    signals: ["Direção autoral", "Motion de alto impacto"],
+      "Roteiro, captação, edição e motion design com direção autoral para transformar ideia em imagem memorável e de alto impacto.",
   },
   {
     label: "03",
     title: "Audiovisual para construção e imóveis",
     copy:
-      "Produções que valorizam empreendimentos, destacam diferenciais e aceleram a decisão de compra.",
-    signals: ["Visual arquitetônico", "Vendas com contexto"],
+      "Produções com linguagem visual arquitetônica que valorizam empreendimentos, destacam diferenciais e aceleram vendas com contexto claro para o público.",
   },
   {
     label: "04",
     title: "Cobertura de eventos e campanhas",
     copy:
-      "Conteúdo ágil e estratégico para marcas e instituições que precisam presença forte e consistência.",
-    signals: ["Entrega em ritmo real", "Distribuição multicanal"],
+      "Conteúdo ágil e estratégico com entrega em ritmo real e distribuição multicanal para marcas e instituições que precisam presença forte e consistência.",
   },
 ];
 
@@ -1947,14 +1943,6 @@ export default function Home() {
                 </div>
                 <div className="capability-body">
                   <p>{card.copy}</p>
-                  <ul className="capability-signals">
-                    {card.signals.map((signal) => (
-                      <li key={signal}>{signal}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="capability-number" aria-hidden="true">
-                  {card.label}
                 </div>
               </article>
             ))}
