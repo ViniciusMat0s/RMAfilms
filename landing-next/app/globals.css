@@ -2537,6 +2537,8 @@ h2.section-title--hero-font {
   --row-focus: 0;
   --row-hover: 0;
   --row-dim: 0;
+  --row-enter-x: 0px;
+  --row-enter-alpha: 1;
   --row-reveal: clamp(0, calc(var(--row-focus) + var(--row-hover)), 1);
   position: sticky;
   top: calc(var(--stack-top, 120px) + var(--stack-index) * var(--stack-gap, 18px));
@@ -2688,12 +2690,28 @@ h2.section-title--hero-font {
     grid-template-columns: 1fr;
     align-items: start;
     gap: 12px;
-    transform: none;
-    filter: none;
-    opacity: 1;
+    transform: translateX(var(--row-enter-x))
+      translateY(calc(var(--row-hover) * -4px))
+      scale(calc(1 + var(--row-hover) * 0.018 - var(--row-dim) * 0.016));
+    filter: saturate(calc(0.9 + var(--row-hover) * 0.24 - var(--row-dim) * 0.12))
+      brightness(calc(0.96 + var(--row-hover) * 0.08 - var(--row-dim) * 0.1));
+    opacity: calc(
+      (0.84 + var(--row-hover) * 0.16 - var(--row-dim) * 0.14) *
+        var(--row-enter-alpha)
+    );
     padding: clamp(14px, 4vw, 20px) clamp(12px, 4vw, 18px);
     min-height: clamp(110px, 22vw, 160px);
-    --row-reveal: clamp(0.35, calc(var(--row-focus) * 1.4 + 0.1), 1);
+    --row-reveal: clamp(
+      0.28,
+      calc(var(--row-focus) * 0.9 + var(--row-hover) * 0.95 + 0.08),
+      1
+    );
+    border-bottom-color: rgba(
+      247,
+      247,
+      242,
+      calc(0.08 + var(--row-focus) * 0.08 + var(--row-hover) * 0.16 - var(--row-dim) * 0.06)
+    ) !important;
   }
 
   .capability-title h3 {
@@ -5153,17 +5171,22 @@ h2.section-title--hero-font {
 
 @media (max-width: 610px) {
   .rail-section {
-    padding-top: clamp(var(--fib-2), 5.6svh, calc(var(--fib-5) + var(--fib-2)));
+    padding-top: clamp(var(--fib-1), 3.8svh, calc(var(--fib-4) + var(--fib-1)));
     padding-bottom: clamp(var(--fib-2), 4.2svh, var(--fib-4));
   }
 
   .rail-head {
-    margin-bottom: clamp(var(--fib-4), 6vw, var(--fib-6));
+    margin-bottom: clamp(var(--fib-3), 4.4vw, var(--fib-5));
   }
 
   .rail-track {
-    padding-top: clamp(var(--fib-3), 4.8svh, var(--fib-5));
+    padding-top: clamp(var(--fib-2), 3.2svh, var(--fib-4));
     margin-bottom: clamp(var(--fib-4), 6svh, var(--fib-6));
+  }
+
+  .rail-card {
+    min-width: min(320px, 74vw);
+    min-height: clamp(360px, 52svh, 460px);
   }
 
   .process-roadmap {

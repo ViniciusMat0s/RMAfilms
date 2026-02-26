@@ -484,24 +484,65 @@ export default function Home() {
 
         const capabilityRows = gsap.utils.toArray<HTMLElement>(".capability-row");
         if (capabilityRows.length) {
+          const isCapabilitiesMobile = window.matchMedia("(max-width: 900px)").matches;
           gsap.set(capabilityRows, {
             "--row-progress": 0,
+            "--row-enter-x": "0px",
+            "--row-enter-alpha": 1,
           });
 
-          gsap.fromTo(
-            capabilityRows,
-            { autoAlpha: 0 },
-            {
-              autoAlpha: 1,
-              duration: 0.9,
-              ease: "power3.out",
-              stagger: 0.12,
-              scrollTrigger: {
-                trigger: "#capabilities",
-                start: "top 82%",
-              },
-            }
-          );
+          if (isCapabilitiesMobile) {
+            capabilityRows.forEach((row, rowIndex) => {
+              gsap.set(row, {
+                "--row-enter-x": "72px",
+                "--row-enter-alpha": 0,
+              });
+              ScrollTrigger.create({
+                trigger: row,
+                start: "top 88%",
+                onEnter: () => {
+                  gsap.to(row, {
+                    "--row-enter-x": "0px",
+                    "--row-enter-alpha": 1,
+                    duration: 0.55,
+                    delay: rowIndex * 0.03,
+                    ease: "power3.out",
+                    overwrite: "auto",
+                  });
+                },
+                onEnterBack: () => {
+                  gsap.to(row, {
+                    "--row-enter-x": "0px",
+                    "--row-enter-alpha": 1,
+                    duration: 0.45,
+                    ease: "power2.out",
+                    overwrite: "auto",
+                  });
+                },
+                onLeaveBack: () => {
+                  gsap.set(row, {
+                    "--row-enter-x": "72px",
+                    "--row-enter-alpha": 0,
+                  });
+                },
+              });
+            });
+          } else {
+            gsap.fromTo(
+              capabilityRows,
+              { autoAlpha: 0 },
+              {
+                autoAlpha: 1,
+                duration: 0.9,
+                ease: "power3.out",
+                stagger: 0.12,
+                scrollTrigger: {
+                  trigger: "#capabilities",
+                  start: "top 82%",
+                },
+              }
+            );
+          }
 
           const capabilityStack =
             rootRef.current?.querySelector<HTMLElement>(".capabilities-stack");
@@ -512,33 +553,79 @@ export default function Home() {
                 ease: "power2.out",
               })
             );
-            const clamp = gsap.utils.clamp(0, 1);
+            const hoverSetters = capabilityRows.map((row) =>
+              gsap.quickTo(row, "--row-hover", {
+                duration: 0.28,
+                ease: "power2.out",
+              })
+            );
+            const dimSetters = capabilityRows.map((row) =>
+              gsap.quickTo(row, "--row-dim", {
+                duration: 0.28,
+                ease: "power2.out",
+              })
+            );
 
-            const applyFocus = (progress: number) => {
-              const virtualIndex = progress * (capabilityRows.length - 1);
-              capabilityRows.forEach((_, rowIndex) => {
-                const distance = Math.abs(rowIndex - virtualIndex);
-                const raw = clamp(1 - distance * 0.9);
-                const eased = raw * raw;
-                focusSetters[rowIndex](eased);
+            if (isCapabilitiesMobile) {
+              const setActiveRow = (activeIndex: number | null) => {
+                capabilityRows.forEach((_, rowIndex) => {
+                  const isActive = activeIndex === rowIndex;
+                  focusSetters[rowIndex](isActive ? 1 : 0);
+                  hoverSetters[rowIndex](isActive ? 1 : 0);
+                  dimSetters[rowIndex](activeIndex === null || isActive ? 0 : 1);
+                });
+              };
+
+              setActiveRow(null);
+
+              capabilityRows.forEach((row, rowIndex) => {
+                ScrollTrigger.create({
+                  trigger: row,
+                  start: "top 76%",
+                  end: "bottom 46%",
+                  onEnter: () => setActiveRow(rowIndex),
+                  onEnterBack: () => setActiveRow(rowIndex),
+                  onLeave: () => {
+                    if (rowIndex === capabilityRows.length - 1) {
+                      setActiveRow(null);
+                    }
+                  },
+                  onLeaveBack: () => {
+                    if (rowIndex === 0) {
+                      setActiveRow(null);
+                    }
+                  },
+                });
               });
-            };
+            } else {
+              const clamp = gsap.utils.clamp(0, 1);
 
-            const clearFocus = () => {
-              capabilityRows.forEach((_, rowIndex) => focusSetters[rowIndex](0));
-            };
+              const applyFocus = (progress: number) => {
+                const virtualIndex = progress * (capabilityRows.length - 1);
+                capabilityRows.forEach((_, rowIndex) => {
+                  const distance = Math.abs(rowIndex - virtualIndex);
+                  const raw = clamp(1 - distance * 0.9);
+                  const eased = raw * raw;
+                  focusSetters[rowIndex](eased);
+                });
+              };
 
-            const focusTrigger = ScrollTrigger.create({
-              trigger: capabilityStack,
-              start: "top 70%",
-              end: "bottom 30%",
-              scrub: 0.7,
-              onUpdate: (self) => applyFocus(self.progress),
-              onLeave: clearFocus,
-              onLeaveBack: clearFocus,
-            });
+              const clearFocus = () => {
+                capabilityRows.forEach((_, rowIndex) => focusSetters[rowIndex](0));
+              };
 
-            focusTrigger?.vars?.onUpdate?.(focusTrigger);
+              const focusTrigger = ScrollTrigger.create({
+                trigger: capabilityStack,
+                start: "top 70%",
+                end: "bottom 30%",
+                scrub: 0.7,
+                onUpdate: (self) => applyFocus(self.progress),
+                onLeave: clearFocus,
+                onLeaveBack: clearFocus,
+              });
+
+              focusTrigger?.vars?.onUpdate?.(focusTrigger);
+            }
           }
 
           capabilityRows.forEach((row, index) => {
