@@ -48,6 +48,7 @@ export default function Home() {
     let onNavProgressRefresh: (() => void) | null = null;
     let teamHoverCleanups: Array<() => void> = [];
     let roadmapHoverCleanups: Array<() => void> = [];
+    let capabilityMobileTapCleanups: Array<() => void> = [];
     let ctaHoverCleanup: (() => void) | null = null;
     let recordingTimerId: ReturnType<typeof setInterval> | null = null;
     const pad2 = (value: number) => String(value).padStart(2, "0");
@@ -291,163 +292,57 @@ export default function Home() {
         const capabilityRows = gsap.utils.toArray<HTMLElement>(".capability-row");
         if (capabilityRows.length) {
           const isCapabilitiesMobile = window.matchMedia("(max-width: 900px)").matches;
-          gsap.set(capabilityRows, {
-            "--row-progress": 0,
-            "--row-open": 0,
-            "--row-enter-x": isCapabilitiesMobile ? "84px" : "0px",
-            "--row-enter-alpha": 1,
-            "--row-focus": 0,
-            "--row-hover": 0,
-            "--row-dim": 0,
-          });
+          if (isCapabilitiesMobile) {
+            let currentActiveIndex: number | null = null;
 
-          if (!isCapabilitiesMobile) {
-            gsap.fromTo(
-              capabilityRows,
-              { autoAlpha: 0 },
-              {
-                autoAlpha: 1,
-                duration: 0.9,
-                ease: "power3.out",
-                stagger: 0.12,
-                scrollTrigger: {
-                  trigger: "#capabilities",
-                  start: "top 82%",
-                },
-              }
-            );
-          }
-
-          const capabilityStack =
-            rootRef.current?.querySelector<HTMLElement>(".capabilities-stack");
-          if (capabilityStack) {
-            if (isCapabilitiesMobile) {
-              const rowCount = capabilityRows.length;
-              let currentActiveIndex: number | null = null;
-
-              capabilityRows.forEach((row) => {
-                row.classList.remove("is-active");
-                gsap.set(row, {
-                  "--row-open": 0,
-                  "--row-focus": 0,
-                  "--row-hover": 0,
-                  "--row-dim": 0,
-                });
-                gsap.fromTo(
-                  row,
-                  {
-                    "--row-enter-x": "92px",
-                    "--row-enter-alpha": 0.24,
-                  },
-                  {
-                    "--row-enter-x": "0px",
-                    "--row-enter-alpha": 1,
-                    ease: "none",
-                    scrollTrigger: {
-                      trigger: row,
-                      start: "top 95%",
-                      end: "top 70%",
-                      scrub: 0.72,
-                      invalidateOnRefresh: true,
-                    },
-                  }
-                );
-              });
-
-              const setActiveRow = (activeIndex: number | null) => {
-                if (currentActiveIndex === activeIndex) return;
-                currentActiveIndex = activeIndex;
-
-                capabilityRows.forEach((row, rowIndex) => {
-                  const isActive = activeIndex === rowIndex;
-                  row.classList.toggle("is-active", isActive);
-                  gsap.to(row, {
-                    "--row-open": isActive ? 1 : 0,
-                    "--row-focus": isActive ? 1 : 0,
-                    "--row-hover": isActive ? 1 : 0,
-                    "--row-dim": activeIndex === null || isActive ? 0 : 0.82,
-                    duration: 0.34,
-                    ease: "power2.out",
-                    overwrite: "auto",
-                  });
-                });
-              };
-
-              setActiveRow(null);
-
-              ScrollTrigger.create({
-                trigger: capabilityStack,
-                start: "top 92%",
-                end: "bottom 10%",
-                invalidateOnRefresh: true,
-                onEnter: () => setActiveRow(0),
-                onLeave: () => setActiveRow(rowCount - 1),
-                onEnterBack: () => setActiveRow(rowCount - 1),
-                onLeaveBack: () => setActiveRow(null),
-              });
+            const setActiveRow = (activeIndex: number | null) => {
+              if (currentActiveIndex === activeIndex) return;
+              currentActiveIndex = activeIndex;
 
               capabilityRows.forEach((row, rowIndex) => {
-                ScrollTrigger.create({
-                  trigger: row,
-                  start: "top 62%",
-                  end: "bottom 62%",
-                  invalidateOnRefresh: true,
-                  onEnter: () => setActiveRow(rowIndex),
-                  onEnterBack: () => setActiveRow(rowIndex),
-                });
+                const isActive = activeIndex === rowIndex;
+                row.classList.toggle("is-active", isActive);
+                row.setAttribute("aria-expanded", String(isActive));
               });
-            } else {
-              const focusSetters = capabilityRows.map((row) =>
-                gsap.quickTo(row, "--row-focus", {
-                  duration: 0.35,
-                  ease: "power2.out",
-                })
-              );
-              const clamp = gsap.utils.clamp(0, 1);
+            };
 
-              const applyFocus = (progress: number) => {
-                const virtualIndex = progress * (capabilityRows.length - 1);
-                capabilityRows.forEach((_, rowIndex) => {
-                  const distance = Math.abs(rowIndex - virtualIndex);
-                  const raw = clamp(1 - distance * 0.9);
-                  const eased = raw * raw;
-                  focusSetters[rowIndex](eased);
-                });
+            capabilityRows.forEach((row, rowIndex) => {
+              row.classList.remove("is-active");
+              row.setAttribute("tabindex", "0");
+              row.setAttribute("role", "button");
+              row.setAttribute("aria-expanded", "false");
+
+              const toggleRow = () => {
+                const nextIndex = currentActiveIndex === rowIndex ? null : rowIndex;
+                setActiveRow(nextIndex);
               };
 
-              const clearFocus = () => {
-                capabilityRows.forEach((_, rowIndex) => focusSetters[rowIndex](0));
+              const onKeyDown = (event: KeyboardEvent) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  toggleRow();
+                }
               };
 
-              const focusTrigger = ScrollTrigger.create({
-                trigger: capabilityStack,
-                start: "top 70%",
-                end: "bottom 30%",
-                scrub: 0.7,
-                onUpdate: (self) => applyFocus(self.progress),
-                onLeave: clearFocus,
-                onLeaveBack: clearFocus,
+              row.addEventListener("click", toggleRow);
+              row.addEventListener("keydown", onKeyDown);
+              capabilityMobileTapCleanups.push(() => {
+                row.removeEventListener("click", toggleRow);
+                row.removeEventListener("keydown", onKeyDown);
+                row.removeAttribute("tabindex");
+                row.removeAttribute("role");
+                row.removeAttribute("aria-expanded");
+                row.classList.remove("is-active");
               });
+            });
 
-              focusTrigger?.vars?.onUpdate?.(focusTrigger);
-            }
-          }
-
-          if (!isCapabilitiesMobile) {
-            capabilityRows.forEach((row, index) => {
-              const nextRow = capabilityRows[index + 1];
-              if (nextRow) {
-                gsap.to(row, {
-                  "--row-progress": 1,
-                  ease: "none",
-                  scrollTrigger: {
-                    trigger: nextRow,
-                    start: "top 74%",
-                    end: "top 36%",
-                    scrub: 0.9,
-                  },
-                });
-              }
+            setActiveRow(null);
+          } else {
+            capabilityRows.forEach((row) => {
+              row.classList.remove("is-active");
+              row.removeAttribute("tabindex");
+              row.removeAttribute("role");
+              row.removeAttribute("aria-expanded");
             });
           }
         }
@@ -1597,6 +1492,8 @@ export default function Home() {
     }, rootRef);
 
     return () => {
+      capabilityMobileTapCleanups.forEach((cleanup) => cleanup());
+      capabilityMobileTapCleanups = [];
       teamHoverCleanups.forEach((cleanup) => cleanup());
       teamHoverCleanups = [];
       roadmapHoverCleanups.forEach((cleanup) => cleanup());

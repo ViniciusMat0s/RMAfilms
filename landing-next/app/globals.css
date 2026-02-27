@@ -2533,16 +2533,8 @@ h2.section-title--hero-font {
 
 .capability-row {
   --stack-index: 0;
-  --row-progress: 0;
-  --row-focus: 0;
-  --row-hover: 0;
-  --row-dim: 0;
-  --row-open: 0;
-  --row-enter-x: 0px;
-  --row-enter-alpha: 1;
-  --row-reveal: clamp(0, calc(var(--row-focus) + var(--row-hover)), 1);
-  position: sticky;
-  top: calc(var(--stack-top, 120px) + var(--stack-index) * var(--stack-gap, 18px));
+  position: relative;
+  top: auto;
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
   gap: clamp(20px, 4vw, 56px);
@@ -2551,73 +2543,22 @@ h2.section-title--hero-font {
   min-height: clamp(140px, 14vw, 220px);
   border-radius: 0 !important;
   border: 0 !important;
-  border-bottom: 1px solid
-    rgba(247, 247, 242, calc(0.06 + var(--row-focus) * 0.08)) !important;
+  border-bottom: 1px solid rgba(247, 247, 242, 0.1) !important;
   background: transparent !important;
   box-shadow: none !important;
   outline: none !important;
-  transform-origin: 50% 0%;
-  transform: translateY(calc(var(--row-progress) * -16px))
-    scale(
-      calc(
-        1 -
-          var(--row-progress) * 0.02 +
-          var(--row-focus) * 0.02 +
-          var(--row-hover) * 0.05 -
-          var(--row-dim) * 0.035
-      )
-    );
-  filter: saturate(
-      calc(
-        0.82 +
-          var(--row-focus) * 0.24 -
-          var(--row-progress) * 0.06 -
-          var(--row-dim) * 0.12 +
-          var(--row-hover) * 0.1
-      )
-    )
-    brightness(
-      calc(
-        0.94 +
-          var(--row-focus) * 0.06 -
-          var(--row-progress) * 0.06 -
-          var(--row-dim) * 0.08 +
-          var(--row-hover) * 0.08
-      )
-    );
-  opacity: calc(
-    0.88 -
-      var(--row-progress) * 0.14 +
-      var(--row-focus) * 0.12 -
-      var(--row-dim) * 0.12 +
-      var(--row-hover) * 0.12
-  );
-  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.9s ease, border-color 0.9s ease, box-shadow 0.9s ease,
-    filter 0.9s ease;
-  will-change: transform, filter, opacity;
+  transform: none;
+  filter: none;
+  opacity: 1;
+  transition: none;
+  will-change: auto;
   isolation: isolate;
   overflow: visible;
-  z-index: calc(1 + var(--row-focus) * 2 + var(--row-hover) * 3);
+  z-index: 1;
 }
 
 .capability-row.is-active {
-  --row-focus: 1;
-}
-
-@media (hover: hover) {
-  .capability-row {
-    cursor: pointer;
-  }
-
-  .capabilities-stack:hover .capability-row {
-    --row-dim: 1;
-  }
-
-  .capabilities-stack:hover .capability-row:hover {
-    --row-hover: 1;
-    --row-dim: 0;
-  }
+  border-bottom-color: rgba(247, 247, 242, 0.24) !important;
 }
 
 .capability-row::before {
@@ -2633,11 +2574,11 @@ h2.section-title--hero-font {
 .capability-body {
   display: grid;
   gap: 12px;
-  max-height: calc(260px * var(--row-reveal));
-  opacity: var(--row-reveal);
-  transform: translateY(calc((1 - var(--row-reveal)) * 10px));
-  overflow: hidden;
-  transition: max-height 0.9s ease, opacity 0.8s ease, transform 0.9s ease;
+  max-height: none;
+  opacity: 1;
+  transform: none;
+  overflow: visible;
+  transition: none;
 }
 
 .capability-body p {
@@ -2694,25 +2635,13 @@ h2.section-title--hero-font {
     top: auto;
     grid-template-columns: 1fr;
     align-items: start;
+    cursor: pointer;
     gap: 12px;
-    transform: translateX(var(--row-enter-x))
-      translateY(calc(var(--row-hover) * -4px))
-      scale(calc(1 + var(--row-hover) * 0.018 - var(--row-dim) * 0.016));
-    filter: saturate(calc(0.9 + var(--row-hover) * 0.24 - var(--row-dim) * 0.12))
-      brightness(calc(0.96 + var(--row-hover) * 0.08 - var(--row-dim) * 0.1));
-    opacity: calc(
-      (0.84 + var(--row-hover) * 0.16 - var(--row-dim) * 0.14) *
-        var(--row-enter-alpha)
-    );
+    transform: none;
+    filter: none;
+    opacity: 1;
     padding: clamp(14px, 4vw, 20px) clamp(12px, 4vw, 18px);
-    min-height: clamp(110px, 22vw, 160px);
-    --row-reveal: clamp(0, var(--row-open), 1);
-    border-bottom-color: rgba(
-      247,
-      247,
-      242,
-      calc(0.08 + var(--row-focus) * 0.08 + var(--row-hover) * 0.16 - var(--row-dim) * 0.06)
-    ) !important;
+    min-height: 0;
     transition: none;
   }
 
@@ -2721,9 +2650,17 @@ h2.section-title--hero-font {
   }
 
   .capability-body {
+    display: none;
     gap: 10px;
-    max-height: calc(360px * var(--row-reveal));
+    max-height: none;
+    opacity: 1;
+    transform: none;
+    overflow: visible;
     transition: none;
+  }
+
+  .capability-row.is-active .capability-body {
+    display: grid;
   }
 
   .capability-body p {
