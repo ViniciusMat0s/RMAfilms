@@ -41,12 +41,44 @@ type ProjectSubmitPayload = {
   image: string;
   media: string[];
 };
+type EditorStepKey = "auth" | "details" | "media" | "review";
 
 const TOKEN_STORAGE_KEY = "rma_admin_token";
 const FALLBACK_TOKEN_HINT = "ADMINRMA";
 const VIDEO_EXTENSION_PATTERN = /\.(mp4|webm|ogg|mov|m4v)$/i;
 const INSTAGRAM_POST_PATTERN =
   /(?:https?:\/\/)?(?:www\.)?instagram\.com\/(p|reel|tv)\/([A-Za-z0-9_-]+)/i;
+const EDITOR_STEPS: Array<{
+  key: EditorStepKey;
+  label: string;
+  title: string;
+  hint: string;
+}> = [
+  {
+    key: "auth",
+    label: "Token",
+    title: "Autenticacao",
+    hint: "Configure o token admin para liberar operacoes de salvamento.",
+  },
+  {
+    key: "details",
+    label: "Projeto",
+    title: "Informacoes do Projeto",
+    hint: "Defina tag, titulo e descricao do card.",
+  },
+  {
+    key: "media",
+    label: "Midias",
+    title: "Midias e Importacao",
+    hint: "Envie arquivos e importe publicacoes do Instagram.",
+  },
+  {
+    key: "review",
+    label: "Revisao",
+    title: "Revisao Final",
+    hint: "Confira o resumo antes de criar ou atualizar.",
+  },
+];
 
 const EMPTY_FORM: ProjectForm = {
   tag: "",
@@ -126,9 +158,13 @@ export default function AdminProjectsPage() {
     useState<InstagramImportMode>("single");
   const [importingInstagram, setImportingInstagram] = useState(false);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [editorStep, setEditorStep] = useState(0);
   const [floatingModal, setFloatingModal] = useState<FloatingModalState | null>(null);
   const floatingConfirmActionRef = useRef<(() => void) | null>(null);
   const projectsWithMedia = projects.filter((project) => project.media.length > 0).length;
+  const currentEditorStep = EDITOR_STEPS[editorStep];
+  const isFirstEditorStep = editorStep === 0;
+  const isLastEditorStep = editorStep === EDITOR_STEPS.length - 1;
 
   const closeFloatingModal = () => {
     setFloatingModal(null);
@@ -280,6 +316,7 @@ export default function AdminProjectsPage() {
       setInstagramInput("");
       setInstagramBatchInputs([""]);
       setInstagramImportMode("single");
+      setEditorStep(0);
       setMessage("");
       setError("");
     };
@@ -297,6 +334,7 @@ export default function AdminProjectsPage() {
     setInstagramInput("");
     setInstagramBatchInputs([""]);
     setInstagramImportMode("single");
+    setEditorStep(0);
   };
 
   const openCreateModal = () => {
@@ -326,9 +364,55 @@ export default function AdminProjectsPage() {
     setInstagramInput("");
     setInstagramBatchInputs([""]);
     setInstagramImportMode("single");
+    setEditorStep(0);
     setMessage("");
     setError("");
     setIsEditorOpen(true);
+  };
+
+  const goToEditorStep = (nextStep: number) => {
+    const bounded = Math.min(Math.max(nextStep, 0), EDITOR_STEPS.length - 1);
+    setEditorStep(bounded);
+  };
+
+  const validateCurrentStep = () => {
+    if (editorStep === 0 && !token.trim()) {
+      openAlert("Token admin ausente", "Informe o token admin para continuar para a proxima etapa.");
+      return false;
+    }
+
+    if (editorStep === 1) {
+      const missingFields: string[] = [];
+      if (!form.tag.trim()) missingFields.push("Tag");
+      if (!form.title.trim()) missingFields.push("Titulo");
+      if (!form.copy.trim()) missingFields.push("Descricao");
+      if (missingFields.length) {
+        openAlert(
+          "Campos obrigatorios",
+          `Preencha ${missingFields.join(", ")} antes de continuar.`
+        );
+        return false;
+      }
+    }
+
+    if (editorStep === 2 && importingInstagram) {
+      openAlert(
+        "Importacao em andamento",
+        "Aguarde a importacao de midias do Instagram finalizar para continuar."
+      );
+      return false;
+    }
+
+    return true;
+  };
+
+  const goToNextEditorStep = () => {
+    if (!validateCurrentStep()) return;
+    goToEditorStep(editorStep + 1);
+  };
+
+  const goToPreviousEditorStep = () => {
+    goToEditorStep(editorStep - 1);
   };
 
   const removeMediaFromForm = (mediaPath: string) => {
@@ -710,6 +794,14 @@ export default function AdminProjectsPage() {
     }
   };
 
+  const pendingInstagramLinksCount =
+    instagramImportMode === "single"
+      ? instagramInput.trim().length
+        ? 1
+        : 0
+      : instagramBatchInputs.filter((item) => item.trim().length > 0).length;
+  const hasAnyMediaInForm = form.media.length > 0 || selectedFiles.length > 0;
+
   return (
     <main className={styles.page}>
       <div className={styles.container}>
@@ -854,242 +946,355 @@ export default function AdminProjectsPage() {
               </div>
             </div>
 
-            <form onSubmit={submitForm}>
-              <div className={styles.field}>
-                <label htmlFor="admin-token">Token admin</label>
-                <input
-                  id="admin-token"
-                  className={styles.input}
-                  type="password"
-                  value={token}
-                  onChange={(event) => setToken(event.target.value)}
-                  placeholder="Digite seu token"
-                  autoComplete="off"
-                />
-              </div>
+            <form
+              onSubmit={(event) => {
+                if (!isLastEditorStep) {
+                  event.preventDefault();
+                  goToNextEditorStep();
+                  return;
+                }
+                void submitForm(event);
+              }}
+              className={styles.editorForm}
+            >
+              <div className={styles.editorWizard}>
+                <aside className={styles.wizardSidebar} aria-label="Etapas de criacao de projeto">
+                  {EDITOR_STEPS.map((step, stepIndex) => {
+                    const isActive = stepIndex === editorStep;
+                    const isDone = stepIndex < editorStep;
 
-              <p className={styles.helper}>
-                Defina <code>RMA_ADMIN_TOKEN</code> no servidor para producao. Em dev local,
-                o fallback e <code>{FALLBACK_TOKEN_HINT}</code>.
-              </p>
-
-              <div className={styles.field}>
-                <label htmlFor="project-tag">Tag</label>
-                <input
-                  id="project-tag"
-                  className={styles.input}
-                  value={form.tag}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, tag: event.target.value }))
-                  }
-                  placeholder="Ex.: Institucional"
-                />
-              </div>
-
-              <div className={styles.field}>
-                <label htmlFor="project-title">Titulo</label>
-                <input
-                  id="project-title"
-                  className={styles.input}
-                  value={form.title}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, title: event.target.value }))
-                  }
-                  placeholder="Ex.: Lancamento Imobiliario"
-                />
-              </div>
-
-              <div className={styles.field}>
-                <label htmlFor="project-copy">Descricao</label>
-                <textarea
-                  id="project-copy"
-                  className={styles.textarea}
-                  value={form.copy}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, copy: event.target.value }))
-                  }
-                  placeholder="Texto do card"
-                />
-              </div>
-
-              <div className={styles.field}>
-                <label htmlFor="project-media">Midias do projeto</label>
-                <input
-                  id="project-media"
-                  className={styles.input}
-                  type="file"
-                  accept="image/*,video/*"
-                  multiple
-                  onChange={(event) => {
-                    const files = event.target.files ? Array.from(event.target.files) : [];
-                    setSelectedFiles(files);
-                  }}
-                />
-                <p className={styles.helper}>
-                  Envie imagens (8MB) ou videos (80MB). Tambem e possivel colar um link de
-                  post/reel do Instagram para importar todas as midias automaticamente.
-                </p>
-
-                <div className={styles.instagramMode}>
-                  <button
-                    className={`${styles.modeButton}${
-                      instagramImportMode === "single" ? ` ${styles.modeButtonActive}` : ""
-                    }`}
-                    type="button"
-                    onClick={() => setInstagramImportMode("single")}
-                    disabled={saving || importingInstagram}
-                  >
-                    Uma publicacao
-                  </button>
-                  <button
-                    className={`${styles.modeButton}${
-                      instagramImportMode === "multiple" ? ` ${styles.modeButtonActive}` : ""
-                    }`}
-                    type="button"
-                    onClick={() => setInstagramImportMode("multiple")}
-                    disabled={saving || importingInstagram}
-                  >
-                    Varias publicacoes
-                  </button>
-                </div>
-
-                <div className={styles.instagramRow}>
-                  {instagramImportMode === "single" ? (
-                    <input
-                      className={styles.input}
-                      type="url"
-                      value={instagramInput}
-                      onChange={(event) => setInstagramInput(event.target.value)}
-                      placeholder="Cole 1 link do Instagram (post/reel)"
-                    />
-                  ) : (
-                    <div className={styles.instagramBatchList}>
-                      {instagramBatchInputs.map((value, index) => (
-                        <div className={styles.instagramBatchItem} key={`ig-link-${index}`}>
-                          <input
-                            className={styles.input}
-                            type="url"
-                            value={value}
-                            onChange={(event) =>
-                              updateInstagramBatchInput(index, event.target.value)
-                            }
-                            placeholder={`Link Instagram ${index + 1}`}
-                          />
-                          <button
-                            className={styles.batchRemoveButton}
-                            type="button"
-                            onClick={() => removeInstagramBatchInput(index)}
-                            disabled={
-                              saving || importingInstagram || instagramBatchInputs.length === 1
-                            }
-                            aria-label={`Remover link ${index + 1}`}
-                          >
-                            Remover
-                          </button>
-                        </div>
-                      ))}
+                    return (
                       <button
-                        className={styles.batchAddButton}
+                        key={step.key}
+                        className={`${styles.wizardStep}${
+                          isActive ? ` ${styles.wizardStepActive}` : ""
+                        }${isDone ? ` ${styles.wizardStepDone}` : ""}`}
                         type="button"
-                        onClick={addInstagramBatchInput}
-                        disabled={saving || importingInstagram}
+                        onClick={() => goToEditorStep(stepIndex)}
                       >
-                        + Adicionar link
+                        <span className={styles.wizardStepDot} aria-hidden="true" />
+                        <div className={styles.wizardStepText}>
+                          <strong>{step.label}</strong>
+                          <small>{step.title}</small>
+                        </div>
                       </button>
-                    </div>
-                  )}
-                  <button
-                    className={styles.buttonGhost}
-                    type="button"
-                    onClick={() => void addInstagramLink()}
-                    disabled={saving || importingInstagram}
-                  >
-                    {importingInstagram
-                      ? "Importando..."
-                      : instagramImportMode === "single"
-                        ? "Importar publicacao"
-                        : "Importar publicacoes"}
-                  </button>
-                </div>
+                    );
+                  })}
+                </aside>
 
-                {selectedFiles.length ? (
-                  <ul className={styles.selectedFilesList}>
-                    {selectedFiles.map((file) => (
-                      <li key={`${file.name}-${file.size}`} className={styles.selectedFileItem}>
-                        <span>{file.name}</span>
-                        <strong>{file.type.startsWith("video/") ? "Video" : "Imagem"}</strong>
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
-
-                {form.media.length ? (
-                  <div className={styles.previewWrap}>
-                    {form.media.map((mediaPath) => (
-                      <article className={styles.mediaCard} key={mediaPath}>
-                        <div className={styles.previewMedia}>
-                          {isInstagramMedia(mediaPath) ? (
-                            <div className={styles.instagramPreview}>
-                              <span>Instagram</span>
-                              <small>{getFileLabel(mediaPath)}</small>
-                            </div>
-                          ) : isVideoMedia(mediaPath) ? (
-                            <video src={mediaPath} muted playsInline preload="metadata" />
-                          ) : (
-                            <Image
-                              src={mediaPath}
-                              alt={`Midia ${form.title || "projeto"}`}
-                              fill
-                              sizes="(max-width: 900px) 100vw, 340px"
-                            />
-                          )}
-                        </div>
-                        <div className={styles.mediaMeta}>
-                          <span className={styles.mediaBadge}>
-                            {isInstagramMedia(mediaPath)
-                              ? "Instagram"
-                              : isVideoMedia(mediaPath)
-                                ? "Video"
-                                : "Imagem"}
-                          </span>
-                          <code>{getFileLabel(mediaPath)}</code>
-                        </div>
-                        <div className={styles.mediaActions}>
-                          <button
-                            className={styles.buttonGhost}
-                            type="button"
-                            onClick={() => setMediaAsCover(mediaPath)}
-                            disabled={saving || form.image === mediaPath}
-                          >
-                            {form.image === mediaPath ? "Capa atual" : "Definir como capa"}
-                          </button>
-                          <button
-                            className={styles.buttonGhost}
-                            type="button"
-                            onClick={() => removeMediaFromForm(mediaPath)}
-                            disabled={saving}
-                          >
-                            Remover da galeria
-                          </button>
-                        </div>
-                      </article>
-                    ))}
+                <div className={styles.wizardMain}>
+                  <div className={styles.wizardMainHead}>
+                    <h3>{currentEditorStep.title}</h3>
+                    <p>{currentEditorStep.hint}</p>
                   </div>
-                ) : null}
-              </div>
 
-              <div className={styles.formActions}>
-                <button className={styles.button} type="submit" disabled={saving}>
-                  {saving ? "Salvando..." : editingId ? "Atualizar" : "Criar"}
-                </button>
-                <button
-                  className={styles.buttonGhost}
-                  type="button"
-                  onClick={closeEditorModal}
-                  disabled={saving}
-                >
-                  {editingId ? "Cancelar edicao" : "Fechar"}
-                </button>
+                  {editorStep === 0 ? (
+                    <div className={styles.wizardStepBody}>
+                      <div className={styles.field}>
+                        <label htmlFor="admin-token">Token admin</label>
+                        <input
+                          id="admin-token"
+                          className={styles.input}
+                          type="password"
+                          value={token}
+                          onChange={(event) => setToken(event.target.value)}
+                          placeholder="Digite seu token"
+                          autoComplete="off"
+                        />
+                      </div>
+                      <p className={styles.helper}>
+                        Defina <code>RMA_ADMIN_TOKEN</code> no servidor para producao. Em dev
+                        local, o fallback e <code>{FALLBACK_TOKEN_HINT}</code>.
+                      </p>
+                    </div>
+                  ) : null}
+
+                  {editorStep === 1 ? (
+                    <div className={styles.wizardStepBody}>
+                      <div className={styles.field}>
+                        <label htmlFor="project-tag">Tag</label>
+                        <input
+                          id="project-tag"
+                          className={styles.input}
+                          value={form.tag}
+                          onChange={(event) =>
+                            setForm((current) => ({ ...current, tag: event.target.value }))
+                          }
+                          placeholder="Ex.: Institucional"
+                        />
+                      </div>
+                      <div className={styles.field}>
+                        <label htmlFor="project-title">Titulo</label>
+                        <input
+                          id="project-title"
+                          className={styles.input}
+                          value={form.title}
+                          onChange={(event) =>
+                            setForm((current) => ({ ...current, title: event.target.value }))
+                          }
+                          placeholder="Ex.: Lancamento Imobiliario"
+                        />
+                      </div>
+                      <div className={styles.field}>
+                        <label htmlFor="project-copy">Descricao</label>
+                        <textarea
+                          id="project-copy"
+                          className={styles.textarea}
+                          value={form.copy}
+                          onChange={(event) =>
+                            setForm((current) => ({ ...current, copy: event.target.value }))
+                          }
+                          placeholder="Texto do card"
+                        />
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {editorStep === 2 ? (
+                    <div className={styles.wizardStepBody}>
+                      <div className={styles.field}>
+                        <label htmlFor="project-media">Midias do projeto</label>
+                        <input
+                          id="project-media"
+                          className={styles.input}
+                          type="file"
+                          accept="image/*,video/*"
+                          multiple
+                          onChange={(event) => {
+                            const files = event.target.files ? Array.from(event.target.files) : [];
+                            setSelectedFiles(files);
+                          }}
+                        />
+                        <p className={styles.helper}>
+                          Envie imagens (8MB) ou videos (80MB). Tambem e possivel colar um link de
+                          post/reel do Instagram para importar todas as midias automaticamente.
+                        </p>
+
+                        <div className={styles.instagramMode}>
+                          <button
+                            className={`${styles.modeButton}${
+                              instagramImportMode === "single" ? ` ${styles.modeButtonActive}` : ""
+                            }`}
+                            type="button"
+                            onClick={() => setInstagramImportMode("single")}
+                            disabled={saving || importingInstagram}
+                          >
+                            Uma publicacao
+                          </button>
+                          <button
+                            className={`${styles.modeButton}${
+                              instagramImportMode === "multiple"
+                                ? ` ${styles.modeButtonActive}`
+                                : ""
+                            }`}
+                            type="button"
+                            onClick={() => setInstagramImportMode("multiple")}
+                            disabled={saving || importingInstagram}
+                          >
+                            Varias publicacoes
+                          </button>
+                        </div>
+
+                        <div className={styles.instagramRow}>
+                          {instagramImportMode === "single" ? (
+                            <input
+                              className={styles.input}
+                              type="url"
+                              value={instagramInput}
+                              onChange={(event) => setInstagramInput(event.target.value)}
+                              placeholder="Cole 1 link do Instagram (post/reel)"
+                            />
+                          ) : (
+                            <div className={styles.instagramBatchList}>
+                              {instagramBatchInputs.map((value, index) => (
+                                <div className={styles.instagramBatchItem} key={`ig-link-${index}`}>
+                                  <input
+                                    className={styles.input}
+                                    type="url"
+                                    value={value}
+                                    onChange={(event) =>
+                                      updateInstagramBatchInput(index, event.target.value)
+                                    }
+                                    placeholder={`Link Instagram ${index + 1}`}
+                                  />
+                                  <button
+                                    className={styles.batchRemoveButton}
+                                    type="button"
+                                    onClick={() => removeInstagramBatchInput(index)}
+                                    disabled={
+                                      saving ||
+                                      importingInstagram ||
+                                      instagramBatchInputs.length === 1
+                                    }
+                                    aria-label={`Remover link ${index + 1}`}
+                                  >
+                                    Remover
+                                  </button>
+                                </div>
+                              ))}
+                              <button
+                                className={styles.batchAddButton}
+                                type="button"
+                                onClick={addInstagramBatchInput}
+                                disabled={saving || importingInstagram}
+                              >
+                                + Adicionar link
+                              </button>
+                            </div>
+                          )}
+                          <button
+                            className={styles.buttonGhost}
+                            type="button"
+                            onClick={() => void addInstagramLink()}
+                            disabled={saving || importingInstagram}
+                          >
+                            {importingInstagram
+                              ? "Importando..."
+                              : instagramImportMode === "single"
+                                ? "Importar publicacao"
+                                : "Importar publicacoes"}
+                          </button>
+                        </div>
+
+                        {selectedFiles.length ? (
+                          <ul className={styles.selectedFilesList}>
+                            {selectedFiles.map((file) => (
+                              <li
+                                key={`${file.name}-${file.size}`}
+                                className={styles.selectedFileItem}
+                              >
+                                <span>{file.name}</span>
+                                <strong>{file.type.startsWith("video/") ? "Video" : "Imagem"}</strong>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : null}
+
+                        {form.media.length ? (
+                          <div className={styles.previewWrap}>
+                            {form.media.map((mediaPath) => (
+                              <article className={styles.mediaCard} key={mediaPath}>
+                                <div className={styles.previewMedia}>
+                                  {isInstagramMedia(mediaPath) ? (
+                                    <div className={styles.instagramPreview}>
+                                      <span>Instagram</span>
+                                      <small>{getFileLabel(mediaPath)}</small>
+                                    </div>
+                                  ) : isVideoMedia(mediaPath) ? (
+                                    <video src={mediaPath} muted playsInline preload="metadata" />
+                                  ) : (
+                                    <Image
+                                      src={mediaPath}
+                                      alt={`Midia ${form.title || "projeto"}`}
+                                      fill
+                                      sizes="(max-width: 900px) 100vw, 340px"
+                                    />
+                                  )}
+                                </div>
+                                <div className={styles.mediaMeta}>
+                                  <span className={styles.mediaBadge}>
+                                    {isInstagramMedia(mediaPath)
+                                      ? "Instagram"
+                                      : isVideoMedia(mediaPath)
+                                        ? "Video"
+                                        : "Imagem"}
+                                  </span>
+                                  <code>{getFileLabel(mediaPath)}</code>
+                                </div>
+                                <div className={styles.mediaActions}>
+                                  <button
+                                    className={styles.buttonGhost}
+                                    type="button"
+                                    onClick={() => setMediaAsCover(mediaPath)}
+                                    disabled={saving || form.image === mediaPath}
+                                  >
+                                    {form.image === mediaPath ? "Capa atual" : "Definir como capa"}
+                                  </button>
+                                  <button
+                                    className={styles.buttonGhost}
+                                    type="button"
+                                    onClick={() => removeMediaFromForm(mediaPath)}
+                                    disabled={saving}
+                                  >
+                                    Remover da galeria
+                                  </button>
+                                </div>
+                              </article>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {editorStep === 3 ? (
+                    <div className={styles.wizardStepBody}>
+                      <div className={styles.reviewGrid}>
+                        <article className={styles.reviewCard}>
+                          <span>Token</span>
+                          <strong>{token.trim() ? "Configurado" : "Nao informado"}</strong>
+                        </article>
+                        <article className={styles.reviewCard}>
+                          <span>Tag</span>
+                          <strong>{form.tag.trim() || "Sem tag"}</strong>
+                        </article>
+                        <article className={styles.reviewCard}>
+                          <span>Titulo</span>
+                          <strong>{form.title.trim() || "Sem titulo"}</strong>
+                        </article>
+                        <article className={styles.reviewCard}>
+                          <span>Midias</span>
+                          <strong>{hasAnyMediaInForm ? "Pronto" : "Sem midia"}</strong>
+                        </article>
+                      </div>
+                      <p className={styles.helper}>
+                        {form.copy.trim() || "Sem descricao definida ainda."}
+                      </p>
+                      <div className={styles.reviewMeta}>
+                        <span>{form.media.length} midias importadas</span>
+                        <span>{selectedFiles.length} arquivos locais selecionados</span>
+                        <span>{pendingInstagramLinksCount} links pendentes para importar</span>
+                      </div>
+                    </div>
+                  ) : null}
+
+                  <div className={styles.wizardActions}>
+                    {!isFirstEditorStep ? (
+                      <button
+                        className={styles.buttonGhost}
+                        type="button"
+                        onClick={goToPreviousEditorStep}
+                        disabled={saving}
+                      >
+                        Voltar
+                      </button>
+                    ) : null}
+
+                    {!isLastEditorStep ? (
+                      <button
+                        className={styles.button}
+                        type="button"
+                        onClick={goToNextEditorStep}
+                        disabled={saving}
+                      >
+                        Continuar
+                      </button>
+                    ) : (
+                      <button className={styles.button} type="submit" disabled={saving}>
+                        {saving ? "Salvando..." : editingId ? "Atualizar" : "Criar"}
+                      </button>
+                    )}
+
+                    <button
+                      className={styles.buttonGhost}
+                      type="button"
+                      onClick={closeEditorModal}
+                      disabled={saving}
+                    >
+                      {editingId ? "Cancelar edicao" : "Fechar"}
+                    </button>
+                  </div>
+                </div>
               </div>
             </form>
 

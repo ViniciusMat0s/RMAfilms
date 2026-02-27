@@ -1,6 +1,12 @@
 ﻿"use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type MouseEvent as ReactMouseEvent,
+} from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
@@ -29,13 +35,6 @@ const INSTAGRAM_POST_PATTERN =
 
 const isVideoMedia = (value: string) => VIDEO_EXTENSION_PATTERN.test(value);
 const isInstagramMedia = (value: string) => INSTAGRAM_POST_PATTERN.test(value);
-
-const getInstagramEmbedUrl = (value: string) => {
-  const match = value.match(INSTAGRAM_POST_PATTERN);
-  if (!match) return null;
-  const [, kind, shortcode] = match;
-  return `https://www.instagram.com/${kind}/${shortcode}/embed`;
-};
 
 const normalizeProjectMedia = (project: Partial<ProjectCard>) => {
   const parsedMedia = Array.isArray(project.media)
@@ -79,8 +78,13 @@ export default function Home() {
   const [galleryState, setGalleryState] = useState<{
     project: ProjectCard;
     media: string[];
-    index: number;
   } | null>(null);
+  const [galleryZoomImage, setGalleryZoomImage] = useState<string | null>(null);
+
+  const closeProjectGallery = () => {
+    setGalleryZoomImage(null);
+    setGalleryState(null);
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -148,25 +152,12 @@ export default function Home() {
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
+        if (galleryZoomImage) {
+          setGalleryZoomImage(null);
+          return;
+        }
         setGalleryState(null);
         return;
-      }
-
-      if (event.key === "ArrowRight") {
-        setGalleryState((current) => {
-          if (!current) return current;
-          const nextIndex = (current.index + 1) % current.media.length;
-          return { ...current, index: nextIndex };
-        });
-      }
-
-      if (event.key === "ArrowLeft") {
-        setGalleryState((current) => {
-          if (!current) return current;
-          const nextIndex =
-            (current.index - 1 + current.media.length) % current.media.length;
-          return { ...current, index: nextIndex };
-        });
       }
     };
 
@@ -175,7 +166,7 @@ export default function Home() {
       document.body.classList.remove("project-gallery-open");
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [galleryState]);
+  }, [galleryState, galleryZoomImage]);
 
   useEffect(() => {
     if (!projectsLoaded) return;
@@ -1726,35 +1717,31 @@ export default function Home() {
   const openProjectGallery = (project: ProjectCard) => {
     const media = normalizeProjectMedia(project);
     if (!media.length) return;
-    const initialIndex =
-      project.image && media.includes(project.image) ? media.indexOf(project.image) : 0;
+    setGalleryZoomImage(null);
     setGalleryState({
       project: {
         ...project,
         media,
       },
       media,
-      index: Math.max(initialIndex, 0),
     });
   };
 
-  const goToNextMedia = () => {
-    setGalleryState((current) => {
-      if (!current) return current;
-      const nextIndex = (current.index + 1) % current.media.length;
-      return { ...current, index: nextIndex };
-    });
+  const handleGalleryVideoEnter = (event: ReactMouseEvent<HTMLVideoElement>) => {
+    const video = event.currentTarget;
+    video.muted = true;
+    video.loop = true;
+    const playPromise = video.play();
+    if (playPromise) {
+      void playPromise.catch(() => {});
+    }
   };
 
-  const goToPreviousMedia = () => {
-    setGalleryState((current) => {
-      if (!current) return current;
-      const nextIndex = (current.index - 1 + current.media.length) % current.media.length;
-      return { ...current, index: nextIndex };
-    });
+  const handleGalleryVideoLeave = (event: ReactMouseEvent<HTMLVideoElement>) => {
+    const video = event.currentTarget;
+    video.pause();
+    video.currentTime = 0;
   };
-
-  const activeGalleryMedia = galleryState ? galleryState.media[galleryState.index] : null;
 
   return (
     <div ref={rootRef} className="page">
@@ -2188,114 +2175,128 @@ export default function Home() {
 
       </main>
 
-      {galleryState && activeGalleryMedia ? (
+      {galleryState ? (
         <div
           className="project-gallery"
           role="dialog"
           aria-modal="true"
           aria-label={`Galeria do projeto ${galleryState.project.title}`}
-          onClick={() => setGalleryState(null)}
+          onClick={closeProjectGallery}
         >
           <div
             className="project-gallery-panel"
             onClick={(event) => event.stopPropagation()}
           >
-            <button
-              className="project-gallery-close"
-              type="button"
-              onClick={() => setGalleryState(null)}
-              aria-label="Fechar galeria"
-            >
-              Fechar
-            </button>
-
-            <div className="project-gallery-head">
-              <span>{galleryState.project.tag}</span>
-              <h3>{galleryState.project.title}</h3>
-              <p>{galleryState.project.copy}</p>
-            </div>
-
-            <div className="project-gallery-stage">
-              {isInstagramMedia(activeGalleryMedia) ? (
-                <iframe
-                  className="project-gallery-instagram"
-                  src={getInstagramEmbedUrl(activeGalleryMedia) ?? undefined}
-                  title={`Instagram ${galleryState.project.title}`}
-                  loading="lazy"
-                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                  allowFullScreen
-                />
-              ) : isVideoMedia(activeGalleryMedia) ? (
-                <video
-                  className="project-gallery-media"
-                  src={activeGalleryMedia}
-                  controls
-                  playsInline
-                  preload="metadata"
-                />
-              ) : (
-                <Image
-                  className="project-gallery-media"
-                  src={activeGalleryMedia}
-                  alt={galleryState.project.title}
-                  fill
-                  sizes="(max-width: 900px) 92vw, 860px"
-                />
-              )}
-            </div>
-
-            {galleryState.media.length > 1 ? (
-              <div className="project-gallery-controls">
+            <div className="project-gallery-content">
+              <div className="project-gallery-bar">
+                <div className="project-gallery-head">
+                  <div className="project-gallery-title-row">
+                    <span>{galleryState.project.tag}</span>
+                    <h3>{galleryState.project.title}</h3>
+                  </div>
+                  <p>{galleryState.project.copy}</p>
+                </div>
                 <button
-                  className="project-gallery-nav"
+                  className="project-gallery-close"
                   type="button"
-                  onClick={goToPreviousMedia}
+                  onClick={closeProjectGallery}
+                  aria-label="Fechar galeria"
                 >
-                  Anterior
-                </button>
-                <span className="project-gallery-counter">
-                  {galleryState.index + 1} / {galleryState.media.length}
-                </span>
-                <button
-                  className="project-gallery-nav"
-                  type="button"
-                  onClick={goToNextMedia}
-                >
-                  Proxima
+                  Fechar
                 </button>
               </div>
-            ) : null}
 
-            <div className="project-gallery-strip">
-              {galleryState.media.map((media, mediaIndex) => (
-                <button
-                  key={`${media}-${mediaIndex}`}
-                  className={`project-gallery-thumb${
-                    mediaIndex === galleryState.index ? " is-active" : ""
-                  }`}
-                  type="button"
-                  onClick={() =>
-                    setGalleryState((current) =>
-                      current ? { ...current, index: mediaIndex } : current
-                    )
-                  }
-                >
-                  {isInstagramMedia(media) ? (
-                    <span className="project-gallery-thumb-instagram">IG</span>
-                  ) : isVideoMedia(media) ? (
-                    <video src={media} muted playsInline preload="metadata" />
-                  ) : (
-                    <Image
-                      src={media}
-                      alt={`Thumb ${mediaIndex + 1}`}
-                      fill
-                      sizes="90px"
-                    />
-                  )}
-                </button>
-              ))}
+              <div className="project-gallery-grid" role="list">
+                {galleryState.media.map((media, mediaIndex) => (
+                  <article
+                    key={`${media}-${mediaIndex}`}
+                    className={`project-gallery-item${
+                      isVideoMedia(media)
+                        ? " project-gallery-item--video"
+                        : isInstagramMedia(media)
+                          ? " project-gallery-item--instagram"
+                          : " project-gallery-item--image"
+                    }`}
+                    role="listitem"
+                  >
+                    {isInstagramMedia(media) ? (
+                      <a
+                        className="project-gallery-thumb-instagram"
+                        href={media}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`Abrir Instagram do projeto ${galleryState.project.title}`}
+                      >
+                        IG
+                      </a>
+                    ) : isVideoMedia(media) ? (
+                      <video
+                        className="project-gallery-tile-media"
+                        src={media}
+                        muted
+                        playsInline
+                        preload="metadata"
+                        loop
+                        onMouseEnter={handleGalleryVideoEnter}
+                        onMouseLeave={handleGalleryVideoLeave}
+                      />
+                    ) : (
+                      <button
+                        className="project-gallery-image-button"
+                        type="button"
+                        onClick={() => setGalleryZoomImage(media)}
+                        aria-label={`Abrir imagem ${mediaIndex + 1} em tamanho real`}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          className="project-gallery-tile-media"
+                          src={media}
+                          alt={`Imagem ${mediaIndex + 1} de ${galleryState.project.title}`}
+                        />
+                      </button>
+                    )}
+                  </article>
+                ))}
+              </div>
             </div>
           </div>
+
+          {galleryZoomImage ? (
+            <div
+              className="project-gallery-lightbox"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Imagem em tamanho real"
+              onClick={(event) => {
+                event.stopPropagation();
+                setGalleryZoomImage(null);
+              }}
+            >
+              <button
+                className="project-gallery-lightbox-close"
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setGalleryZoomImage(null);
+                }}
+                aria-label="Fechar visualizacao da imagem"
+              >
+                Fechar imagem
+              </button>
+              <div
+                className="project-gallery-lightbox-frame"
+                onClick={(event) => event.stopPropagation()}
+              >
+                <Image
+                  className="project-gallery-lightbox-image"
+                  src={galleryZoomImage}
+                  alt={`Imagem ampliada de ${galleryState.project.title}`}
+                  fill
+                  sizes="100vw"
+                />
+              </div>
+            </div>
+          ) : null}
         </div>
       ) : null}
 
