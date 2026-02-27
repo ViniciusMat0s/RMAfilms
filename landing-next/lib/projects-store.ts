@@ -9,6 +9,7 @@ export type ProjectInput = {
   title: string;
   copy: string;
   image: string | null;
+  media: string[];
 };
 
 export type ProjectRecord = ProjectInput & {
@@ -19,8 +20,27 @@ export type ProjectRecord = ProjectInput & {
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const PROJECTS_FILE = path.join(DATA_DIR, "projects.json");
+const IMAGE_EXTENSION_PATTERN = /\.(jpg|jpeg|png|webp|gif|avif)$/i;
+const INSTAGRAM_PATTERN = /instagram\.com\/(p|reel|tv)\//i;
 
 const normalizeText = (value: string) => value.trim().replace(/\s+/g, " ");
+const isImagePath = (value: string) => IMAGE_EXTENSION_PATTERN.test(value);
+const isInstagramPath = (value: string) => INSTAGRAM_PATTERN.test(value);
+const isCoverCandidate = (value: string) => isImagePath(value) && !isInstagramPath(value);
+
+const normalizeMediaList = (value: unknown) => {
+  if (!Array.isArray(value)) return [] as string[];
+
+  const cleaned = value
+    .filter((item): item is string => typeof item === "string")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  return Array.from(new Set(cleaned));
+};
+
+const pickCoverImage = (media: string[]) =>
+  media.find((item) => isImagePath(item) && !isInstagramPath(item)) ?? null;
 
 const slugify = (value: string) =>
   value
@@ -43,6 +63,7 @@ const buildFallbackProjects = (): ProjectRecord[] => {
     title: normalizeText(project.title),
     copy: project.copy.trim(),
     image: null,
+    media: [],
     createdAt: timestamp,
     updatedAt: timestamp,
   }));
@@ -59,6 +80,9 @@ const isProjectRecord = (value: unknown): value is ProjectRecord => {
     (typeof project.image === "string" ||
       project.image === null ||
       typeof project.image === "undefined") &&
+    (typeof project.media === "undefined" ||
+      (Array.isArray(project.media) &&
+        project.media.every((item) => typeof item === "string"))) &&
     typeof project.createdAt === "string" &&
     typeof project.updatedAt === "string"
   );
@@ -80,16 +104,27 @@ export const normalizeProjectInput = (payload: Partial<ProjectInput>) => {
   const copy = (payload.copy ?? "").trim();
   const imageRaw = typeof payload.image === "string" ? payload.image.trim() : "";
   const image = imageRaw || null;
+  const media = normalizeMediaList(payload.media);
 
   if (!tag || !title || !copy) {
     return null;
   }
 
+  if (image && !media.includes(image)) {
+    media.unshift(image);
+  }
+
+  const coverImage =
+    image && isCoverCandidate(image) && media.includes(image)
+      ? image
+      : pickCoverImage(media);
+
   return {
     tag,
     title,
     copy,
-    image,
+    image: coverImage,
+    media,
   } satisfies ProjectInput;
 };
 
@@ -101,10 +136,25 @@ export const readProjects = async (): Promise<ProjectRecord[]> => {
     const parsed = JSON.parse(raw) as unknown;
 
     if (Array.isArray(parsed) && parsed.every(isProjectRecord)) {
-      const normalizedProjects = parsed.map((project) => ({
-        ...project,
-        image: typeof project.image === "string" ? project.image : null,
-      }));
+      const normalizedProjects = parsed.map((project) => {
+        const media = normalizeMediaList(project.media);
+        const rawImage = typeof project.image === "string" ? project.image.trim() : "";
+
+        if (!media.length && rawImage) {
+          media.push(rawImage);
+        }
+
+        const image =
+          rawImage && isCoverCandidate(rawImage) && media.includes(rawImage)
+            ? rawImage
+            : pickCoverImage(media);
+
+        return {
+          ...project,
+          media,
+          image,
+        };
+      });
       return normalizedProjects;
     }
   } catch {
@@ -131,6 +181,7 @@ export const createProject = async (input: ProjectInput) => {
     title: input.title,
     copy: input.copy,
     image: input.image,
+    media: input.media,
     createdAt: now,
     updatedAt: now,
   };
@@ -155,6 +206,7 @@ export const updateProject = async (id: string, input: ProjectInput) => {
     title: input.title,
     copy: input.copy,
     image: input.image,
+    media: input.media,
     updatedAt: new Date().toISOString(),
   };
 

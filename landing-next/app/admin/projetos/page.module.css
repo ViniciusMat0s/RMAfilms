@@ -286,15 +286,125 @@
   background: rgba(17, 31, 52, 0.72);
 }
 
+.selectedFilesList {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.instagramMode {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.modeButton {
+  border: 1px solid rgba(169, 210, 254, 0.32);
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: rgba(10, 18, 32, 0.7);
+  color: rgba(208, 227, 250, 0.86);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.66rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modeButtonActive {
+  border-color: rgba(205, 230, 255, 0.72);
+  background: rgba(25, 44, 69, 0.86);
+  color: rgba(240, 248, 255, 0.96);
+}
+
+.instagramRow {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: start;
+}
+
+.instagramBatchList {
+  display: grid;
+  gap: 8px;
+}
+
+.instagramBatchItem {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.batchRemoveButton,
+.batchAddButton {
+  border: 1px solid rgba(169, 210, 254, 0.3);
+  border-radius: 999px;
+  background: rgba(10, 18, 32, 0.72);
+  color: rgba(214, 232, 252, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  font-size: 0.64rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.batchRemoveButton {
+  padding: 0 10px;
+  min-height: 42px;
+}
+
+.batchAddButton {
+  width: fit-content;
+  padding: 9px 12px;
+}
+
+.batchRemoveButton:disabled,
+.batchAddButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.selectedFileItem {
+  border: 1px solid rgba(166, 209, 255, 0.22);
+  border-radius: 10px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: rgba(10, 19, 32, 0.74);
+  font-size: 0.8rem;
+  color: rgba(224, 239, 255, 0.88);
+}
+
+.selectedFileItem strong {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(193, 222, 255, 0.76);
+}
+
 .previewWrap {
   margin-top: 6px;
   display: grid;
   gap: 10px;
 }
 
+.mediaCard {
+  border: 1px solid rgba(173, 211, 255, 0.22);
+  border-radius: 12px;
+  padding: 10px;
+  display: grid;
+  gap: 10px;
+  background: rgba(9, 17, 30, 0.8);
+}
+
 .previewMedia {
   width: 100%;
-  max-width: 340px;
   aspect-ratio: 1.618 / 1;
   position: relative;
   border-radius: 14px;
@@ -305,6 +415,84 @@
 
 .previewMedia :global(img) {
   object-fit: cover;
+}
+
+.instagramPreview {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-content: center;
+  gap: 6px;
+  text-align: center;
+  padding: 10px;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(255, 172, 95, 0.24), rgba(255, 172, 95, 0) 48%),
+    radial-gradient(circle at 82% 84%, rgba(147, 91, 255, 0.24), rgba(147, 91, 255, 0) 52%),
+    linear-gradient(162deg, rgba(30, 17, 45, 0.92), rgba(16, 22, 40, 0.9));
+  color: rgba(236, 242, 255, 0.94);
+}
+
+.instagramPreview span {
+  font-size: 0.84rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.instagramPreview small {
+  color: rgba(204, 223, 248, 0.78);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.previewMedia video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #060d1a;
+}
+
+.mediaMeta {
+  display: grid;
+  gap: 5px;
+}
+
+.mediaMeta code {
+  font-size: 0.72rem;
+  color: rgba(176, 204, 236, 0.88);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mediaActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.coverHint {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(188, 212, 242, 0.68);
+}
+
+.mediaBadge {
+  width: fit-content;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(181, 218, 255, 0.34);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(220, 236, 255, 0.9);
+  background: rgba(22, 39, 61, 0.72);
 }
 
 .formActions {
@@ -445,6 +633,14 @@
   font-size: 0.93rem;
 }
 
+.mediaCount {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(188, 215, 245, 0.72);
+}
+
 .itemImageWrap {
   width: 100%;
   max-width: 420px;
@@ -457,6 +653,14 @@
 
 .itemImageWrap :global(img) {
   object-fit: cover;
+}
+
+.itemImageWrap video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #060d1a;
 }
 
 .itemActions {
@@ -535,5 +739,18 @@
 
   .projectId {
     max-width: 52%;
+  }
+
+  .instagramRow {
+    grid-template-columns: 1fr;
+  }
+
+  .instagramBatchItem {
+    grid-template-columns: 1fr;
+  }
+
+  .batchRemoveButton,
+  .batchAddButton {
+    width: 100%;
   }
 }

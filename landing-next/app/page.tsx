@@ -20,6 +20,56 @@ type ProjectCard = {
   title: string;
   copy: string;
   image: string | null;
+  media: string[];
+};
+
+const VIDEO_EXTENSION_PATTERN = /\.(mp4|webm|ogg|mov|m4v)$/i;
+const INSTAGRAM_POST_PATTERN =
+  /(?:https?:\/\/)?(?:www\.)?instagram\.com\/(p|reel|tv)\/([A-Za-z0-9_-]+)/i;
+
+const isVideoMedia = (value: string) => VIDEO_EXTENSION_PATTERN.test(value);
+const isInstagramMedia = (value: string) => INSTAGRAM_POST_PATTERN.test(value);
+
+const getInstagramEmbedUrl = (value: string) => {
+  const match = value.match(INSTAGRAM_POST_PATTERN);
+  if (!match) return null;
+  const [, kind, shortcode] = match;
+  return `https://www.instagram.com/${kind}/${shortcode}/embed`;
+};
+
+const normalizeProjectMedia = (project: Partial<ProjectCard>) => {
+  const parsedMedia = Array.isArray(project.media)
+    ? project.media.filter((item): item is string => typeof item === "string")
+    : [];
+  const cleanedMedia = parsedMedia.map((item) => item.trim()).filter(Boolean);
+  const imagePath = typeof project.image === "string" ? project.image.trim() : "";
+
+  if (imagePath && !cleanedMedia.includes(imagePath)) {
+    cleanedMedia.unshift(imagePath);
+  }
+
+  return Array.from(new Set(cleanedMedia));
+};
+
+const getProjectCoverImage = (project: Pick<ProjectCard, "image" | "media">) => {
+  if (
+    project.image &&
+    project.media.includes(project.image) &&
+    !isInstagramMedia(project.image) &&
+    !isVideoMedia(project.image)
+  ) {
+    return project.image;
+  }
+
+  if (project.media.length > 0) {
+    return (
+      project.media.find((item) => !isVideoMedia(item) && !isInstagramMedia(item)) ?? null
+    );
+  }
+  if (project.image && !isInstagramMedia(project.image)) {
+    return project.image;
+  }
+  return null;
 };
 
 export default function Home() {
@@ -29,9 +79,15 @@ export default function Home() {
     fallbackProjects.map((project) => ({
       ...project,
       image: null,
+      media: [],
     }))
   );
   const [projectsLoaded, setProjectsLoaded] = useState(false);
+  const [galleryState, setGalleryState] = useState<{
+    project: ProjectCard;
+    media: string[];
+    index: number;
+  } | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -48,6 +104,7 @@ export default function Home() {
               title: string;
               copy: string;
               image: string | null;
+              media: string[];
             }>
           >;
         }>;
@@ -69,6 +126,7 @@ export default function Home() {
               typeof project.image === "string" && project.image.trim().length > 0
                 ? project.image.trim()
                 : null,
+            media: normalizeProjectMedia(project),
           }))
           .filter((project) => project.tag && project.title && project.copy);
 
@@ -89,6 +147,42 @@ export default function Home() {
       isMounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (!galleryState) return;
+
+    document.body.classList.add("project-gallery-open");
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setGalleryState(null);
+        return;
+      }
+
+      if (event.key === "ArrowRight") {
+        setGalleryState((current) => {
+          if (!current) return current;
+          const nextIndex = (current.index + 1) % current.media.length;
+          return { ...current, index: nextIndex };
+        });
+      }
+
+      if (event.key === "ArrowLeft") {
+        setGalleryState((current) => {
+          if (!current) return current;
+          const nextIndex =
+            (current.index - 1 + current.media.length) % current.media.length;
+          return { ...current, index: nextIndex };
+        });
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.classList.remove("project-gallery-open");
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [galleryState]);
 
   useEffect(() => {
     if (!projectsLoaded) return;
@@ -1636,6 +1730,39 @@ export default function Home() {
     };
   }, [projectItems, projectsLoaded]);
 
+  const openProjectGallery = (project: ProjectCard) => {
+    const media = normalizeProjectMedia(project);
+    if (!media.length) return;
+    const initialIndex =
+      project.image && media.includes(project.image) ? media.indexOf(project.image) : 0;
+    setGalleryState({
+      project: {
+        ...project,
+        media,
+      },
+      media,
+      index: Math.max(initialIndex, 0),
+    });
+  };
+
+  const goToNextMedia = () => {
+    setGalleryState((current) => {
+      if (!current) return current;
+      const nextIndex = (current.index + 1) % current.media.length;
+      return { ...current, index: nextIndex };
+    });
+  };
+
+  const goToPreviousMedia = () => {
+    setGalleryState((current) => {
+      if (!current) return current;
+      const nextIndex = (current.index - 1 + current.media.length) % current.media.length;
+      return { ...current, index: nextIndex };
+    });
+  };
+
+  const activeGalleryMedia = galleryState ? galleryState.media[galleryState.index] : null;
+
   return (
     <div ref={rootRef} className="page">
       <div className="cursor">
@@ -1870,32 +1997,57 @@ export default function Home() {
             </div>
           </div>
           <div className="rail-track" ref={railRef}>
-            {projectItems.map((project, index) => (
-              <article className="rail-card" key={`${project.title}-${index}`}>
-                <div
-                  className="rail-image"
-                  aria-hidden="true"
-                  data-has-image={project.image ? "true" : "false"}
+            {projectItems.map((project, index) => {
+              const coverImage = getProjectCoverImage(project);
+
+              return (
+                <article
+                  className={`rail-card${project.media.length ? " rail-card--clickable" : ""}`}
+                  key={`${project.title}-${index}`}
+                  role={project.media.length ? "button" : undefined}
+                  tabIndex={project.media.length ? 0 : undefined}
+                  aria-label={
+                    project.media.length
+                      ? `Abrir galeria do projeto ${project.title}`
+                      : undefined
+                  }
+                  onClick={() => openProjectGallery(project)}
+                  onKeyDown={(event) => {
+                    if (!project.media.length) return;
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      openProjectGallery(project);
+                    }
+                  }}
                 >
-                  {project.image ? (
-                    <Image
-                      src={project.image}
-                      alt=""
-                      fill
-                      sizes="(max-width: 610px) 74vw, (max-width: 1097px) 60vw, 360px"
-                    />
-                  ) : null}
-                </div>
-                <div className="rail-body">
-                  <div className="rail-top">
-                    <span>{project.tag}</span>
-                    <span>RMA FILMS</span>
+                  <div
+                    className="rail-image"
+                    aria-hidden="true"
+                    data-has-image={coverImage ? "true" : "false"}
+                  >
+                    {coverImage ? (
+                      <Image
+                        src={coverImage}
+                        alt=""
+                        fill
+                        sizes="(max-width: 610px) 74vw, (max-width: 1097px) 60vw, 360px"
+                      />
+                    ) : null}
                   </div>
-                  <h3>{project.title}</h3>
-                  <p>{project.copy}</p>
-                </div>
-              </article>
-            ))}
+                  <div className="rail-body">
+                    <div className="rail-top">
+                      <span>{project.tag}</span>
+                      <span>RMA FILMS</span>
+                    </div>
+                    <h3>{project.title}</h3>
+                    <p>{project.copy}</p>
+                  </div>
+                  {project.media.length ? (
+                    <span className="rail-gallery-badge">{project.media.length} midias</span>
+                  ) : null}
+                </article>
+              );
+            })}
           </div>
         </section>
 
@@ -2036,6 +2188,117 @@ export default function Home() {
         </section>
 
       </main>
+
+      {galleryState && activeGalleryMedia ? (
+        <div
+          className="project-gallery"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Galeria do projeto ${galleryState.project.title}`}
+          onClick={() => setGalleryState(null)}
+        >
+          <div
+            className="project-gallery-panel"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              className="project-gallery-close"
+              type="button"
+              onClick={() => setGalleryState(null)}
+              aria-label="Fechar galeria"
+            >
+              Fechar
+            </button>
+
+            <div className="project-gallery-head">
+              <span>{galleryState.project.tag}</span>
+              <h3>{galleryState.project.title}</h3>
+              <p>{galleryState.project.copy}</p>
+            </div>
+
+            <div className="project-gallery-stage">
+              {isInstagramMedia(activeGalleryMedia) ? (
+                <iframe
+                  className="project-gallery-instagram"
+                  src={getInstagramEmbedUrl(activeGalleryMedia) ?? undefined}
+                  title={`Instagram ${galleryState.project.title}`}
+                  loading="lazy"
+                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              ) : isVideoMedia(activeGalleryMedia) ? (
+                <video
+                  className="project-gallery-media"
+                  src={activeGalleryMedia}
+                  controls
+                  playsInline
+                  preload="metadata"
+                />
+              ) : (
+                <Image
+                  className="project-gallery-media"
+                  src={activeGalleryMedia}
+                  alt={galleryState.project.title}
+                  fill
+                  sizes="(max-width: 900px) 92vw, 860px"
+                />
+              )}
+            </div>
+
+            {galleryState.media.length > 1 ? (
+              <div className="project-gallery-controls">
+                <button
+                  className="project-gallery-nav"
+                  type="button"
+                  onClick={goToPreviousMedia}
+                >
+                  Anterior
+                </button>
+                <span className="project-gallery-counter">
+                  {galleryState.index + 1} / {galleryState.media.length}
+                </span>
+                <button
+                  className="project-gallery-nav"
+                  type="button"
+                  onClick={goToNextMedia}
+                >
+                  Proxima
+                </button>
+              </div>
+            ) : null}
+
+            <div className="project-gallery-strip">
+              {galleryState.media.map((media, mediaIndex) => (
+                <button
+                  key={`${media}-${mediaIndex}`}
+                  className={`project-gallery-thumb${
+                    mediaIndex === galleryState.index ? " is-active" : ""
+                  }`}
+                  type="button"
+                  onClick={() =>
+                    setGalleryState((current) =>
+                      current ? { ...current, index: mediaIndex } : current
+                    )
+                  }
+                >
+                  {isInstagramMedia(media) ? (
+                    <span className="project-gallery-thumb-instagram">IG</span>
+                  ) : isVideoMedia(media) ? (
+                    <video src={media} muted playsInline preload="metadata" />
+                  ) : (
+                    <Image
+                      src={media}
+                      alt={`Thumb ${mediaIndex + 1}`}
+                      fill
+                      sizes="90px"
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <footer className="footer">
         <div className="footer-links" data-footer-reveal>

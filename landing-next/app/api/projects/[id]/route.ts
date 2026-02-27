@@ -42,6 +42,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       title: string;
       copy: string;
       image: string | null;
+      media: string[];
     }>;
 
     const normalized = normalizeProjectInput(payload);

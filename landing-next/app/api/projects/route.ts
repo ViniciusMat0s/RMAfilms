@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
       title: string;
       copy: string;
       image: string | null;
+      media: string[];
     }>;
 
     const normalized = normalizeProjectInput(payload);
