@@ -125,6 +125,7 @@ export default function AdminProjectsPage() {
   const [instagramImportMode, setInstagramImportMode] =
     useState<InstagramImportMode>("single");
   const [importingInstagram, setImportingInstagram] = useState(false);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [floatingModal, setFloatingModal] = useState<FloatingModalState | null>(null);
   const floatingConfirmActionRef = useRef<(() => void) | null>(null);
   const projectsWithMedia = projects.filter((project) => project.media.length > 0).length;
@@ -266,6 +267,29 @@ export default function AdminProjectsPage() {
     };
   }, [floatingModal]);
 
+  useEffect(() => {
+    if (!isEditorOpen || floatingModal) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      setIsEditorOpen(false);
+      setForm(EMPTY_FORM);
+      setEditingId(null);
+      setSelectedFiles([]);
+      setInstagramInput("");
+      setInstagramBatchInputs([""]);
+      setInstagramImportMode("single");
+      setMessage("");
+      setError("");
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isEditorOpen, floatingModal]);
+
   const resetForm = () => {
     setForm(EMPTY_FORM);
     setEditingId(null);
@@ -273,6 +297,20 @@ export default function AdminProjectsPage() {
     setInstagramInput("");
     setInstagramBatchInputs([""]);
     setInstagramImportMode("single");
+  };
+
+  const openCreateModal = () => {
+    resetForm();
+    setMessage("");
+    setError("");
+    setIsEditorOpen(true);
+  };
+
+  const closeEditorModal = () => {
+    setIsEditorOpen(false);
+    resetForm();
+    setMessage("");
+    setError("");
   };
 
   const startEdit = (project: ProjectRecord) => {
@@ -290,6 +328,7 @@ export default function AdminProjectsPage() {
     setInstagramImportMode("single");
     setMessage("");
     setError("");
+    setIsEditorOpen(true);
   };
 
   const removeMediaFromForm = (mediaPath: string) => {
@@ -674,36 +713,145 @@ export default function AdminProjectsPage() {
   return (
     <main className={styles.page}>
       <div className={styles.container}>
-        <header className={styles.header}>
-          <span className={styles.kicker}>Painel administrativo</span>
-          <h1>Gestao de Projetos</h1>
-          <p>
-            Cadastre, edite e remova os cards da secao &quot;Projetos&quot;. O layout no site
-            principal continua o mesmo, mudando apenas os dados.
-          </p>
-          <div className={styles.stats}>
-            <article className={styles.stat}>
-              <strong>{loading ? "--" : projects.length}</strong>
-              <span>Projetos ativos</span>
-            </article>
-            <article className={styles.stat}>
-              <strong>{loading ? "--" : projectsWithMedia}</strong>
-              <span>Com midias</span>
-            </article>
-            <article className={styles.stat}>
-              <strong>{editingId ? "ON" : "OFF"}</strong>
-              <span>Modo edicao</span>
-            </article>
+        <section className={`${styles.card} ${styles.projectsBoard}`}>
+          <div className={styles.sectionHead}>
+            <div className={styles.sectionHeadBlock}>
+              <span className={styles.boardKicker}>Painel projetos</span>
+              <h2 className={styles.sectionTitle}>Projetos cadastrados</h2>
+              <p className={styles.sectionSubtitle}>
+                Crie e edite cards em uma janela flutuante.
+              </p>
+              <div className={styles.boardStats}>
+                <span className={styles.boardStat}>
+                  Ativos: <strong>{loading ? "--" : projects.length}</strong>
+                </span>
+                <span className={styles.boardStat}>
+                  Midias: <strong>{loading ? "--" : projectsWithMedia}</strong>
+                </span>
+                <span className={styles.boardStat}>
+                  Edicao: <strong>{editingId ? "ON" : "OFF"}</strong>
+                </span>
+              </div>
+            </div>
+            <div className={styles.sectionHeadActions}>
+              <span className={styles.sectionPill}>{projects.length}</span>
+              <button
+                className={styles.addProjectButton}
+                type="button"
+                onClick={openCreateModal}
+                disabled={saving}
+                aria-label="Adicionar novo projeto"
+              >
+                <span className={styles.addProjectIcon} aria-hidden="true">
+                  +
+                </span>
+                Adicionar
+              </button>
+            </div>
           </div>
-        </header>
 
-        <div className={styles.grid}>
-          <section className={styles.card}>
-            <div className={styles.sectionHead}>
-              <h2 className={styles.sectionTitle}>
-                {editingId ? "Editar Projeto" : "Novo Projeto"}
-              </h2>
-              <span className={styles.sectionPill}>{editingId ? "Atualizacao" : "Criacao"}</span>
+          {loading ? <p className={styles.message}>Carregando...</p> : null}
+
+          {!loading && projects.length === 0 ? (
+            <p className={styles.message}>Nenhum projeto cadastrado.</p>
+          ) : null}
+
+          <div className={styles.list}>
+            {projects.map((project) => {
+              const coverMedia = getProjectCover(project);
+
+              return (
+                <article key={project.id} className={styles.item}>
+                  <div className={styles.topline}>
+                    <span className={styles.tag}>{project.tag}</span>
+                    <code className={styles.projectId}>{project.id}</code>
+                  </div>
+                  <h3 className={styles.title}>{project.title}</h3>
+                  {coverMedia ? (
+                    <div className={styles.itemImageWrap}>
+                      {isInstagramMedia(coverMedia) ? (
+                        <div className={styles.instagramPreview}>
+                          <span>Instagram</span>
+                          <small>{getFileLabel(coverMedia)}</small>
+                        </div>
+                      ) : isVideoMedia(coverMedia) ? (
+                        <video src={coverMedia} muted playsInline preload="metadata" />
+                      ) : (
+                        <Image
+                          src={coverMedia}
+                          alt={project.title}
+                          fill
+                          sizes="(max-width: 900px) 100vw, 420px"
+                        />
+                      )}
+                    </div>
+                  ) : null}
+                  <p className={styles.copy}>{project.copy}</p>
+                  <p className={styles.mediaCount}>{project.media.length} midias cadastradas</p>
+                  <div className={styles.itemActions}>
+                    <button
+                      className={styles.buttonGhost}
+                      type="button"
+                      onClick={() => startEdit(project)}
+                      disabled={saving}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className={styles.buttonDanger}
+                      type="button"
+                      onClick={() => removeProject(project)}
+                      disabled={saving}
+                    >
+                      Remover
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+
+        {!isEditorOpen && (message || error) ? (
+          <div className={styles.statusStack}>
+            {message ? <p className={`${styles.message} ${styles.messageSuccess}`}>{message}</p> : null}
+            {error ? <p className={`${styles.message} ${styles.error}`}>{error}</p> : null}
+          </div>
+        ) : null}
+
+        <Link className={styles.linkBack} href="/">
+          Voltar para o site
+        </Link>
+      </div>
+      {isEditorOpen ? (
+        <div className={styles.editorBackdrop} onClick={closeEditorModal}>
+          <section
+            className={`${styles.card} ${styles.editorWindow}`}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="project-editor-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className={styles.editorHeader}>
+              <div className={styles.sectionHeadBlock}>
+                <h2 id="project-editor-title" className={styles.sectionTitle}>
+                  {editingId ? "Editar Projeto" : "Novo Projeto"}
+                </h2>
+                <p className={styles.sectionSubtitle}>
+                  Os dados salvos aqui atualizam automaticamente os cards da secao de projetos.
+                </p>
+              </div>
+              <div className={styles.sectionHeadActions}>
+                <span className={styles.sectionPill}>{editingId ? "Atualizacao" : "Criacao"}</span>
+                <button
+                  className={styles.closeEditorButton}
+                  type="button"
+                  onClick={closeEditorModal}
+                  disabled={saving}
+                >
+                  Fechar
+                </button>
+              </div>
             </div>
 
             <form onSubmit={submitForm}>
@@ -934,17 +1082,14 @@ export default function AdminProjectsPage() {
                 <button className={styles.button} type="submit" disabled={saving}>
                   {saving ? "Salvando..." : editingId ? "Atualizar" : "Criar"}
                 </button>
-
-                {editingId ? (
-                  <button
-                    className={styles.buttonGhost}
-                    type="button"
-                    onClick={resetForm}
-                    disabled={saving}
-                  >
-                    Cancelar edicao
-                  </button>
-                ) : null}
+                <button
+                  className={styles.buttonGhost}
+                  type="button"
+                  onClick={closeEditorModal}
+                  disabled={saving}
+                >
+                  {editingId ? "Cancelar edicao" : "Fechar"}
+                </button>
               </div>
             </form>
 
@@ -957,80 +1102,8 @@ export default function AdminProjectsPage() {
               </div>
             ) : null}
           </section>
-
-          <section className={styles.card}>
-            <div className={styles.sectionHead}>
-              <h2 className={styles.sectionTitle}>Projetos cadastrados</h2>
-              <span className={styles.sectionPill}>{projects.length}</span>
-            </div>
-
-            {loading ? <p className={styles.message}>Carregando...</p> : null}
-
-            {!loading && projects.length === 0 ? (
-              <p className={styles.message}>Nenhum projeto cadastrado.</p>
-            ) : null}
-
-            <div className={styles.list}>
-              {projects.map((project) => {
-                const coverMedia = getProjectCover(project);
-
-                return (
-                  <article key={project.id} className={styles.item}>
-                    <div className={styles.topline}>
-                      <span className={styles.tag}>{project.tag}</span>
-                      <code className={styles.projectId}>{project.id}</code>
-                    </div>
-                    <h3 className={styles.title}>{project.title}</h3>
-                    {coverMedia ? (
-                      <div className={styles.itemImageWrap}>
-                        {isInstagramMedia(coverMedia) ? (
-                          <div className={styles.instagramPreview}>
-                            <span>Instagram</span>
-                            <small>{getFileLabel(coverMedia)}</small>
-                          </div>
-                        ) : isVideoMedia(coverMedia) ? (
-                          <video src={coverMedia} muted playsInline preload="metadata" />
-                        ) : (
-                          <Image
-                            src={coverMedia}
-                            alt={project.title}
-                            fill
-                            sizes="(max-width: 900px) 100vw, 420px"
-                          />
-                        )}
-                      </div>
-                    ) : null}
-                    <p className={styles.copy}>{project.copy}</p>
-                    <p className={styles.mediaCount}>{project.media.length} midias cadastradas</p>
-                    <div className={styles.itemActions}>
-                      <button
-                        className={styles.buttonGhost}
-                        type="button"
-                        onClick={() => startEdit(project)}
-                        disabled={saving}
-                      >
-                        Editar
-                      </button>
-                      <button
-                        className={styles.buttonDanger}
-                        type="button"
-                        onClick={() => removeProject(project)}
-                        disabled={saving}
-                      >
-                        Remover
-                      </button>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          </section>
         </div>
-
-        <Link className={styles.linkBack} href="/">
-          Voltar para o site
-        </Link>
-      </div>
+      ) : null}
       {floatingModal ? (
         <div className={styles.floatingBackdrop} onClick={closeFloatingModal}>
           <section
