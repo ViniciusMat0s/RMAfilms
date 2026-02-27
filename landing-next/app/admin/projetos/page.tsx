@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -26,6 +26,21 @@ type ProjectForm = {
 };
 
 type InstagramImportMode = "single" | "multiple";
+type FloatingModalMode = "alert" | "confirm";
+type FloatingModalState = {
+  mode: FloatingModalMode;
+  title: string;
+  message: string;
+  confirmLabel: string;
+  cancelLabel?: string;
+};
+type ProjectSubmitPayload = {
+  tag: string;
+  title: string;
+  copy: string;
+  image: string;
+  media: string[];
+};
 
 const TOKEN_STORAGE_KEY = "rma_admin_token";
 const FALLBACK_TOKEN_HINT = "ADMINRMA";
@@ -110,7 +125,49 @@ export default function AdminProjectsPage() {
   const [instagramImportMode, setInstagramImportMode] =
     useState<InstagramImportMode>("single");
   const [importingInstagram, setImportingInstagram] = useState(false);
+  const [floatingModal, setFloatingModal] = useState<FloatingModalState | null>(null);
+  const floatingConfirmActionRef = useRef<(() => void) | null>(null);
   const projectsWithMedia = projects.filter((project) => project.media.length > 0).length;
+
+  const closeFloatingModal = () => {
+    setFloatingModal(null);
+    floatingConfirmActionRef.current = null;
+  };
+
+  const openAlert = (title: string, message: string, confirmLabel = "Entendi") => {
+    floatingConfirmActionRef.current = null;
+    setFloatingModal({
+      mode: "alert",
+      title,
+      message,
+      confirmLabel,
+    });
+  };
+
+  const openConfirm = (
+    title: string,
+    message: string,
+    onConfirm: () => void,
+    confirmLabel = "Confirmar",
+    cancelLabel = "Cancelar"
+  ) => {
+    floatingConfirmActionRef.current = onConfirm;
+    setFloatingModal({
+      mode: "confirm",
+      title,
+      message,
+      confirmLabel,
+      cancelLabel,
+    });
+  };
+
+  const handleFloatingConfirm = () => {
+    const action = floatingConfirmActionRef.current;
+    closeFloatingModal();
+    if (action) {
+      action();
+    }
+  };
 
   const loadProjects = async () => {
     setLoading(true);
@@ -192,6 +249,22 @@ export default function AdminProjectsPage() {
     if (!token.trim()) return;
     window.localStorage.setItem(TOKEN_STORAGE_KEY, token);
   }, [token]);
+
+  useEffect(() => {
+    if (!floatingModal) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      setFloatingModal(null);
+      floatingConfirmActionRef.current = null;
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [floatingModal]);
 
   const resetForm = () => {
     setForm(EMPTY_FORM);
@@ -378,31 +451,8 @@ export default function AdminProjectsPage() {
     }
   };
 
-  const submitForm = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setMessage("");
-    setError("");
-
-    const trimmed = {
-      tag: form.tag.trim(),
-      title: form.title.trim(),
-      copy: form.copy.trim(),
-      image: typeof form.image === "string" ? form.image.trim() : "",
-      media: form.media.map((item) => item.trim()).filter(Boolean),
-    };
-
-    if (!trimmed.tag || !trimmed.title || !trimmed.copy) {
-      setError("Preencha tag, titulo e descricao antes de salvar.");
-      return;
-    }
-
-    if (!token.trim()) {
-      setError("Informe o token admin para salvar.");
-      return;
-    }
-
+  const persistProject = async (trimmed: ProjectSubmitPayload) => {
     setSaving(true);
-
     const endpoint = editingId ? `/api/projects/${editingId}` : "/api/projects";
     const method = editingId ? "PATCH" : "POST";
 
@@ -491,6 +541,88 @@ export default function AdminProjectsPage() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const submitForm = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setMessage("");
+    setError("");
+
+    const trimmed: ProjectSubmitPayload = {
+      tag: form.tag.trim(),
+      title: form.title.trim(),
+      copy: form.copy.trim(),
+      image: typeof form.image === "string" ? form.image.trim() : "",
+      media: form.media.map((item) => item.trim()).filter(Boolean),
+    };
+
+    if (importingInstagram) {
+      openAlert(
+        "Importacao em andamento",
+        "Aguarde a importacao das midias terminar antes de salvar o projeto."
+      );
+      return;
+    }
+
+    const missingFields: string[] = [];
+    if (!trimmed.tag) missingFields.push("Tag");
+    if (!trimmed.title) missingFields.push("Titulo");
+    if (!trimmed.copy) missingFields.push("Descricao");
+
+    if (missingFields.length) {
+      openAlert(
+        "Campos obrigatorios",
+        `Preencha ${missingFields.join(", ")} antes de salvar o projeto.`
+      );
+      return;
+    }
+
+    if (!token.trim()) {
+      openAlert("Token admin ausente", "Informe o token admin antes de salvar.");
+      return;
+    }
+
+    const hasPendingInstagramLinks =
+      instagramImportMode === "single"
+        ? Boolean(instagramInput.trim())
+        : instagramBatchInputs.some((item) => item.trim().length > 0);
+
+    const hasAnyMedia = trimmed.media.length > 0 || selectedFiles.length > 0;
+    const continueSave = () => void persistProject(trimmed);
+
+    const confirmWithoutMedia = () => {
+      openConfirm(
+        "Salvar sem midia?",
+        "Nenhuma midia foi importada ou enviada. Deseja continuar mesmo assim?",
+        continueSave,
+        editingId ? "Atualizar sem midia" : "Criar sem midia",
+        "Voltar e revisar"
+      );
+    };
+
+    if (hasPendingInstagramLinks) {
+      openConfirm(
+        "Importacao pendente",
+        "Ha links do Instagram preenchidos sem importacao. Se continuar, eles nao entram na galeria deste projeto.",
+        () => {
+          if (!hasAnyMedia) {
+            confirmWithoutMedia();
+            return;
+          }
+          continueSave();
+        },
+        "Salvar assim",
+        "Revisar links"
+      );
+      return;
+    }
+
+    if (!hasAnyMedia) {
+      confirmWithoutMedia();
+      return;
+    }
+
+    continueSave();
   };
 
   const removeProject = async (project: ProjectRecord) => {
@@ -899,6 +1031,43 @@ export default function AdminProjectsPage() {
           Voltar para o site
         </Link>
       </div>
+      {floatingModal ? (
+        <div className={styles.floatingBackdrop} onClick={closeFloatingModal}>
+          <section
+            className={styles.floatingWindow}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="floating-modal-title"
+            aria-describedby="floating-modal-message"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <p id="floating-modal-title" className={styles.floatingTitle}>
+              {floatingModal.title}
+            </p>
+            <p id="floating-modal-message" className={styles.floatingMessage}>
+              {floatingModal.message}
+            </p>
+            <div className={styles.floatingActions}>
+              {floatingModal.mode === "confirm" ? (
+                <button
+                  className={styles.floatingSecondary}
+                  type="button"
+                  onClick={closeFloatingModal}
+                >
+                  {floatingModal.cancelLabel ?? "Cancelar"}
+                </button>
+              ) : null}
+              <button
+                className={styles.floatingPrimary}
+                type="button"
+                onClick={handleFloatingConfirm}
+              >
+                {floatingModal.confirmLabel}
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
     </main>
   );
 }

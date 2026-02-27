@@ -706,6 +706,84 @@
   filter: brightness(1.08);
 }
 
+.floatingBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: clamp(var(--admin-space-xs), 4vw, var(--admin-space-sm));
+  background: rgba(2, 6, 12, 0.72);
+  backdrop-filter: blur(4px);
+}
+
+.floatingWindow {
+  width: min(520px, 100%);
+  border: 1px solid rgba(175, 215, 255, 0.32);
+  border-radius: calc(var(--admin-space-xs) + 2px);
+  padding: clamp(var(--admin-space-xs), 2.8vw, var(--admin-space-md));
+  background:
+    radial-gradient(circle at 15% 0%, rgba(126, 181, 255, 0.2), rgba(126, 181, 255, 0) 48%),
+    linear-gradient(162deg, rgba(12, 21, 37, 0.98), rgba(6, 12, 23, 0.98));
+  box-shadow: 0 24px 52px rgba(0, 0, 0, 0.42);
+  display: grid;
+  gap: 12px;
+}
+
+.floatingTitle {
+  margin: 0;
+  font-size: clamp(0.98rem, 1.6vw, 1.1rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(238, 246, 255, 0.96);
+  font-weight: 670;
+}
+
+.floatingMessage {
+  margin: 0;
+  color: rgba(216, 233, 252, 0.84);
+  line-height: 1.58;
+  font-size: 0.94rem;
+}
+
+.floatingActions {
+  margin-top: 4px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.floatingPrimary,
+.floatingSecondary {
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease, border-color 0.2s ease;
+}
+
+.floatingPrimary {
+  border: 1px solid rgba(217, 236, 255, 0.34);
+  color: #13243f;
+  background: linear-gradient(178deg, rgba(230, 242, 255, 0.99), rgba(194, 223, 252, 0.96));
+}
+
+.floatingSecondary {
+  border: 1px solid rgba(169, 210, 254, 0.34);
+  color: rgba(221, 235, 255, 0.92);
+  background: rgba(11, 20, 34, 0.78);
+}
+
+.floatingPrimary:hover,
+.floatingSecondary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+}
+
 @media (max-width: 1100px) {
   .stats {
     grid-template-columns: 1fr;
@@ -783,6 +861,15 @@
 
   .batchRemoveButton,
   .batchAddButton {
+    width: 100%;
+  }
+
+  .floatingActions {
+    flex-direction: column-reverse;
+  }
+
+  .floatingPrimary,
+  .floatingSecondary {
     width: 100%;
   }
 }
