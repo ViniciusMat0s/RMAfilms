@@ -4285,7 +4285,15 @@ h2.section-title--hero-font {
   align-items: flex-end;
   --cta-fade: clamp(220px, 28vh, 360px);
   margin-top: calc(-1 * var(--cta-fade));
-  background: transparent;
+  background:
+    radial-gradient(76% 84% at 12% 12%, rgba(102, 163, 236, 0.1), transparent 64%),
+    radial-gradient(70% 76% at 88% 30%, rgba(84, 138, 212, 0.08), transparent 66%),
+    linear-gradient(
+      180deg,
+      rgba(5, 8, 13, 0) 0%,
+      rgba(5, 10, 18, 0.24) 54%,
+      rgba(6, 17, 32, 0.62) 100%
+    );
   isolation: isolate;
   padding-top: calc(var(--cta-fade) + clamp(var(--fib-3), 4vw, var(--fib-5)));
   padding-bottom: 0;
@@ -4320,11 +4328,11 @@ h2.section-title--hero-font {
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(5, 8, 13, 0) 0%,
-    rgba(5, 8, 13, 0.12) 26%,
-    rgba(5, 8, 13, 0.42) 58%,
-    rgba(5, 8, 13, 0.82) 88%,
-    rgba(5, 8, 13, 0.98) 100%
+    rgba(6, 12, 22, 0) 0%,
+    rgba(6, 13, 24, 0.08) 26%,
+    rgba(5, 13, 28, 0.28) 58%,
+    rgba(5, 11, 22, 0.58) 88%,
+    rgba(5, 10, 18, 0.82) 100%
   );
   pointer-events: none;
   z-index: 0;
@@ -4353,8 +4361,8 @@ h2.section-title--hero-font {
   padding: clamp(var(--fib-4), 6vw, var(--fib-6));
   box-shadow: var(--shadow),
     0 0 calc(110px * (0.2 + var(--cta-glow) * 0.8))
-      rgba(160, 202, 255, calc(0.08 + var(--cta-glow) * 0.28)),
-    0 0 calc(26px * var(--cta-hover)) rgba(255, 255, 255, 0.14);
+      rgba(134, 191, 255, calc(0.1 + var(--cta-glow) * 0.3)),
+    0 0 calc(26px * var(--cta-hover)) rgba(173, 214, 255, 0.16);
   border: none;
   perspective: 1200px;
   will-change: box-shadow, border-color;
@@ -4372,13 +4380,13 @@ h2.section-title--hero-font {
   inset: -40%;
   background: radial-gradient(
       380px 280px at calc(var(--cta-x) * 1%) calc(var(--cta-y) * 1%),
-      rgba(160, 210, 255, 0.42),
-      rgba(120, 160, 220, 0.18) 35%,
+      rgba(148, 204, 255, 0.36),
+      rgba(101, 157, 229, 0.16) 35%,
       transparent 68%
     ),
     radial-gradient(
       580px 320px at calc(var(--cta-x) * 1%) calc(var(--cta-y) * 1%),
-      rgba(255, 255, 255, 0.14),
+      rgba(168, 214, 255, 0.14),
       transparent 70%
     );
   opacity: calc(0.08 + (var(--cta-glow) + var(--cta-hover)) * 0.5);
@@ -4391,10 +4399,10 @@ h2.section-title--hero-font {
   inset: -65%;
   background: conic-gradient(
     from 0deg at 50% 50%,
-    rgba(120, 190, 255, 0.25),
-    rgba(255, 120, 180, 0.12),
-    rgba(255, 255, 255, 0.2),
-    rgba(120, 190, 255, 0.3)
+    rgba(120, 190, 255, 0.24),
+    rgba(88, 148, 226, 0.16),
+    rgba(174, 216, 255, 0.16),
+    rgba(120, 190, 255, 0.28)
   );
   opacity: calc(0.05 + var(--cta-glow) * 0.4);
   mix-blend-mode: screen;
@@ -4425,8 +4433,8 @@ h2.section-title--hero-font {
   background: linear-gradient(
     110deg,
     transparent 28%,
-    rgba(255, 255, 255, 0.18) 44%,
-    rgba(140, 200, 255, 0.26) 50%,
+    rgba(172, 217, 255, 0.14) 44%,
+    rgba(126, 191, 255, 0.26) 50%,
     transparent 64%
   );
   opacity: calc(0.12 + var(--cta-pulse) * 0.45);
@@ -4437,16 +4445,16 @@ h2.section-title--hero-font {
 .cta-effects::after {
   background-image: repeating-linear-gradient(
       0deg,
-      rgba(255, 255, 255, 0.08) 0 1px,
+      rgba(196, 228, 255, 0.08) 0 1px,
       transparent 1px 4px
     ),
     repeating-linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.05) 0 1px,
+      rgba(182, 219, 255, 0.05) 0 1px,
       transparent 1px 6px
     ),
-    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.16), transparent 35%),
-    radial-gradient(circle at 80% 30%, rgba(120, 190, 255, 0.12), transparent 40%);
+    radial-gradient(circle at 20% 20%, rgba(180, 220, 255, 0.14), transparent 35%),
+    radial-gradient(circle at 80% 30%, rgba(116, 184, 255, 0.14), transparent 40%);
   background-size: 100% 6px, 8px 100%, 100% 100%, 100% 100%;
   background-position: 0 0, 0 0, 0 0, 0 0;
   opacity: 0.55;
@@ -4479,7 +4487,7 @@ h2.section-title--hero-font {
   font-family: var(--font-heading), "Bodoni Moda", serif;
   font-size: var(--title-size-cta);
   text-shadow: 0 0 calc(32px * (0.2 + var(--cta-glow)))
-    rgba(198, 222, 255, 0.3);
+    rgba(156, 206, 255, 0.32);
 }
 
 .cta-title {
@@ -4504,8 +4512,8 @@ h2.section-title--hero-font {
   z-index: 0;
   background: radial-gradient(
     200px 200px at var(--cta-glow-x) var(--cta-glow-y),
-    rgba(255, 255, 255, 0.98),
-    rgba(198, 222, 255, 0.58) 36%,
+    rgba(214, 235, 255, 0.96),
+    rgba(144, 198, 255, 0.6) 36%,
     rgba(255, 255, 255, 0) 70%
   );
   opacity: var(--cta-glow-alpha);
@@ -4534,15 +4542,23 @@ h2.section-title--hero-font {
 }
 
 .cta-actions .button {
+  border: 1px solid rgba(168, 206, 248, 0.7);
+  background: linear-gradient(
+    180deg,
+    rgba(227, 239, 255, 0.97) 0%,
+    rgba(200, 223, 248, 0.96) 100%
+  );
+  color: #0f1c30;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5),
-    0 0 calc(34px * var(--cta-glow)) rgba(198, 222, 255, 0.3);
+    0 0 calc(34px * var(--cta-glow)) rgba(164, 208, 255, 0.32);
 }
 
 .cta-actions .button--ghost {
-  border-color: rgba(247, 247, 242, 0.42);
-  background: rgba(10, 10, 10, 0.35);
-  box-shadow: inset 0 0 0 1px rgba(247, 247, 242, 0.18),
-    0 0 calc(24px * var(--cta-glow)) rgba(160, 200, 255, 0.2);
+  border-color: rgba(160, 202, 248, 0.54);
+  background: rgba(11, 24, 43, 0.46);
+  color: rgba(226, 238, 255, 0.94);
+  box-shadow: inset 0 0 0 1px rgba(168, 208, 250, 0.2),
+    0 0 calc(24px * var(--cta-glow)) rgba(132, 189, 255, 0.24);
 }
 
 @keyframes ctaBeam {
@@ -4594,12 +4610,29 @@ h2.section-title--hero-font {
   background:
     radial-gradient(74% 82% at 10% 0%, rgba(114, 175, 255, 0.24), transparent 62%),
     radial-gradient(66% 72% at 100% 40%, rgba(88, 148, 226, 0.2), transparent 64%),
-    linear-gradient(180deg, #05080d 0%, #050a12 58%, #061120 100%);
+    linear-gradient(180deg, #061120 0%, #050a12 58%, #05080d 100%);
   color: rgba(247, 247, 242, 0.86);
 }
 
 .footer::before {
-  content: none;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(118, 174, 238, 0) 0%,
+    rgba(152, 202, 255, 0.34) 18%,
+    rgba(196, 226, 255, 0.56) 50%,
+    rgba(152, 202, 255, 0.34) 82%,
+    rgba(118, 174, 238, 0) 100%
+  );
+  box-shadow: 0 0 16px rgba(132, 188, 255, 0.2),
+    0 -1px 0 rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+  z-index: 3;
 }
 
 .footer::after {
@@ -4862,17 +4895,72 @@ h2.section-title--hero-font {
 
 @media (max-width: 610px) {
   .footer {
-    --footer-inline: max(
-      clamp(var(--fib-2), 6vw, var(--fib-4)),
-      calc(var(--nav-content-offset) + clamp(var(--fib-2), 2.2vw, var(--fib-4)))
-    );
-    padding-bottom: var(--space-md);
+    --footer-inline: clamp(var(--fib-2), 5.6vw, var(--fib-4));
+    padding-top: clamp(var(--fib-4), 8vw, var(--fib-5));
+    padding-bottom: clamp(var(--fib-3), 8vw, var(--fib-5));
+    background:
+      radial-gradient(
+        92% 108% at 50% -16%,
+        rgba(114, 175, 255, 0.22),
+        rgba(114, 175, 255, 0) 64%
+      ),
+      linear-gradient(180deg, rgba(6, 17, 32, 0.96) 0%, rgba(5, 10, 18, 0.96) 56%, rgba(5, 9, 16, 0.96) 100%);
+  }
+
+  .footer::after {
+    opacity: 0.18;
+    bottom: -176px;
+    height: 320px;
   }
 
   .footer-links {
-    grid-template-columns: 1fr;
-    justify-items: center;
-    row-gap: clamp(var(--fib-2), 3vw, var(--fib-4));
+    width: min(100%, 560px);
+    margin-inline: var(--footer-inline);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-content: stretch;
+    justify-items: stretch;
+    column-gap: clamp(14px, 4.4vw, 22px);
+    row-gap: clamp(12px, 4vw, 20px);
+    padding: clamp(12px, 4vw, 20px);
+    border-radius: clamp(14px, 4.6vw, 18px);
+    border: 1px solid rgba(247, 247, 242, 0.12);
+    background: linear-gradient(148deg, rgba(20, 32, 52, 0.64), rgba(7, 11, 19, 0.6));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 18px 38px rgba(0, 0, 0, 0.28);
+  }
+
+  .footer-menu {
+    align-items: flex-start;
+    text-align: left;
+    gap: 10px;
+  }
+
+  .footer-menu ul {
+    justify-items: flex-start;
+    gap: 8px;
+  }
+
+  .footer-menu-title {
+    font-size: clamp(0.58rem, 2.5vw, 0.66rem);
+    letter-spacing: 0.16em;
+  }
+
+  .footer-menu-link {
+    font-size: clamp(0.94rem, 4vw, 1.02rem);
+  }
+
+  .footer-divider,
+  .footer-bottom {
+    margin-inline: var(--footer-inline);
+  }
+
+  .footer-divider {
+    margin-bottom: clamp(16px, 4.8vw, 24px);
+  }
+
+  .footer-bottom {
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 0.82rem;
   }
 
   .footer-newsletter-input-row {
@@ -4888,8 +4976,34 @@ h2.section-title--hero-font {
   }
 
   .footer-bottom-links {
+    width: 100%;
+    justify-content: flex-start;
     flex-wrap: wrap;
-    gap: 14px;
+    gap: 10px 16px;
+  }
+}
+
+@media (max-width: 430px) {
+  .footer-links {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-menu {
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer-menu ul {
+    justify-items: center;
+  }
+
+  .footer-bottom {
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer-bottom-links {
+    justify-content: center;
   }
 }
 
