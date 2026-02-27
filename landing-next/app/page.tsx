@@ -51,22 +51,15 @@ const normalizeProjectMedia = (project: Partial<ProjectCard>) => {
   return Array.from(new Set(cleanedMedia));
 };
 
-const getProjectCoverImage = (project: Pick<ProjectCard, "image" | "media">) => {
-  if (
-    project.image &&
-    project.media.includes(project.image) &&
-    !isInstagramMedia(project.image) &&
-    !isVideoMedia(project.image)
-  ) {
+const getProjectCoverMedia = (project: Pick<ProjectCard, "image" | "media">) => {
+  if (project.image && project.media.includes(project.image)) {
     return project.image;
   }
 
   if (project.media.length > 0) {
-    return (
-      project.media.find((item) => !isVideoMedia(item) && !isInstagramMedia(item)) ?? null
-    );
+    return project.media[0];
   }
-  if (project.image && !isInstagramMedia(project.image)) {
+  if (project.image) {
     return project.image;
   }
   return null;
@@ -1998,7 +1991,7 @@ export default function Home() {
           </div>
           <div className="rail-track" ref={railRef}>
             {projectItems.map((project, index) => {
-              const coverImage = getProjectCoverImage(project);
+              const coverMedia = getProjectCoverMedia(project);
 
               return (
                 <article
@@ -2023,15 +2016,21 @@ export default function Home() {
                   <div
                     className="rail-image"
                     aria-hidden="true"
-                    data-has-image={coverImage ? "true" : "false"}
+                    data-has-image={coverMedia ? "true" : "false"}
                   >
-                    {coverImage ? (
-                      <Image
-                        src={coverImage}
-                        alt=""
-                        fill
-                        sizes="(max-width: 610px) 74vw, (max-width: 1097px) 60vw, 360px"
-                      />
+                    {coverMedia ? (
+                      isInstagramMedia(coverMedia) ? (
+                        <span className="rail-instagram-cover">Instagram</span>
+                      ) : isVideoMedia(coverMedia) ? (
+                        <video src={coverMedia} muted autoPlay loop playsInline preload="metadata" />
+                      ) : (
+                        <Image
+                          src={coverMedia}
+                          alt=""
+                          fill
+                          sizes="(max-width: 610px) 74vw, (max-width: 1097px) 60vw, 360px"
+                        />
+                      )
                     ) : null}
                   </div>
                   <div className="rail-body">

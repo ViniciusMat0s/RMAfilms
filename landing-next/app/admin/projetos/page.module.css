@@ -391,26 +391,35 @@
 .previewWrap {
   margin-top: 6px;
   display: grid;
-  gap: 10px;
+  gap: 8px;
+  max-height: 360px;
+  overflow: auto;
+  padding-right: 4px;
 }
 
 .mediaCard {
   border: 1px solid rgba(173, 211, 255, 0.22);
-  border-radius: 12px;
-  padding: 10px;
+  border-radius: 10px;
+  padding: 8px;
   display: grid;
-  gap: 10px;
+  grid-template-columns: 124px minmax(0, 1fr);
+  grid-template-areas:
+    "thumb meta"
+    "thumb actions";
+  gap: 6px 10px;
+  align-items: center;
   background: rgba(9, 17, 30, 0.8);
 }
 
 .previewMedia {
-  width: 100%;
-  aspect-ratio: 1.618 / 1;
+  grid-area: thumb;
+  width: 124px;
+  aspect-ratio: 4 / 3;
   position: relative;
-  border-radius: 14px;
+  border-radius: 10px;
   overflow: hidden;
   border: 1px solid rgba(173, 211, 255, 0.3);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.24);
 }
 
 .previewMedia :global(img) {
@@ -433,16 +442,16 @@
 }
 
 .instagramPreview span {
-  font-size: 0.84rem;
-  letter-spacing: 0.12em;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   font-weight: 700;
 }
 
 .instagramPreview small {
   color: rgba(204, 223, 248, 0.78);
-  font-size: 0.68rem;
-  letter-spacing: 0.06em;
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -457,12 +466,14 @@
 }
 
 .mediaMeta {
+  grid-area: meta;
   display: grid;
-  gap: 5px;
+  gap: 3px;
+  min-width: 0;
 }
 
 .mediaMeta code {
-  font-size: 0.72rem;
+  font-size: 0.66rem;
   color: rgba(176, 204, 236, 0.88);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -470,8 +481,9 @@
 }
 
 .mediaActions {
+  grid-area: actions;
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
   align-items: center;
 }
@@ -485,14 +497,20 @@
 
 .mediaBadge {
   width: fit-content;
-  padding: 3px 8px;
+  padding: 2px 7px;
   border-radius: 999px;
   border: 1px solid rgba(181, 218, 255, 0.34);
-  font-size: 0.66rem;
-  letter-spacing: 0.1em;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: rgba(220, 236, 255, 0.9);
   background: rgba(22, 39, 61, 0.72);
+}
+
+.mediaActions .buttonGhost {
+  padding: 7px 11px;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
 }
 
 .formActions {
@@ -735,6 +753,20 @@
   .itemActions .buttonGhost,
   .itemActions .buttonDanger {
     width: 100%;
+  }
+
+  .mediaCard {
+    grid-template-columns: 96px minmax(0, 1fr);
+    padding: 7px;
+  }
+
+  .previewMedia {
+    width: 96px;
+  }
+
+  .mediaActions .buttonGhost {
+    width: auto;
+    padding: 6px 9px;
   }
 
   .projectId {

@@ -20,13 +20,8 @@ export type ProjectRecord = ProjectInput & {
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const PROJECTS_FILE = path.join(DATA_DIR, "projects.json");
-const IMAGE_EXTENSION_PATTERN = /\.(jpg|jpeg|png|webp|gif|avif)$/i;
-const INSTAGRAM_PATTERN = /instagram\.com\/(p|reel|tv)\//i;
 
 const normalizeText = (value: string) => value.trim().replace(/\s+/g, " ");
-const isImagePath = (value: string) => IMAGE_EXTENSION_PATTERN.test(value);
-const isInstagramPath = (value: string) => INSTAGRAM_PATTERN.test(value);
-const isCoverCandidate = (value: string) => isImagePath(value) && !isInstagramPath(value);
 
 const normalizeMediaList = (value: unknown) => {
   if (!Array.isArray(value)) return [] as string[];
@@ -39,8 +34,7 @@ const normalizeMediaList = (value: unknown) => {
   return Array.from(new Set(cleaned));
 };
 
-const pickCoverImage = (media: string[]) =>
-  media.find((item) => isImagePath(item) && !isInstagramPath(item)) ?? null;
+const pickCoverMedia = (media: string[]) => media[0] ?? null;
 
 const slugify = (value: string) =>
   value
@@ -114,10 +108,7 @@ export const normalizeProjectInput = (payload: Partial<ProjectInput>) => {
     media.unshift(image);
   }
 
-  const coverImage =
-    image && isCoverCandidate(image) && media.includes(image)
-      ? image
-      : pickCoverImage(media);
+  const coverImage = image && media.includes(image) ? image : pickCoverMedia(media);
 
   return {
     tag,
@@ -140,14 +131,11 @@ export const readProjects = async (): Promise<ProjectRecord[]> => {
         const media = normalizeMediaList(project.media);
         const rawImage = typeof project.image === "string" ? project.image.trim() : "";
 
-        if (!media.length && rawImage) {
-          media.push(rawImage);
+        if (rawImage && !media.includes(rawImage)) {
+          media.unshift(rawImage);
         }
 
-        const image =
-          rawImage && isCoverCandidate(rawImage) && media.includes(rawImage)
-            ? rawImage
-            : pickCoverImage(media);
+        const image = rawImage && media.includes(rawImage) ? rawImage : pickCoverMedia(media);
 
         return {
           ...project,

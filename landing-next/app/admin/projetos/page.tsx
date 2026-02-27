@@ -72,36 +72,22 @@ const normalizeMediaList = (media: unknown, image: string | null) => {
 
 const normalizeCoverFromMedia = (media: string[], image: string | null) => {
   const cleanedImage = typeof image === "string" ? image.trim() : "";
-  if (
-    cleanedImage &&
-    media.includes(cleanedImage) &&
-    !isVideoMedia(cleanedImage) &&
-    !isInstagramMedia(cleanedImage)
-  ) {
+  if (cleanedImage && media.includes(cleanedImage)) {
     return cleanedImage;
   }
 
-  return media.find((item) => !isVideoMedia(item) && !isInstagramMedia(item)) ?? null;
+  return media[0] ?? null;
 };
 
 const getProjectCover = (project: Pick<ProjectRecord, "media" | "image">) => {
-  if (
-    project.image &&
-    project.media.includes(project.image) &&
-    !isInstagramMedia(project.image) &&
-    !isVideoMedia(project.image)
-  ) {
+  if (project.image && project.media.includes(project.image)) {
     return project.image;
   }
 
   if (project.media.length > 0) {
-    return (
-      project.media.find((item) => !isVideoMedia(item) && !isInstagramMedia(item)) ??
-      project.media.find((item) => isVideoMedia(item)) ??
-      null
-    );
+    return project.media[0];
   }
-  if (project.image && !isInstagramMedia(project.image)) {
+  if (project.image) {
     return project.image;
   }
   return null;
@@ -245,10 +231,6 @@ export default function AdminProjectsPage() {
   };
 
   const setMediaAsCover = (mediaPath: string) => {
-    if (isVideoMedia(mediaPath) || isInstagramMedia(mediaPath)) {
-      return;
-    }
-
     setForm((current) => ({
       ...current,
       image: mediaPath,
@@ -793,22 +775,14 @@ export default function AdminProjectsPage() {
                           <code>{getFileLabel(mediaPath)}</code>
                         </div>
                         <div className={styles.mediaActions}>
-                          {!isVideoMedia(mediaPath) && !isInstagramMedia(mediaPath) ? (
-                            <button
-                              className={styles.buttonGhost}
-                              type="button"
-                              onClick={() => setMediaAsCover(mediaPath)}
-                              disabled={saving || form.image === mediaPath}
-                            >
-                              {form.image === mediaPath ? "Capa atual" : "Definir como capa"}
-                            </button>
-                          ) : (
-                            <span className={styles.coverHint}>
-                              {isInstagramMedia(mediaPath)
-                                ? "Instagram nao pode ser capa"
-                                : "Video nao pode ser capa"}
-                            </span>
-                          )}
+                          <button
+                            className={styles.buttonGhost}
+                            type="button"
+                            onClick={() => setMediaAsCover(mediaPath)}
+                            disabled={saving || form.image === mediaPath}
+                          >
+                            {form.image === mediaPath ? "Capa atual" : "Definir como capa"}
+                          </button>
                           <button
                             className={styles.buttonGhost}
                             type="button"
@@ -866,8 +840,7 @@ export default function AdminProjectsPage() {
 
             <div className={styles.list}>
               {projects.map((project) => {
-                const coverImage = getProjectCover(project);
-                const firstInstagram = project.media.find((item) => isInstagramMedia(item));
+                const coverMedia = getProjectCover(project);
 
                 return (
                   <article key={project.id} className={styles.item}>
@@ -876,25 +849,23 @@ export default function AdminProjectsPage() {
                       <code className={styles.projectId}>{project.id}</code>
                     </div>
                     <h3 className={styles.title}>{project.title}</h3>
-                    {coverImage ? (
+                    {coverMedia ? (
                       <div className={styles.itemImageWrap}>
-                        {isVideoMedia(coverImage) ? (
-                          <video src={coverImage} muted playsInline preload="metadata" />
+                        {isInstagramMedia(coverMedia) ? (
+                          <div className={styles.instagramPreview}>
+                            <span>Instagram</span>
+                            <small>{getFileLabel(coverMedia)}</small>
+                          </div>
+                        ) : isVideoMedia(coverMedia) ? (
+                          <video src={coverMedia} muted playsInline preload="metadata" />
                         ) : (
                           <Image
-                            src={coverImage}
+                            src={coverMedia}
                             alt={project.title}
                             fill
                             sizes="(max-width: 900px) 100vw, 420px"
                           />
                         )}
-                      </div>
-                    ) : firstInstagram ? (
-                      <div className={styles.itemImageWrap}>
-                        <div className={styles.instagramPreview}>
-                          <span>Instagram</span>
-                          <small>{getFileLabel(firstInstagram)}</small>
-                        </div>
                       </div>
                     ) : null}
                     <p className={styles.copy}>{project.copy}</p>
