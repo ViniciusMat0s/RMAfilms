@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useEffect, useRef, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
@@ -11,15 +11,88 @@ import {
   footerLinkColumns,
   navSections,
   process,
-  projects,
+  projects as fallbackProjects,
   teamMembers,
 } from "./content";
+
+type ProjectCard = {
+  tag: string;
+  title: string;
+  copy: string;
+  image: string | null;
+};
 
 export default function Home() {
   const rootRef = useRef<HTMLDivElement>(null);
   const railRef = useRef<HTMLDivElement>(null);
+  const [projectItems, setProjectItems] = useState<ProjectCard[]>(
+    fallbackProjects.map((project) => ({
+      ...project,
+      image: null,
+    }))
+  );
+  const [projectsLoaded, setProjectsLoaded] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
+
+    const loadProjects = async () => {
+      try {
+        const response = await fetch("/api/projects", { cache: "no-store" });
+        if (!response.ok) return;
+
+        const payload = (await response.json()) as Partial<{
+          projects: Array<
+            Partial<{
+              tag: string;
+              title: string;
+              copy: string;
+              image: string | null;
+            }>
+          >;
+        }>;
+
+        if (!Array.isArray(payload.projects)) return;
+
+        const normalized = payload.projects
+          .filter(
+            (project) =>
+              typeof project.tag === "string" &&
+              typeof project.title === "string" &&
+              typeof project.copy === "string"
+          )
+          .map((project) => ({
+            tag: project.tag!.trim(),
+            title: project.title!.trim(),
+            copy: project.copy!.trim(),
+            image:
+              typeof project.image === "string" && project.image.trim().length > 0
+                ? project.image.trim()
+                : null,
+          }))
+          .filter((project) => project.tag && project.title && project.copy);
+
+        if (!isMounted || !normalized.length) return;
+        setProjectItems(normalized);
+      } catch {
+        // Keeps fallback projects.
+      } finally {
+        if (isMounted) {
+          setProjectsLoaded(true);
+        }
+      }
+    };
+
+    void loadProjects();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!projectsLoaded) return;
+
     gsap.registerPlugin(ScrollTrigger);
 
     const lenis = new Lenis({
@@ -1561,7 +1634,7 @@ export default function Home() {
       lenis.destroy();
       ctx.revert();
     };
-  }, []);
+  }, [projectItems, projectsLoaded]);
 
   return (
     <div ref={rootRef} className="page">
@@ -1797,9 +1870,22 @@ export default function Home() {
             </div>
           </div>
           <div className="rail-track" ref={railRef}>
-            {projects.map((project) => (
-              <article className="rail-card" key={project.title}>
-                <div className="rail-image" aria-hidden="true" />
+            {projectItems.map((project, index) => (
+              <article className="rail-card" key={`${project.title}-${index}`}>
+                <div
+                  className="rail-image"
+                  aria-hidden="true"
+                  data-has-image={project.image ? "true" : "false"}
+                >
+                  {project.image ? (
+                    <Image
+                      src={project.image}
+                      alt=""
+                      fill
+                      sizes="(max-width: 610px) 74vw, (max-width: 1097px) 60vw, 360px"
+                    />
+                  ) : null}
+                </div>
                 <div className="rail-body">
                   <div className="rail-top">
                     <span>{project.tag}</span>

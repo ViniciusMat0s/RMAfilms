@@ -168,6 +168,17 @@ main {
   .page {
     cursor: none;
   }
+
+  body.admin-projects-page,
+  body.admin-projects-page * {
+    cursor: auto;
+  }
+
+  body.admin-projects-page a,
+  body.admin-projects-page button,
+  body.admin-projects-page [role="button"] {
+    cursor: pointer;
+  }
 }
 
 .progress {
@@ -3052,6 +3063,26 @@ h2.section-title--hero-font {
   will-change: transform, filter;
 }
 
+.rail-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.rail-image[data-has-image="true"] {
+  background: #070d17;
+}
+
+.rail-image[data-has-image="true"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(152deg, rgba(5, 10, 18, 0.12), rgba(5, 10, 18, 0.46));
+  pointer-events: none;
+}
+
 .rail-body {
   position: absolute;
   inset: 0;
@@ -4920,23 +4951,18 @@ h2.section-title--hero-font {
     justify-content: stretch;
     justify-items: stretch;
     column-gap: clamp(14px, 4.4vw, 22px);
-    row-gap: clamp(12px, 4vw, 20px);
-    padding: clamp(12px, 4vw, 20px);
-    border-radius: clamp(14px, 4.6vw, 18px);
-    border: 1px solid rgba(247, 247, 242, 0.12);
-    background: linear-gradient(148deg, rgba(20, 32, 52, 0.64), rgba(7, 11, 19, 0.6));
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 18px 38px rgba(0, 0, 0, 0.28);
+    row-gap: clamp(22px, 7vw, 34px);
   }
 
   .footer-menu {
     align-items: flex-start;
     text-align: left;
-    gap: 10px;
+    gap: clamp(12px, 3.8vw, 18px);
   }
 
   .footer-menu ul {
     justify-items: flex-start;
-    gap: 8px;
+    gap: clamp(8px, 2.6vw, 12px);
   }
 
   .footer-menu-title {
@@ -4986,6 +5012,7 @@ h2.section-title--hero-font {
 @media (max-width: 430px) {
   .footer-links {
     grid-template-columns: 1fr;
+    row-gap: clamp(24px, 8vw, 40px);
   }
 
   .footer-menu {
