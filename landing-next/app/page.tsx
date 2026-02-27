@@ -291,60 +291,97 @@ export default function Home() {
 
         const capabilityRows = gsap.utils.toArray<HTMLElement>(".capability-row");
         if (capabilityRows.length) {
-          const isCapabilitiesMobile = window.matchMedia("(max-width: 900px)").matches;
-          if (isCapabilitiesMobile) {
-            let currentActiveIndex: number | null = null;
+          const capabilityMobileMq = window.matchMedia("(max-width: 900px)");
+          let currentActiveIndex: number | null = null;
 
-            const setActiveRow = (activeIndex: number | null) => {
-              if (currentActiveIndex === activeIndex) return;
-              currentActiveIndex = activeIndex;
+          const updateCapabilityBodyHeights = () => {
+            capabilityRows.forEach((row) => {
+              const body = row.querySelector<HTMLElement>(".capability-body");
+              if (!body) return;
+              row.style.setProperty("--capability-body-height", `${body.scrollHeight}px`);
+            });
+          };
 
-              capabilityRows.forEach((row, rowIndex) => {
-                const isActive = activeIndex === rowIndex;
-                row.classList.toggle("is-active", isActive);
-                row.setAttribute("aria-expanded", String(isActive));
-              });
-            };
+          const setActiveRow = (activeIndex: number | null) => {
+            if (currentActiveIndex === activeIndex) return;
+            currentActiveIndex = activeIndex;
 
             capabilityRows.forEach((row, rowIndex) => {
-              row.classList.remove("is-active");
-              row.setAttribute("tabindex", "0");
-              row.setAttribute("role", "button");
-              row.setAttribute("aria-expanded", "false");
-
-              const toggleRow = () => {
-                const nextIndex = currentActiveIndex === rowIndex ? null : rowIndex;
-                setActiveRow(nextIndex);
-              };
-
-              const onKeyDown = (event: KeyboardEvent) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  toggleRow();
-                }
-              };
-
-              row.addEventListener("click", toggleRow);
-              row.addEventListener("keydown", onKeyDown);
-              capabilityMobileTapCleanups.push(() => {
-                row.removeEventListener("click", toggleRow);
-                row.removeEventListener("keydown", onKeyDown);
-                row.removeAttribute("tabindex");
-                row.removeAttribute("role");
-                row.removeAttribute("aria-expanded");
-                row.classList.remove("is-active");
-              });
+              const isActive = activeIndex === rowIndex;
+              row.classList.toggle("is-active", isActive);
+              row.setAttribute("aria-expanded", String(isActive));
             });
+          };
 
-            setActiveRow(null);
-          } else {
+          const applyCapabilitiesMode = () => {
+            if (capabilityMobileMq.matches) {
+              capabilityRows.forEach((row) => {
+                row.setAttribute("tabindex", "0");
+                row.setAttribute("role", "button");
+                if (!row.hasAttribute("aria-expanded")) {
+                  row.setAttribute("aria-expanded", "false");
+                }
+              });
+              return;
+            }
+
+            currentActiveIndex = null;
             capabilityRows.forEach((row) => {
               row.classList.remove("is-active");
               row.removeAttribute("tabindex");
               row.removeAttribute("role");
               row.removeAttribute("aria-expanded");
             });
+          };
+
+          capabilityRows.forEach((row, rowIndex) => {
+            const toggleRow = () => {
+              if (!capabilityMobileMq.matches) return;
+              const nextIndex = currentActiveIndex === rowIndex ? null : rowIndex;
+              setActiveRow(nextIndex);
+            };
+
+            const onKeyDown = (event: KeyboardEvent) => {
+              if (!capabilityMobileMq.matches) return;
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                toggleRow();
+              }
+            };
+
+            row.addEventListener("click", toggleRow);
+            row.addEventListener("keydown", onKeyDown);
+            capabilityMobileTapCleanups.push(() => {
+              row.removeEventListener("click", toggleRow);
+              row.removeEventListener("keydown", onKeyDown);
+              row.removeAttribute("tabindex");
+              row.removeAttribute("role");
+              row.removeAttribute("aria-expanded");
+              row.classList.remove("is-active");
+            });
+          });
+
+          const onCapabilitiesModeChange = () => applyCapabilitiesMode();
+          if (capabilityMobileMq.addEventListener) {
+            capabilityMobileMq.addEventListener("change", onCapabilitiesModeChange);
+            capabilityMobileTapCleanups.push(() => {
+              capabilityMobileMq.removeEventListener("change", onCapabilitiesModeChange);
+            });
+          } else {
+            capabilityMobileMq.addListener(onCapabilitiesModeChange);
+            capabilityMobileTapCleanups.push(() => {
+              capabilityMobileMq.removeListener(onCapabilitiesModeChange);
+            });
           }
+
+          window.addEventListener("resize", updateCapabilityBodyHeights);
+          capabilityMobileTapCleanups.push(() => {
+            window.removeEventListener("resize", updateCapabilityBodyHeights);
+          });
+
+          setActiveRow(null);
+          applyCapabilitiesMode();
+          updateCapabilityBodyHeights();
         }
 
         const processCards = gsap.utils.toArray<HTMLElement>(".process-card");
